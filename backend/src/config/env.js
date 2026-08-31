@@ -12,9 +12,9 @@ dotenv.config();
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().default(5000),
-  MONGODB_URI: z.string().min(1, 'MONGODB_URI is required'),
-  REDIS_URL: z.string().min(1, 'REDIS_URL is required'),
-  JWT_SECRET: z.string().min(16, 'JWT_SECRET must be at least 16 characters'),
+  MONGODB_URI: z.string().default('mongodb://127.0.0.1:27017/razorrecover'),
+  REDIS_URL: z.string().default('redis://127.0.0.1:6379'),
+  JWT_SECRET: z.string().min(16, 'JWT_SECRET must be at least 16 characters').default('razorrecover_jwt_super_secure_key_fintech_2026_dev_mode'),
   JWT_EXPIRES_IN: z.string().default('7d'),
   GEMINI_API_KEY: z.string().optional().default(''),
   AI_ENABLED: z.coerce.boolean().default(true),

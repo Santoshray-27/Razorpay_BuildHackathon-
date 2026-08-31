@@ -7,6 +7,7 @@ import { WebhookEvent } from '../models/WebhookEvent.js';
 import { AuditLog } from '../models/AuditLog.js';
 import { computePayloadHash } from '../utils/crypto.js';
 import { logger } from '../observability/logger.js';
+import { processStoredWebhookEvent } from './paymentProcessingService.js';
 
 /**
  * Persists and deduplicates incoming verified webhook events.
@@ -82,12 +83,16 @@ export async function processWebhookEvent({
       providerEventId: effectiveEventId
     });
 
-    // 3. Asynchronous handoff placeholder for Phase 3 (Payment & Case Engine)
+    // 3. Trigger Ingestion Pipeline (Normalizing, Risk Engine & Case Creation)
     setImmediate(async () => {
       try {
-        await handleAsyncEventProcessing(newEvent, correlationId);
+        await processStoredWebhookEvent(newEvent, correlationId);
       } catch (err) {
-        logger.error('Async webhook handoff failed', { error: err.message, correlationId });
+        logger.error('Async webhook payment pipeline failed', {
+          error: err.message,
+          stack: err.stack,
+          correlationId
+        });
       }
     });
 
@@ -98,7 +103,6 @@ export async function processWebhookEvent({
     };
   } catch (err) {
     if (err.code === 11000) {
-      // Race condition caught by MongoDB unique compound index
       logger.warn('Concurrent duplicate caught by unique index', { correlationId, providerEventId: effectiveEventId });
       return {
         isDuplicate: true,
@@ -107,15 +111,4 @@ export async function processWebhookEvent({
     }
     throw err;
   }
-}
-
-/**
- * Placeholder for Phase 3 Event Normalization & Recovery Case creation.
- * In Phase 2, this records that the event is queued for downstream analysis.
- */
-export async function handleAsyncEventProcessing(webhookEvent, correlationId) {
-  // Marked as received. Phase 3 will attach the Risk Engine, Payment upsert, and Case state machine.
-  logger.debug(`[Queue Handoff Placeholder] Ready for Phase 3 processing: ${webhookEvent.providerEventId}`, {
-    correlationId
-  });
 }

@@ -1,6 +1,6 @@
 # RazorRecover — Safety-First, AI-Assisted Revenue Recovery Platform
 
-> **"AI Recommends. Backend Policy Decides."**
+> **"AI Recommends. Backend Policy Decides."**  
 > A production-grade FinTech platform for merchants to detect failed Razorpay payments, predict recovery likelihood with explainable ML, consult Google Gemini for advisory recovery strategies, enforce strict deterministic safety policies, schedule actions asynchronously with BullMQ + Redis, and measure genuine recovered revenue.
 
 [![RazorRecover CI](https://github.com/Santoshray-27/Razorpay_BuildHackathon-/actions/workflows/ci.yml/badge.svg)](https://github.com/Santoshray-27/Razorpay_BuildHackathon-/actions)
@@ -9,17 +9,16 @@
 
 ---
 
-## 📑 Table of Contents
-1. [The Problem & Our Solution](#-the-problem--our-solution)
-2. [Core FinTech Principles](#-core-fintech-principles)
-3. [Architecture & Workflow](#-architecture--workflow)
-4. [Tech Stack](#-tech-stack)
-5. [Quick Start (Local Setup in 3 Minutes)](#-quick-start-local-setup-in-3-minutes)
-6. [Live Demo Walkthrough for Evaluators](#-live-demo-walkthrough-for-evaluators)
-7. [4-Strategy Simulation Benchmark](#-4-strategy-simulation-benchmark)
-8. [Environment Variables Matrix](#-environment-variables-matrix)
-9. [Production Deployment Guide (Render + Vercel)](#-production-deployment-guide-render--vercel)
-10. [Test Suite Verification](#-test-suite-verification)
+## 📑 Quick Navigation & Documentation
+* [Executive Summary & Problem](#-the-problem--our-solution)
+* [Core FinTech Principles](#-core-fintech-principles)
+* [System Architecture & State Machine](#-architecture--workflow)
+* [Quick Start (Local Setup in 3 Minutes)](#-quick-start-local-setup-in-3-minutes)
+* [Live Demo Walkthrough for Evaluators](#-live-demo-walkthrough-for-evaluators)
+* [4-Strategy Simulation Benchmark](#-4-strategy-simulation-benchmark)
+* [Environment Variables Matrix](#-environment-variables-matrix)
+* [Production Deployment Guide (Render + Vercel)](#-production-deployment-guide-render--vercel)
+* [Submission Assets Index](#-submission-assets-index)
 
 ---
 
@@ -173,7 +172,7 @@ Evaluated across **10,000 synthetic transactions** on the exact same population 
 | `GEMINI_API_KEY` | Optional | Google Gemini API Key | `AIzaSy...` |
 | `AI_ENABLED` | No | Toggle AI layer (true/false) | `true` |
 | `RAZORPAY_KEY_ID` | Optional | Razorpay Test API Key ID | `rzp_test_...` |
-| `RAZORPAY_KEY_SECRET` | Optional | Razorpay Test API Key Secret | `rvKKl...` |
+| `RAZORPAY_KEY_SECRET` | Optional | Razorpay Test Key Secret | `rvKKl...` |
 | `RAZORPAY_WEBHOOK_SECRET` | Optional | Razorpay Webhook Secret | `webhook_secret_...` |
 | `DEMO_COMPRESSION_ENABLED` | No | Compress 6h delay $\to$ 30s in demo | `true` |
 
@@ -208,6 +207,23 @@ Evaluated across **10,000 synthetic transactions** on the exact same population 
 
 ---
 
+## 📚 Submission Assets Index
+
+| Asset Document | Description |
+| :--- | :--- |
+| [`docs/pitch.md`](docs/pitch.md) | 30-Second Elevator Hook & 60-Second Hackathon Pitch |
+| [`docs/demo-script.md`](docs/demo-script.md) | 5-Minute Video Recording & Live Presentation Script |
+| [`docs/architecture.md`](docs/architecture.md) | Mermaid Architecture & State Machine Flowcharts |
+| [`docs/metrics.md`](docs/metrics.md) | Mathematical Metric Formulations & Execution Mode Integrity |
+| [`docs/limitations.md`](docs/limitations.md) | Honest MVP Limitations & Future Roadmap |
+| [`docs/judge-guide.md`](docs/judge-guide.md) | 3-to-5 Minute Fast-Track Judge Evaluation Guide |
+| [`docs/screenshots-needed.md`](docs/screenshots-needed.md) | Submission Screenshots Checklist |
+| [`docs/security.md`](docs/security.md) | Security, Privacy, PII Masking & HMAC Verification |
+| [`docs/testing.md`](docs/testing.md) | Test Suite Matrix (43 / 43 Passing Tests) |
+| [`docs/api.md`](docs/api.md) | Complete REST API Reference Guide |
+
+---
+
 ## 🧪 Test Suite Verification
 
 Run the entire automated test suite (43 unit & integration tests):
@@ -230,11 +246,13 @@ PASS tests/simulation.test.js (4 tests)
 Test Suites: 9 passed, 9 total
 Tests:       43 passed, 43 total
 Snapshots:   0 total
-Time:        4.225 s
+Time:        4.474 s
 ```
 
 ---
 
 ## 👨‍💻 Author & Acknowledgements
 Built with ❤️ by **Santosh Ray** for the **Razorpay Buildathon / AI Builder Internship**.
-* **GitHub:** [@Santoshray-27](https://github.com/Santoshray-27)
+* **GitHub Repository:** [Santoshray-27/Razorpay_BuildHackathon-](https://github.com/Santoshray-27/Razorpay_BuildHackathon-)
+* **Live Demo URL:** `[YOUR_DEPLOYED_FRONTEND_URL]`
+* **Demo Video Link:** `[YOUR_YOUTUBE_OR_LOOM_VIDEO_LINK]`

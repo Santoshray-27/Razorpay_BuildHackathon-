@@ -2,40 +2,35 @@
 
 ## 1. High-Level System Architecture
 
-```text
-                                 [ Razorpay Gateway ]
-                                           │
-                                 (Raw Webhook Event)
-                                           ▼
-                            [ Ingestion & HMAC Verify ]
-                                           │
-                                           ▼
-                                 [ Risk Engine ] ──► [ DETECTED ]
-                                           │
-                        ┌──────────────────┴──────────────────┐
-                        ▼                                     ▼
-            [ Logistic Regression ML ]               [ Google Gemini LLM ]
-              Numeric Probability                      Strategy Advisory
-                 (0.0 to 1.0)                        (Zod Validated JSON)
-                        └──────────────────┬──────────────────┘
-                                           │
-                                           ▼
-                           [ Deterministic Policy Engine ]
-                           (Authoritative 15-Rule Hierarchy)
-                                           │
-                        ┌──────────────────┴──────────────────┐
-                        │                                     │
-                 [ APPROVED ]                        [ PENDING_APPROVAL ]
-                        │                                     │
-                        ▼                              (Human Operator)
-               [ BullMQ + Redis ]                             │
-              (Delayed Queueing)                              ▼
-                        │                                [ APPROVED ]
-                        ▼                                     │
-               [ Recovery Worker ] ◄──────────────────────────┘
-                        │
-                        ▼
-               [ Outcome Execution ] ──► [ RECOVERED ]
+```mermaid
+flowchart TD
+    A[Razorpay Payment Failure Webhook] -->|Raw JSON Body| B(HMAC-SHA256 Signature Verification)
+    B -->|Verified Event| C[Webhook Ingestion & Idempotency Store]
+    C -->|New Failure| D[Revenue Risk Engine]
+    D -->|State: DETECTED| E[Recovery Case & Privacy Context]
+    
+    E --> F[Hybrid Intelligence Layer]
+    F -->|Feature Vector| G[Logistic Regression ML Model\n0.0 - 1.0 Probability]
+    F -->|Sanitized Context| H[Google Gemini LLM Advisory\nStrategy & Reasoning]
+    
+    G --> I[Zod Schema Validation Engine]
+    H --> I
+    
+    I --> J{15-Rule Deterministic Policy Engine}
+    J -->|High Value >= 10k or Low Conf| K[Human Review Queue\nOperator Approval]
+    K -->|Approved| L[BullMQ + Redis Queue\nDelayed Action Job]
+    J -->|Auto-Approved| L
+    J -->|Policy Blocked / Opt-Out| M[Case STOPPED / CLOSED]
+    
+    L --> N[Recovery Worker Process]
+    N -->|Idempotent Lock Guard| O[Recovery Executor Adapter\nRazorpay Test / Mock]
+    O -->|Success| P[State: RECOVERED\nRevenue Captured in Paise]
+    
+    E -.-> Q[(Immutable Audit Trail Log\nActor + Trace ID)]
+    J -.-> Q
+    K -.-> Q
+    N -.-> Q
+    P -.-> Q
 ```
 
 ---
@@ -43,9 +38,9 @@
 ## 2. Fundamental FinTech Boundary
 > **"AI Recommends. Backend Policy Decides."**
 
-In modern payment systems, Large Language Models are non-deterministic and hallucination-prone. RazorRecover enforces a strict architectural boundary:
-* **The AI Layer is purely advisory:** Generates structured recommendations validated strictly via Zod.
-* **The Backend Policy Engine is the single authority:** Evaluates deterministic financial thresholds (amount limits $\ge ₹10,000$, customer opt-outs, retry limits, active locks) before any action can ever be queued or executed.
+In financial transactions, Large Language Models are non-deterministic and prone to hallucination. RazorRecover enforces a strict architectural boundary:
+* **The AI Layer is purely advisory:** Generates structured strategy JSON validated strictly via Zod (`RecoveryRecommendationSchema`).
+* **The Backend Policy Engine is the sole authority:** Evaluates deterministic financial rules (amount limits $\ge ₹10,000$, customer opt-outs, retry limits, active locks) before any action can ever be queued or executed.
 * **The Worker executes safely:** Ensures idempotent execution via unique keys and prevents duplicate double-charges.
 
 ---
@@ -59,4 +54,19 @@ In modern payment systems, Large Language Models are non-deterministic and hallu
 
 ## 4. Finite State Machine Transitions
 
-`detected` $\to$ `analyzing` $\to$ `recommended` $\to$ (`pending_approval` / `approved`) $\to$ `scheduled` $\to$ `executing` $\to$ `recovered` / `stopped` / `failed` / `expired`.
+```mermaid
+stateDiagram-v2
+    [*] --> detected: Failed Payment Webhook
+    detected --> analyzing: Explicit Analysis Requested
+    analyzing --> recommended: AI Recommendation Validated
+    recommended --> pending_approval: High-Value or Low Confidence
+    recommended --> approved: Deterministic Policy Passed
+    pending_approval --> approved: Operator Authorized
+    pending_approval --> stopped: Operator Rejected
+    approved --> scheduled: Enqueued in BullMQ
+    scheduled --> executing: Worker Acquired Lock
+    executing --> recovered: Payment Succeeded
+    executing --> analyzing: Transient Retry < 3
+    executing --> failed: Retries Exhausted (>= 3)
+    detected --> stopped: Opt-Out / Expiry
+```

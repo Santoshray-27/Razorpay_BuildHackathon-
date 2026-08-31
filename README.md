@@ -9,16 +9,17 @@
 
 ---
 
-## 📑 Quick Navigation & Documentation
-* [Executive Summary & Problem](#-the-problem--our-solution)
+## 📑 Quick Navigation
+* [The Problem & Our Solution](#-the-problem--our-solution)
 * [Core FinTech Principles](#-core-fintech-principles)
 * [System Architecture & State Machine](#-architecture--workflow)
+* [Tech Stack](#-tech-stack)
 * [Quick Start (Local Setup in 3 Minutes)](#-quick-start-local-setup-in-3-minutes)
 * [Live Demo Walkthrough for Evaluators](#-live-demo-walkthrough-for-evaluators)
 * [4-Strategy Simulation Benchmark](#-4-strategy-simulation-benchmark)
 * [Environment Variables Matrix](#-environment-variables-matrix)
 * [Production Deployment Guide (Render + Vercel)](#-production-deployment-guide-render--vercel)
-* [Submission Assets Index](#-submission-assets-index)
+* [Automated Test Verification](#-test-suite-verification)
 
 ---
 
@@ -204,23 +205,6 @@ Evaluated across **10,000 synthetic transactions** on the exact same population 
    * **Build Command:** `npm run build`
    * **Output Directory:** `dist`
    * Add `VITE_API_URL` pointing to your Render backend URL (e.g. `https://razorrecover-api.onrender.com/api`).
-
----
-
-## 📚 Submission Assets Index
-
-| Asset Document | Description |
-| :--- | :--- |
-| [`docs/pitch.md`](docs/pitch.md) | 30-Second Elevator Hook & 60-Second Hackathon Pitch |
-| [`docs/demo-script.md`](docs/demo-script.md) | 5-Minute Video Recording & Live Presentation Script |
-| [`docs/architecture.md`](docs/architecture.md) | Mermaid Architecture & State Machine Flowcharts |
-| [`docs/metrics.md`](docs/metrics.md) | Mathematical Metric Formulations & Execution Mode Integrity |
-| [`docs/limitations.md`](docs/limitations.md) | Honest MVP Limitations & Future Roadmap |
-| [`docs/judge-guide.md`](docs/judge-guide.md) | 3-to-5 Minute Fast-Track Judge Evaluation Guide |
-| [`docs/screenshots-needed.md`](docs/screenshots-needed.md) | Submission Screenshots Checklist |
-| [`docs/security.md`](docs/security.md) | Security, Privacy, PII Masking & HMAC Verification |
-| [`docs/testing.md`](docs/testing.md) | Test Suite Matrix (43 / 43 Passing Tests) |
-| [`docs/api.md`](docs/api.md) | Complete REST API Reference Guide |
 
 ---
 

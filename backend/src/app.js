@@ -20,6 +20,7 @@ import webhookRoutes from './routes/webhookRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import recoveryRoutes from './routes/recoveryRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
 
 const app = express();
 
@@ -138,6 +139,7 @@ app.get('/api/ready', async (req, res) => {
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/recovery', recoveryRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Fallback 404 Handler
 app.use(notFoundHandler);

@@ -16,6 +16,7 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { getDatabaseStatus } from './config/db.js';
 import { getRedisStatus } from './config/redis.js';
 
+import webhookRoutes from './routes/webhookRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 
@@ -44,10 +45,29 @@ app.use(morgan(morganFormat, {
   }
 }));
 
+// Webhook Rate Limiter (Protects endpoint while allowing legitimate webhook bursts)
+const webhookLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 120, // 120 requests/minute
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: {
+      code: 'WEBHOOK_RATE_LIMIT_EXCEEDED',
+      message: 'Webhook burst threshold reached.'
+    }
+  }
+});
+
+// CRITICAL FINTECH RULE: Mount Webhooks BEFORE global express.json()
+// This ensures express.raw() can capture exact unmodified request bytes for HMAC verification.
+app.use('/api/webhooks', webhookLimiter, webhookRoutes);
+
 // Rate limiter for Auth endpoints (protection against brute-force)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 30, // 30 requests per 15 mins for login/register
+  max: 30,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -75,7 +95,7 @@ const generalLimiter = rateLimit({
 });
 app.use(generalLimiter);
 
-// Express JSON body parser
+// Express JSON body parser for regular application routes
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 

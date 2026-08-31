@@ -102,9 +102,9 @@ app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 /**
- * Operational Health Probes
+ * Operational Health Probes (Root and /api aliases)
  */
-app.get('/api/health', (req, res) => {
+app.get(['/health', '/api/health'], (req, res) => {
   res.status(200).json({
     status: 'ok',
     service: 'razorrecover-backend',
@@ -115,7 +115,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-app.get('/api/ready', async (req, res) => {
+app.get(['/ready', '/api/ready'], async (req, res) => {
   const dbStatus = getDatabaseStatus();
   const redisStatus = await getRedisStatus();
 

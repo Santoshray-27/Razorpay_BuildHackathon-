@@ -18,7 +18,8 @@ import {
   Sparkles,
   Zap,
   CheckCircle,
-  Cpu
+  Cpu,
+  BarChart3
 } from 'lucide-react';
 
 export default function DashboardLayout() {
@@ -60,7 +61,8 @@ export default function DashboardLayout() {
     { to: '/', label: 'Overview', icon: LayoutDashboard },
     { to: '/cases', label: 'Recovery Cases', icon: Layers },
     { to: '/review-queue', label: 'Human Review Queue', icon: UserCheck },
-    { to: '/payments', label: 'All Payments', icon: CreditCard }
+    { to: '/payments', label: 'All Payments', icon: CreditCard },
+    { to: '/simulator', label: 'Simulation & Benchmark', icon: BarChart3 }
   ];
 
   return (

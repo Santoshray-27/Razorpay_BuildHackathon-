@@ -21,6 +21,7 @@ import authRoutes from './routes/authRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import recoveryRoutes from './routes/recoveryRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
+import simulatorRoutes from './routes/simulatorRoutes.js';
 
 const app = express();
 
@@ -47,7 +48,7 @@ app.use(morgan(morganFormat, {
   }
 }));
 
-// Webhook Rate Limiter (Protects endpoint while allowing legitimate webhook bursts)
+// Webhook Rate Limiter
 const webhookLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 120,
@@ -65,7 +66,7 @@ const webhookLimiter = rateLimit({
 // CRITICAL FINTECH RULE: Mount Webhooks BEFORE global express.json()
 app.use('/api/webhooks', webhookLimiter, webhookRoutes);
 
-// Rate limiter for Auth endpoints (protection against brute-force)
+// Rate limiter for Auth endpoints
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 30,
@@ -140,6 +141,7 @@ app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/recovery', recoveryRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/simulator', simulatorRoutes);
 
 // Fallback 404 Handler
 app.use(notFoundHandler);

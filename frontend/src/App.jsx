@@ -13,6 +13,7 @@ import RecoveryCasesPage from './pages/RecoveryCasesPage';
 import CaseDetailPage from './pages/CaseDetailPage';
 import ReviewQueuePage from './pages/ReviewQueuePage';
 import PaymentsPage from './pages/PaymentsPage';
+import SimulatorPage from './pages/SimulatorPage';
 
 function ProtectedRoute({ children }) {
   const { token, loading } = useAuth();
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="cases/:id" element={<CaseDetailPage />} />
             <Route path="review-queue" element={<ReviewQueuePage />} />
             <Route path="payments" element={<PaymentsPage />} />
+            <Route path="simulator" element={<SimulatorPage />} />
           </Route>
 
           {/* Catch-all redirect */}

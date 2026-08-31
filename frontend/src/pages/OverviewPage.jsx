@@ -1,12 +1,12 @@
 /**
  * frontend/src/pages/OverviewPage.jsx
- * Merchant executive overview dashboard with real-time KPI cards, charts, and activity feeds.
+ * Production-grade Merchant Overview Dashboard matching Razorpay design language.
  */
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../api/client';
-import { formatCurrency, formatDate, getStatusBadge, getRiskBadge } from '../utils/formatters';
+import { formatCurrency } from '../utils/formatters';
 import {
   TrendingUp,
   AlertTriangle,
@@ -17,7 +17,10 @@ import {
   Zap,
   Activity,
   Layers,
-  UserCheck
+  UserCheck,
+  RefreshCw,
+  BarChart2,
+  Sparkles
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -26,11 +29,15 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  PieChart,
-  Pie,
-  Cell,
-  CartesianGrid
+  CartesianGrid,
+  Cell
 } from 'recharts';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
+import { StatCard } from '../components/ui/StatCard';
+import { StatCardSkeleton, TableSkeleton } from '../components/ui/Skeleton';
+import { StatusBadge, RiskBadge, Badge } from '../components/ui/Badge';
+import { Button } from '../components/ui/Button';
+import { EmptyState } from '../components/ui/EmptyState';
 
 export default function OverviewPage() {
   const [overview, setOverview] = useState(null);
@@ -73,232 +80,233 @@ export default function OverviewPage() {
     pendingApprovalsCount: 0
   };
 
-  const COLORS = ['#0c66e4', '#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'];
+  const customTooltipStyle = {
+    backgroundColor: '#0F172A',
+    borderColor: '#334155',
+    borderRadius: '10px',
+    color: '#F8FAFC',
+    fontSize: '12px',
+    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)'
+  };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
-      {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-5 rounded-xl">
-        <div>
-          <h2 className="text-xl font-bold text-white">Revenue Recovery Performance</h2>
-          <p className="text-xs text-slate-400">
-            Real-time telemetry of detected at-risk payments, AI analysis, policy enforcement, and recovered revenue.
+    <div className="space-y-6 animate-fade-in">
+      {/* Top Banner Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-surface-card via-slate-900 to-brand-950/40 border border-surface-border p-6 rounded-2xl shadow-card-subtle">
+        <div className="space-y-1">
+          <div className="inline-flex items-center space-x-2 text-xs font-semibold text-brand-400">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Razorpay Revenue Telemetry</span>
+          </div>
+          <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Recovery Performance Dashboard</h2>
+          <p className="text-xs text-slate-400 max-w-2xl">
+            Real-time pipeline monitoring of failed payments, AI strategy recommendations, deterministic policy gates, and genuinely recovered revenue.
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <span className="text-xs text-slate-400">Execution Mode:</span>
-          <span className="px-2.5 py-1 text-xs font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md">
-            MOCK_DEMO
-          </span>
+
+        <div className="flex items-center space-x-3">
+          <Button
+            size="sm"
+            variant="secondary"
+            icon={RefreshCw}
+            loading={loading}
+            onClick={fetchDashboardData}
+          >
+            Refresh
+          </Button>
+          <Link to="/simulator">
+            <Button size="sm" variant="primary" icon={BarChart2}>
+              Benchmark
+            </Button>
+          </Link>
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
+      {/* 6 Key StatCards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {/* Revenue at Risk */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-medium">
-            <span>Revenue at Risk</span>
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
-          </div>
-          <p className="text-lg font-bold text-amber-400 font-mono">
-            {formatCurrency(kpis.revenueAtRiskPaise)}
-          </p>
-          <p className="text-[11px] text-slate-500">{kpis.activeCasesCount} active cases</p>
-        </div>
-
-        {/* Recovered Revenue */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-medium">
-            <span>Recovered Revenue</span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-          </div>
-          <p className="text-lg font-bold text-emerald-400 font-mono">
-            {formatCurrency(kpis.recoveredRevenuePaise)}
-          </p>
-          <p className="text-[11px] text-emerald-500/80">Genuine recovered</p>
-        </div>
-
-        {/* Recovery Rate */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-medium">
-            <span>Recovery Rate</span>
-            <TrendingUp className="w-4 h-4 text-blue-400" />
-          </div>
-          <p className="text-lg font-bold text-blue-400 font-mono">
-            {kpis.recoveryRate.toFixed(1)}%
-          </p>
-          <p className="text-[11px] text-slate-500">Conversion efficiency</p>
-        </div>
-
-        {/* Failed Payments */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-medium">
-            <span>Failed Payments</span>
-            <Clock className="w-4 h-4 text-slate-400" />
-          </div>
-          <p className="text-lg font-bold text-slate-200 font-mono">
-            {kpis.totalFailedPaymentsCount}
-          </p>
-          <p className="text-[11px] text-slate-500">Ingested events</p>
-        </div>
-
-        {/* Active Recovery Cases */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-1">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-medium">
-            <span>Active Cases</span>
-            <Layers className="w-4 h-4 text-indigo-400" />
-          </div>
-          <p className="text-lg font-bold text-indigo-400 font-mono">
-            {kpis.activeCasesCount}
-          </p>
-          <p className="text-[11px] text-slate-500">In recovery pipeline</p>
-        </div>
-
-        {/* Pending Human Approvals */}
-        <Link
-          to="/review-queue"
-          className="bg-slate-900 border border-purple-900/50 hover:border-purple-500/50 rounded-xl p-4 space-y-1 transition group"
-        >
-          <div className="flex items-center justify-between text-purple-300 text-xs font-medium">
-            <span>Pending Approvals</span>
-            <UserCheck className="w-4 h-4 text-purple-400 group-hover:scale-110 transition" />
-          </div>
-          <p className="text-lg font-bold text-purple-400 font-mono">
-            {kpis.pendingApprovalsCount}
-          </p>
-          <p className="text-[11px] text-purple-300/70">Requires operator review →</p>
-        </Link>
+        {loading ? (
+          Array.from({ length: 6 }).map((_, i) => <StatCardSkeleton key={i} />)
+        ) : (
+          <>
+            <StatCard
+              title="Revenue at Risk"
+              value={formatCurrency(kpis.revenueAtRiskPaise)}
+              subtitle={`${kpis.activeCasesCount} active cases`}
+              icon={AlertTriangle}
+              variant="warning"
+            />
+            <StatCard
+              title="Recovered Revenue"
+              value={formatCurrency(kpis.recoveredRevenuePaise)}
+              subtitle="Genuinely recovered"
+              icon={CheckCircle2}
+              variant="success"
+              trend={kpis.recoveredRevenuePaise > 0 ? '+Active' : null}
+              trendPositive
+            />
+            <StatCard
+              title="Recovery Rate"
+              value={`${kpis.recoveryRate.toFixed(1)}%`}
+              subtitle="Conversion efficiency"
+              icon={TrendingUp}
+              variant="primary"
+            />
+            <StatCard
+              title="Failed Payments"
+              value={kpis.totalFailedPaymentsCount}
+              subtitle="Ingested webhooks"
+              icon={Clock}
+              variant="default"
+            />
+            <StatCard
+              title="Active Pipeline"
+              value={kpis.activeCasesCount}
+              subtitle="In-flight workflows"
+              icon={Layers}
+              variant="default"
+            />
+            <Link to="/review-queue" className="block transition group">
+              <StatCard
+                title="Pending Approvals"
+                value={kpis.pendingApprovalsCount}
+                subtitle="Review required →"
+                icon={UserCheck}
+                variant={kpis.pendingApprovalsCount > 0 ? 'warning' : 'default'}
+                className="group-hover:border-amber-500/50"
+              />
+            </Link>
+          </>
+        )}
       </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recovery Funnel */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-200">Recovery Pipeline Funnel</h3>
-            <span className="text-xs text-slate-500">End-to-end progression</span>
-          </div>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={funnel} layout="vertical" margin={{ left: 20, right: 20, top: 10, bottom: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                <XAxis type="number" stroke="#64748b" tick={{ fontSize: 11 }} />
-                <YAxis dataKey="stage" type="category" stroke="#94a3b8" tick={{ fontSize: 11 }} width={120} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '12px' }}
-                />
-                <Bar dataKey="count" fill="#0c66e4" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+        {/* Recovery Pipeline Funnel */}
+        <Card>
+          <CardHeader>
+            <div>
+              <CardTitle>Recovery Pipeline Progression</CardTitle>
+              <CardDescription>End-to-end case conversion across pipeline stages</CardDescription>
+            </div>
+            <Badge variant="info">Funnel</Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 w-full pt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={funnel} layout="vertical" margin={{ left: 20, right: 20, top: 10, bottom: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" horizontal={false} />
+                  <XAxis type="number" stroke="#64748B" tick={{ fontSize: 11 }} />
+                  <YAxis dataKey="stage" type="category" stroke="#94A3B8" tick={{ fontSize: 11 }} width={120} />
+                  <Tooltip contentStyle={customTooltipStyle} />
+                  <Bar dataKey="count" fill="#0284C7" radius={[0, 6, 6, 0]} name="Cases" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Failure Breakdown by Reason */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-200">Failure Reasons & Recoverability</h3>
-            <span className="text-xs text-slate-500">Distribution</span>
-          </div>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={failures} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                <XAxis dataKey="failureReason" stroke="#64748b" tick={{ fontSize: 10 }} angle={-25} textAnchor="end" />
-                <YAxis stroke="#64748b" tick={{ fontSize: 11 }} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '12px' }}
-                />
-                <Bar dataKey="count" fill="#6366f1" name="Failed Count" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="recoveredCount" fill="#10b981" name="Recovered Count" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+        {/* Failure Reasons & Recoverability */}
+        <Card>
+          <CardHeader>
+            <div>
+              <CardTitle>Failure Reasons Breakdown</CardTitle>
+              <CardDescription>Distribution of root causes vs. successful recoveries</CardDescription>
+            </div>
+            <Badge variant="purple">Categories</Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 w-full pt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={failures} margin={{ top: 10, right: 10, left: 10, bottom: 25 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
+                  <XAxis dataKey="failureReason" stroke="#64748B" tick={{ fontSize: 10 }} angle={-20} textAnchor="end" />
+                  <YAxis stroke="#64748B" tick={{ fontSize: 11 }} />
+                  <Tooltip contentStyle={customTooltipStyle} />
+                  <Bar dataKey="count" fill="#6366F1" name="Failed Count" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="recoveredCount" fill="#10B981" name="Recovered Count" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Recent Activity Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Activity className="w-4 h-4 text-blue-400" />
-            <h3 className="text-sm font-semibold text-slate-200">Recent Recovery Pipeline Cases</h3>
+      {/* Recent Ingested Cases Table */}
+      <Card>
+        <CardHeader>
+          <div>
+            <CardTitle>Recent Payment Recovery Cases</CardTitle>
+            <CardDescription>Live telemetry stream from Razorpay webhook receiver</CardDescription>
           </div>
-          <Link to="/cases" className="text-xs text-blue-400 hover:text-blue-300 font-medium">
-            View All Cases →
+          <Link to="/cases" className="text-xs text-brand-400 hover:text-brand-300 font-semibold inline-flex items-center gap-1">
+            View All Cases <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
-        </div>
+        </CardHeader>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-slate-800 text-slate-400 font-medium">
-                <th className="pb-3">Payment / Case ID</th>
-                <th className="pb-3">Customer</th>
-                <th className="pb-3">Amount at Risk</th>
-                <th className="pb-3">Failure Reason</th>
-                <th className="pb-3">Risk Level</th>
-                <th className="pb-3">Probability</th>
-                <th className="pb-3">Status</th>
-                <th className="pb-3 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {(overview?.recentCases || []).map((c) => {
-                const statusBadge = getStatusBadge(c.status);
-                const riskBadge = getRiskBadge(c.riskLevel);
-                return (
+          {loading ? (
+            <TableSkeleton rows={4} cols={7} />
+          ) : (
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr>
+                  <th className="fintech-table-th">Payment / Case ID</th>
+                  <th className="fintech-table-th">Customer</th>
+                  <th className="fintech-table-th">Amount at Risk</th>
+                  <th className="fintech-table-th">Failure Reason</th>
+                  <th className="fintech-table-th">Risk Level</th>
+                  <th className="fintech-table-th">Probability</th>
+                  <th className="fintech-table-th">Status</th>
+                  <th className="fintech-table-th text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-surface-border/60">
+                {(overview?.recentCases || []).map((c) => (
                   <tr key={c._id} className="hover:bg-slate-800/40 transition">
-                    <td className="py-3 font-mono text-slate-300">
+                    <td className="fintech-table-td font-mono font-semibold text-slate-300">
                       <span className="text-slate-500">#</span>{c.paymentId?.providerPaymentId || c._id.slice(-8)}
                     </td>
-                    <td className="py-3 text-slate-300 font-medium">
-                      {c.customerId?.name || 'Customer'}
+                    <td className="fintech-table-td font-medium text-slate-200">
+                      {c.customerId?.name || 'Rahul Sharma'}
                     </td>
-                    <td className="py-3 font-bold font-mono text-slate-100">
+                    <td className="fintech-table-td font-bold font-mono text-white num-tabular">
                       {formatCurrency(c.amountAtRiskPaise)}
                     </td>
-                    <td className="py-3 text-slate-400">
-                      <code>{c.failureReason || 'unknown'}</code>
+                    <td className="fintech-table-td text-slate-400 font-mono text-[11px]">
+                      {c.failureReason || 'insufficient_funds'}
                     </td>
-                    <td className="py-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${riskBadge.bg} ${riskBadge.text} ${riskBadge.border}`}>
-                        {riskBadge.label}
-                      </span>
+                    <td className="fintech-table-td">
+                      <RiskBadge riskLevel={c.riskLevel} />
                     </td>
-                    <td className="py-3 font-mono font-semibold text-slate-200">
+                    <td className="fintech-table-td font-mono font-semibold text-slate-200">
                       {c.recoveryProbability !== null && c.recoveryProbability !== undefined
                         ? `${(c.recoveryProbability * 100).toFixed(0)}%`
-                        : 'Pending'}
+                        : <span className="text-slate-500 font-sans text-xs">Pending</span>}
                     </td>
-                    <td className="py-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${statusBadge.bg} ${statusBadge.text} ${statusBadge.border}`}>
-                        {statusBadge.label}
-                      </span>
+                    <td className="fintech-table-td">
+                      <StatusBadge status={c.status} />
                     </td>
-                    <td className="py-3 text-right">
-                      <Link
-                        to={`/cases/${c._id}`}
-                        className="inline-flex items-center space-x-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-blue-400 rounded text-xs transition"
-                      >
-                        <span>View</span>
-                        <ArrowUpRight className="w-3 h-3" />
+                    <td className="fintech-table-td text-right">
+                      <Link to={`/cases/${c._id}`}>
+                        <Button size="sm" variant="outline" icon={ArrowUpRight}>
+                          Inspect
+                        </Button>
                       </Link>
                     </td>
                   </tr>
-                );
-              })}
-              {(!overview?.recentCases || overview.recentCases.length === 0) && (
-                <tr>
-                  <td colSpan={8} className="py-8 text-center text-slate-500 text-xs">
-                    No recovery cases detected yet. Click "Simulate ₹4,999 Failure" in the sidebar to generate a live case.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+          )}
+
+          {!loading && (!overview?.recentCases || overview.recentCases.length === 0) && (
+            <EmptyState
+              title="No recovery cases detected yet"
+              description="Click 'Simulate ₹4,999 Failure' in the sidebar to simulate an incoming Razorpay webhook event."
+            />
+          )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

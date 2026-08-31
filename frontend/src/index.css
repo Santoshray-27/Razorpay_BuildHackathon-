@@ -2,8 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@layer base {
+  :root {
+    --color-primary: #0284C7;
+    --color-primary-hover: #0369A1;
+    --color-bg-base: #060B16;
+    --color-surface-card: #0F172A;
+    --color-border: #1E293B;
+  }
+
+  body {
+    @apply bg-navy-950 text-slate-100 antialiased font-sans selection:bg-brand-500/30 selection:text-brand-200 min-h-screen;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  /* Custom Clean Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #090E1A;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #1E293B;
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+  }
+}
+
+@layer components {
+  /* Razorpay FinTech Card Style */
+  .fintech-card {
+    @apply bg-surface-card/90 border border-surface-border rounded-xl p-5 shadow-card-subtle backdrop-blur-sm transition-all duration-200;
+  }
+
+  .fintech-card-hover {
+    @apply hover:border-slate-700/80 hover:shadow-glow-brand;
+  }
+
+  /* Glass Surface */
+  .fintech-glass {
+    @apply bg-slate-900/60 backdrop-blur-md border border-slate-800/80;
+  }
+
+  /* Table Headers & Rows */
+  .fintech-table-th {
+    @apply px-4 py-3 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/80 border-b border-surface-border;
+  }
+
+  .fintech-table-td {
+    @apply px-4 py-3.5 text-sm text-slate-200 border-b border-surface-border/60 transition-colors;
+  }
+
+  /* Input fields */
+  .fintech-input {
+    @apply bg-surface-input border border-surface-border rounded-lg px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all duration-150;
+  }
+
+  /* Tabular Numerals for Currency & Counts */
+  .num-tabular {
+    font-variant-numeric: tabular-nums;
+  }
 }

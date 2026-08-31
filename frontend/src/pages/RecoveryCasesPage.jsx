@@ -1,19 +1,34 @@
 /**
  * frontend/src/pages/RecoveryCasesPage.jsx
- * Filterable, paginated list of merchant recovery cases with lifecycle badges.
+ * Filterable, paginated recovery case explorer with life-cycle badges and search.
  */
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../api/client';
-import { formatCurrency, formatDate, getStatusBadge, getRiskBadge } from '../utils/formatters';
-import { Layers, Search, Filter, ArrowUpRight, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { formatCurrency } from '../utils/formatters';
+import {
+  Layers,
+  Search,
+  Filter,
+  ArrowUpRight,
+  RefreshCw,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles
+} from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
+import { StatusBadge, RiskBadge, Badge } from '../components/ui/Badge';
+import { Button } from '../components/ui/Button';
+import { TableSkeleton } from '../components/ui/Skeleton';
+import { EmptyState } from '../components/ui/EmptyState';
 
 export default function RecoveryCasesPage() {
   const [cases, setCases] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 15, total: 0, pages: 1 });
   const [statusFilter, setStatusFilter] = useState('');
   const [riskFilter, setRiskFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
   const fetchCases = async (page = 1) => {
@@ -27,8 +42,8 @@ export default function RecoveryCasesPage() {
           riskLevel: riskFilter || undefined
         }
       });
-      setCases(res.data.data.cases);
-      setPagination(res.data.data.pagination);
+      setCases(res.data.data.cases || []);
+      setPagination(res.data.data.pagination || { page: 1, limit: 15, total: 0, pages: 1 });
     } catch (err) {
       console.error('Failed to load recovery cases', err);
     } finally {
@@ -40,165 +55,185 @@ export default function RecoveryCasesPage() {
     fetchCases(1);
   }, [statusFilter, riskFilter]);
 
+  const filteredCases = cases.filter((c) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    const paymentId = c.paymentId?.providerPaymentId?.toLowerCase() || '';
+    const caseId = c._id?.toLowerCase() || '';
+    const customerName = c.customerId?.name?.toLowerCase() || '';
+    return paymentId.includes(q) || caseId.includes(q) || customerName.includes(q);
+  });
+
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white">Recovery Cases</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Recovery Cases</h2>
           <p className="text-xs text-slate-400">
-            Lifecycle monitoring from detection, AI recommendation, policy decision, through execution.
+            End-to-end lifecycle monitoring: detection, AI recommendation, policy enforcement, through execution.
           </p>
         </div>
-        <button
+        <Button
+          size="sm"
+          variant="secondary"
+          icon={RefreshCw}
+          loading={loading}
           onClick={() => fetchCases(pagination.page)}
-          disabled={loading}
-          className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs text-slate-200 rounded-lg transition"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-          <span>Refresh</span>
-        </button>
+          Refresh
+        </Button>
       </div>
 
-      {/* Filters Bar */}
-      <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex flex-wrap items-center gap-3">
-        <div className="flex items-center space-x-2 text-xs text-slate-400">
-          <Filter className="w-3.5 h-3.5" />
-          <span>Filters:</span>
+      {/* Filters & Search Toolbar */}
+      <Card className="p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3 flex-1">
+            {/* Search */}
+            <div className="relative min-w-[220px] flex-1 max-w-sm">
+              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by Payment ID, Case ID, or Customer..."
+                className="fintech-input w-full pl-9 text-xs"
+              />
+            </div>
+
+            {/* Status Filter */}
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="fintech-input text-xs"
+            >
+              <option value="">All Statuses</option>
+              <option value="detected">Detected</option>
+              <option value="analyzing">Analyzing</option>
+              <option value="recommended">Recommended</option>
+              <option value="pending_approval">Pending Approval</option>
+              <option value="approved">Approved</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="executing">Executing</option>
+              <option value="recovered">Recovered</option>
+              <option value="stopped">Stopped</option>
+            </select>
+
+            {/* Risk Filter */}
+            <select
+              value={riskFilter}
+              onChange={(e) => setRiskFilter(e.target.value)}
+              className="fintech-input text-xs"
+            >
+              <option value="">All Risk Levels</option>
+              <option value="low">Low Risk</option>
+              <option value="medium">Medium Risk</option>
+              <option value="high">High Risk</option>
+            </select>
+          </div>
+
+          <span className="text-xs text-slate-400 font-mono">
+            Showing {filteredCases.length} of {pagination.total} cases
+          </span>
         </div>
-
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500"
-        >
-          <option value="">All Statuses</option>
-          <option value="detected">Detected</option>
-          <option value="analyzing">Analyzing</option>
-          <option value="recommended">Recommended</option>
-          <option value="pending_approval">Pending Approval</option>
-          <option value="approved">Approved</option>
-          <option value="scheduled">Scheduled</option>
-          <option value="executing">Executing</option>
-          <option value="recovered">Recovered</option>
-          <option value="stopped">Stopped</option>
-        </select>
-
-        <select
-          value={riskFilter}
-          onChange={(e) => setRiskFilter(e.target.value)}
-          className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500"
-        >
-          <option value="">All Risk Levels</option>
-          <option value="low">Low Risk</option>
-          <option value="medium">Medium Risk</option>
-          <option value="high">High Risk</option>
-        </select>
-
-        <span className="text-xs text-slate-500 ml-auto">
-          Showing {cases.length} of {pagination.total} cases
-        </span>
-      </div>
+      </Card>
 
       {/* Cases Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+      <Card className="overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="bg-slate-950/60 border-b border-slate-800 text-slate-400 font-medium">
-                <th className="p-4">Case / Payment ID</th>
-                <th className="p-4">Customer</th>
-                <th className="p-4">Amount at Risk</th>
-                <th className="p-4">Failure Reason</th>
-                <th className="p-4">Risk Level</th>
-                <th className="p-4">Probability</th>
-                <th className="p-4">Strategy</th>
-                <th className="p-4">Status</th>
-                <th className="p-4 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {cases.map((c) => {
-                const statusBadge = getStatusBadge(c.status);
-                const riskBadge = getRiskBadge(c.riskLevel);
-                return (
+          {loading ? (
+            <TableSkeleton rows={6} cols={8} />
+          ) : (
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr>
+                  <th className="fintech-table-th">Payment / Case ID</th>
+                  <th className="fintech-table-th">Customer</th>
+                  <th className="fintech-table-th">Amount at Risk</th>
+                  <th className="fintech-table-th">Failure Reason</th>
+                  <th className="fintech-table-th">Risk Level</th>
+                  <th className="fintech-table-th">Probability</th>
+                  <th className="fintech-table-th">AI Strategy</th>
+                  <th className="fintech-table-th">Status</th>
+                  <th className="fintech-table-th text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-surface-border/60">
+                {filteredCases.map((c) => (
                   <tr key={c._id} className="hover:bg-slate-800/40 transition">
-                    <td className="p-4 font-mono text-slate-300">
+                    <td className="fintech-table-td font-mono font-semibold text-slate-300">
                       <span className="text-slate-500">#</span>{c.paymentId?.providerPaymentId || c._id.slice(-8)}
                     </td>
-                    <td className="p-4 text-slate-200 font-medium">
-                      {c.customerId?.name || 'Customer'}
+                    <td className="fintech-table-td font-medium text-slate-200">
+                      {c.customerId?.name || 'Rahul Sharma'}
                     </td>
-                    <td className="p-4 font-bold font-mono text-slate-100">
+                    <td className="fintech-table-td font-bold font-mono text-white num-tabular">
                       {formatCurrency(c.amountAtRiskPaise)}
                     </td>
-                    <td className="p-4 text-slate-400">
-                      <code>{c.failureReason || 'unknown'}</code>
+                    <td className="fintech-table-td text-slate-400 font-mono text-[11px]">
+                      {c.failureReason || 'insufficient_funds'}
                     </td>
-                    <td className="p-4">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${riskBadge.bg} ${riskBadge.text} ${riskBadge.border}`}>
-                        {riskBadge.label}
-                      </span>
+                    <td className="fintech-table-td">
+                      <RiskBadge riskLevel={c.riskLevel} />
                     </td>
-                    <td className="p-4 font-mono font-semibold text-slate-200">
+                    <td className="fintech-table-td font-mono font-semibold text-slate-200">
                       {c.recoveryProbability !== null && c.recoveryProbability !== undefined
                         ? `${(c.recoveryProbability * 100).toFixed(0)}%`
-                        : '—'}
+                        : <span className="text-slate-500 font-sans text-xs">—</span>}
                     </td>
-                    <td className="p-4 text-slate-300 font-mono text-[11px]">
+                    <td className="fintech-table-td text-brand-300 font-mono text-[11px]">
                       {c.latestRecommendation?.recommended_action || '—'}
                     </td>
-                    <td className="p-4">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${statusBadge.bg} ${statusBadge.text} ${statusBadge.border}`}>
-                        {statusBadge.label}
-                      </span>
+                    <td className="fintech-table-td">
+                      <StatusBadge status={c.status} />
                     </td>
-                    <td className="p-4 text-right">
-                      <Link
-                        to={`/cases/${c._id}`}
-                        className="inline-flex items-center space-x-1 px-3 py-1.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 rounded text-xs transition"
-                      >
-                        <span>Inspect Case</span>
-                        <ArrowUpRight className="w-3.5 h-3.5" />
+                    <td className="fintech-table-td text-right">
+                      <Link to={`/cases/${c._id}`}>
+                        <Button size="sm" variant="primary" icon={ArrowUpRight}>
+                          Inspect
+                        </Button>
                       </Link>
                     </td>
                   </tr>
-                );
-              })}
-              {cases.length === 0 && !loading && (
-                <tr>
-                  <td colSpan={9} className="p-8 text-center text-slate-500 text-xs">
-                    No recovery cases match the selected filters.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+          )}
+
+          {!loading && filteredCases.length === 0 && (
+            <EmptyState
+              title="No matching recovery cases"
+              description="Try adjusting your search query or status filters."
+            />
+          )}
         </div>
 
         {/* Pagination Bar */}
-        <div className="p-4 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+        <div className="p-4 bg-navy-950/60 border-t border-surface-border flex items-center justify-between text-xs text-slate-400">
           <span>
-            Page {pagination.page} of {pagination.pages}
+            Page <strong className="text-slate-200">{pagination.page}</strong> of <strong className="text-slate-200">{pagination.pages}</strong>
           </span>
           <div className="flex items-center space-x-2">
-            <button
-              onClick={() => fetchCases(pagination.page - 1)}
+            <Button
+              size="sm"
+              variant="outline"
+              icon={ChevronLeft}
               disabled={pagination.page <= 1 || loading}
-              className="p-1.5 bg-slate-900 border border-slate-800 rounded hover:bg-slate-800 disabled:opacity-40 transition"
+              onClick={() => fetchCases(pagination.page - 1)}
             >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => fetchCases(pagination.page + 1)}
+              Prev
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
               disabled={pagination.page >= pagination.pages || loading}
-              className="p-1.5 bg-slate-900 border border-slate-800 rounded hover:bg-slate-800 disabled:opacity-40 transition"
+              onClick={() => fetchCases(pagination.page + 1)}
             >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+              Next
+            </Button>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

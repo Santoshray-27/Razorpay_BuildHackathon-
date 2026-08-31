@@ -1,11 +1,24 @@
 /**
  * frontend/src/pages/LoginPage.jsx
- * Authentication page featuring 1-click Demo Merchant Login helper.
+ * Production-grade FinTech authentication page with Razorpay Buildathon aesthetic
+ * and 1-click Demo Merchant Login for evaluators.
  */
 
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { ShieldCheck, ArrowRight, Zap, Lock, Mail, User } from 'lucide-react';
+import {
+  ShieldCheck,
+  ArrowRight,
+  Zap,
+  Lock,
+  Mail,
+  User,
+  CheckCircle2,
+  Cpu,
+  Layers,
+  Sparkles
+} from 'lucide-react';
+import { Button } from '../components/ui/Button';
 
 export default function LoginPage() {
   const { login, register, demoLogin } = useAuth();
@@ -14,6 +27,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
@@ -34,134 +48,182 @@ export default function LoginPage() {
   };
 
   const handleDemoSignIn = async () => {
-    setLoading(true);
+    setDemoLoading(true);
     setError(null);
     try {
       await demoLogin('merchant_admin');
     } catch (err) {
       setError(err.response?.data?.error?.message || err.message || 'Demo login failed');
     } finally {
-      setLoading(false);
+      setDemoLoading(false);
     }
   };
 
+  const highlights = [
+    { title: 'Deterministic Policy Engine', desc: 'Authoritative 15-rule hierarchy with human-in-the-loop gating' },
+    { title: 'Explainable Probability Model', desc: 'Trained Logistic Regression with transparent feature driver scoring' },
+    { title: 'Google Gemini AI Advisor', desc: 'Strictly advisory recommendations with Zod schema validation' }
+  ];
+
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4">
-      {/* Decorative gradient */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-blue-900/10 via-slate-950 to-indigo-950/20 pointer-events-none" />
+    <div className="min-h-screen bg-navy-950 flex items-center justify-center p-4 lg:p-8 relative overflow-hidden font-sans">
+      {/* Subtle Background Glows */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-brand-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-[300px] h-[300px] bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-md w-full relative z-10 space-y-6">
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex p-3 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded-xl mb-1 shadow-lg shadow-blue-950/50">
-            <ShieldCheck className="w-8 h-8" />
-          </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">RazorRecover</h1>
-          <p className="text-sm text-slate-400">
-            AI-Assisted, Policy-Controlled Revenue Recovery Platform
-          </p>
-        </div>
-
-        {/* Demo Fast Login Banner */}
-        <div className="bg-gradient-to-r from-blue-950/80 to-indigo-950/80 border border-blue-800/50 rounded-xl p-4 space-y-2.5">
-          <div className="flex items-center space-x-2 text-xs font-semibold text-blue-300">
-            <Zap className="w-4 h-4 text-blue-400" />
-            <span>Judge & Reviewer Fast Track</span>
-          </div>
-          <p className="text-xs text-slate-300">
-            Skip manual sign-up with pre-seeded merchant credentials.
-          </p>
-          <button
-            onClick={handleDemoSignIn}
-            disabled={loading}
-            className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-[0.99] text-xs font-semibold text-white rounded-lg transition shadow-md shadow-blue-900/30"
-          >
-            <span>⚡ Sign in as Demo Merchant Admin</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        {/* Form Card */}
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h2 className="text-sm font-semibold text-slate-200">
-              {isRegister ? 'Create Merchant Account' : 'Merchant Portal Login'}
-            </h2>
-            <button
-              onClick={() => { setIsRegister(!isRegister); setError(null); }}
-              className="text-xs text-blue-400 hover:text-blue-300 underline"
-            >
-              {isRegister ? 'Already registered? Login' : 'Need an account? Register'}
-            </button>
+      <div className="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10 items-center">
+        {/* Left Column: Brand & Feature Highlights */}
+        <div className="lg:col-span-6 space-y-6 text-left">
+          <div className="inline-flex items-center space-x-2.5 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 text-xs font-semibold">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Razorpay AI Buildathon 2026</span>
           </div>
 
-          {error && (
-            <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-3.5">
-            {isRegister && (
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-gradient-to-br from-brand-600 to-indigo-700 text-white rounded-2xl shadow-glow-brand">
+                <ShieldCheck className="w-8 h-8" />
+              </div>
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Merchant / Owner Name</label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Santosh Ray"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500"
-                  />
+                <h1 className="text-3xl font-extrabold text-white tracking-tight">RazorRecover</h1>
+                <p className="text-xs text-brand-300 font-medium">FinTech Revenue Recovery Engine</p>
+              </div>
+            </div>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Detect failed payments, predict recovery probability, and execute safe, policy-controlled workflows.
+            </p>
+          </div>
+
+          {/* Highlights list */}
+          <div className="space-y-3 pt-2">
+            {highlights.map((h, i) => (
+              <div key={i} className="flex items-start space-x-3 p-3 rounded-xl bg-surface-card/60 border border-surface-border/60">
+                <div className="p-1 rounded bg-brand-500/10 text-brand-400 mt-0.5">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
                 </div>
+                <div>
+                  <h4 className="text-xs font-semibold text-white">{h.title}</h4>
+                  <p className="text-[11px] text-slate-400 leading-relaxed mt-0.5">{h.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-2 text-xs text-slate-400">
+            <p className="font-mono text-[11px] text-slate-400">
+              Core Rule: <strong className="text-slate-300">"AI recommends. Backend policy decides."</strong>
+            </p>
+          </div>
+        </div>
+
+        {/* Right Column: Fast Track & Auth Form */}
+        <div className="lg:col-span-6 space-y-4">
+          {/* Judge & Reviewer 1-Click Fast Track Card */}
+          <div className="bg-gradient-to-br from-brand-950/90 via-slate-900 to-indigo-950/90 border border-brand-500/30 rounded-2xl p-5 shadow-card-subtle space-y-3 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-10">
+              <Zap className="w-24 h-24 text-brand-400" />
+            </div>
+
+            <div className="flex items-center space-x-2 text-xs font-semibold text-brand-300">
+              <Zap className="w-4 h-4 text-brand-400" />
+              <span>Judge & Evaluator Fast Track</span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Sign in immediately as a pre-seeded Merchant Admin with one click.
+            </p>
+            <Button
+              variant="primary"
+              size="lg"
+              loading={demoLoading}
+              icon={ArrowRight}
+              onClick={handleDemoSignIn}
+              className="w-full text-xs md:text-sm font-semibold shadow-glow-brand"
+            >
+              Sign In as Demo Merchant Admin
+            </Button>
+          </div>
+
+          {/* Form Card */}
+          <div className="bg-surface-card border border-surface-border rounded-2xl p-6 shadow-card-subtle space-y-4">
+            <div className="flex items-center justify-between border-b border-surface-border/60 pb-3">
+              <h2 className="text-sm font-bold text-white tracking-tight">
+                {isRegister ? 'Create Merchant Account' : 'Merchant Portal Login'}
+              </h2>
+              <button
+                type="button"
+                onClick={() => { setIsRegister(!isRegister); setError(null); }}
+                className="text-xs text-brand-400 hover:text-brand-300 font-medium transition"
+              >
+                {isRegister ? 'Have an account? Log in' : 'Need an account? Register'}
+              </button>
+            </div>
+
+            {error && (
+              <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-medium">
+                {error}
               </div>
             )}
 
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Email Address</label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="merchant@example.com"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500"
-                />
-              </div>
-            </div>
+            <form onSubmit={handleSubmit} className="space-y-3.5">
+              {isRegister && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Merchant / Owner Name</label>
+                  <div className="relative">
+                    <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-2.5" />
+                    <input
+                      type="text"
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Santosh Ray"
+                      className="fintech-input w-full pl-9 text-xs"
+                    />
+                  </div>
+                </div>
+              )}
 
-            <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Password</label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500"
-                />
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+                <div className="relative">
+                  <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-2.5" />
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="merchant@example.com"
+                    className="fintech-input w-full pl-9 text-xs"
+                  />
+                </div>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 rounded-lg transition active:scale-[0.99]"
-            >
-              {loading ? 'Authenticating...' : isRegister ? 'Register Merchant' : 'Sign In'}
-            </button>
-          </form>
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-2.5" />
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="fintech-input w-full pl-9 text-xs"
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                variant="secondary"
+                size="md"
+                loading={loading}
+                className="w-full text-xs font-semibold"
+              >
+                {isRegister ? 'Register Merchant' : 'Sign In with Credentials'}
+              </Button>
+            </form>
+          </div>
         </div>
-
-        <p className="text-center text-[11px] text-slate-500">
-          RazorRecover FinTech Platform &bull; Santosh Ray &copy; 2026
-        </p>
       </div>
     </div>
   );

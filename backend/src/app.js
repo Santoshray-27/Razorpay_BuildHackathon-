@@ -16,6 +16,9 @@ import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { getDatabaseStatus } from './config/db.js';
 import { getRedisStatus } from './config/redis.js';
 
+import authRoutes from './routes/authRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
+
 const app = express();
 
 // Security Headers
@@ -41,10 +44,25 @@ app.use(morgan(morganFormat, {
   }
 }));
 
-// Global Rate Limiter
+// Rate limiter for Auth endpoints (protection against brute-force)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30, // 30 requests per 15 mins for login/register
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: {
+      code: 'AUTH_RATE_LIMIT_EXCEEDED',
+      message: 'Too many authentication attempts. Please try again in 15 minutes.'
+    }
+  }
+});
+
+// General Rate Limiter
 const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 500, // limit each IP to 500 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 500,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -62,7 +80,7 @@ app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 /**
- * Liveness Probe - Fast check for process liveness
+ * Operational Health Probes
  */
 app.get('/api/health', (req, res) => {
   res.status(200).json({
@@ -75,9 +93,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-/**
- * Readiness Probe - Checks DB & Redis dependencies
- */
 app.get('/api/ready', async (req, res) => {
   const dbStatus = getDatabaseStatus();
   const redisStatus = await getRedisStatus();
@@ -96,6 +111,12 @@ app.get('/api/ready', async (req, res) => {
     }
   });
 });
+
+/**
+ * Application API Routes
+ */
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Fallback 404 Handler
 app.use(notFoundHandler);

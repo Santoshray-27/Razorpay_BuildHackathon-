@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,49 +8,60 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Razorpay Brand & FinTech Semantic Palette
+        theme: {
+          base: 'var(--bg-base)',
+          surface: 'var(--bg-surface)',
+          elevated: 'var(--bg-elevated)',
+          'border-subtle': 'var(--border-subtle)',
+          'border-default': 'var(--border-default)',
+          primary: 'var(--text-primary)',
+          secondary: 'var(--text-secondary)',
+          muted: 'var(--text-muted)',
+        },
         brand: {
-          50: '#F0F7FF',
-          100: '#E0EFFE',
-          200: '#BAE0FD',
-          300: '#7CC5FB',
-          400: '#36A5F7',
-          500: '#0C87EB',
-          600: '#0284C7', // Core Razorpay Blue
-          700: '#0369A1',
-          800: '#075985',
-          900: '#0C2D57', // Deep Brand Navy
-          950: '#071830',
+          primary: 'var(--brand-primary)',
+          hover: 'var(--brand-hover)',
+          'subtle-bg': 'var(--brand-subtle-bg)',
         },
-        navy: {
-          800: '#111E38',
-          850: '#0E192E',
-          900: '#0A1324',
-          950: '#060B16',
-        },
-        surface: {
-          card: '#0F172A',
-          'card-hover': '#141E33',
-          elevated: '#1E293B',
-          input: '#090E1A',
-          border: '#1E293B',
-          'border-subtle': '#334155',
+        semantic: {
+          success: 'var(--color-success)',
+          'success-bg': 'var(--color-success-bg)',
+          warning: 'var(--color-warning)',
+          'warning-bg': 'var(--color-warning-bg)',
+          danger: 'var(--color-danger)',
+          'danger-bg': 'var(--color-danger-bg)',
+          info: 'var(--color-info)',
+          'info-bg': 'var(--color-info-bg)',
         }
       },
+      spacing: {
+        'space-1': '4px',
+        'space-2': '8px',
+        'space-3': '12px',
+        'space-4': '16px',
+        'space-5': '20px',
+        'space-6': '24px',
+        'space-8': '32px',
+        'space-10': '40px',
+        'space-12': '48px',
+      },
+      borderRadius: {
+        'radius-sm': '6px',
+        'radius-md': '10px',
+        'radius-lg': '14px',
+        'radius-full': '9999px',
+      },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Roboto Mono', 'monospace'],
       },
       boxShadow: {
-        'glow-brand': '0 0 24px -4px rgba(2, 132, 199, 0.25)',
-        'glow-success': '0 0 24px -4px rgba(16, 185, 129, 0.25)',
-        'glow-amber': '0 0 24px -4px rgba(245, 158, 11, 0.25)',
-        'card-subtle': '0 4px 20px -2px rgba(0, 0, 0, 0.4), 0 2px 6px -1px rgba(0, 0, 0, 0.2)',
+        'theme-sm': 'var(--shadow-sm)',
+        'theme-md': 'var(--shadow-md)',
       },
       animation: {
-        'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'fade-in': 'fadeIn 0.25s ease-out forwards',
-        'slide-up': 'slideUp 0.3s ease-out forwards',
+        'fade-in': 'fadeIn 0.2s ease-out forwards',
+        'slide-up': 'slideUp 0.25s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
@@ -57,7 +69,7 @@ export default {
           '100%': { opacity: '1' },
         },
         slideUp: {
-          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '0%': { opacity: '0', transform: 'translateY(6px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         }
       }

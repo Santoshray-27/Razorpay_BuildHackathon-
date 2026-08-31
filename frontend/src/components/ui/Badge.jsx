@@ -1,49 +1,47 @@
 /**
  * frontend/src/components/ui/Badge.jsx
- * Standardized semantic badges for Status, Risk Level, Execution Mode, and Policy Decisions.
+ * Standardized single reusable Badge component adhering to the design system:
+ * - Height: 24px
+ * - Horizontal padding: space-3 (12px)
+ * - Radius: radius-full (pill)
+ * - Typography: text-caption with font-weight 600
  */
 
 import React from 'react';
 
 export function Badge({
   children,
-  variant = 'default', // 'default' | 'success' | 'warning' | 'danger' | 'info' | 'purple' | 'slate'
-  size = 'md', // 'sm' | 'md'
+  variant = 'default', // 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'neutral'
   dot = false,
   className = ''
 }) {
   const variantStyles = {
-    default: 'bg-slate-800 text-slate-300 border-slate-700',
-    info: 'bg-brand-500/10 text-brand-400 border-brand-500/20',
-    success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    warning: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    danger: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-    purple: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
-    slate: 'bg-slate-900 text-slate-400 border-slate-800'
+    default: 'bg-theme-elevated text-theme-secondary border-theme-border-subtle',
+    neutral: 'bg-theme-elevated text-theme-secondary border-theme-border-subtle',
+    primary: 'bg-brand-subtle-bg text-brand-primary border-brand-primary/20',
+    success: 'bg-semantic-success-bg text-semantic-success border-semantic-success/20',
+    warning: 'bg-semantic-warning-bg text-semantic-warning border-semantic-warning/20',
+    danger: 'bg-semantic-danger-bg text-semantic-danger border-semantic-danger/20',
+    info: 'bg-semantic-info-bg text-semantic-info border-semantic-info/20'
   };
 
   const dotColors = {
-    default: 'bg-slate-400',
-    info: 'bg-brand-400',
-    success: 'bg-emerald-400 animate-pulse',
-    warning: 'bg-amber-400',
-    danger: 'bg-rose-400',
-    purple: 'bg-indigo-400',
-    slate: 'bg-slate-500'
-  };
-
-  const sizeStyles = {
-    sm: 'text-[10px] px-2 py-0.5 font-medium gap-1',
-    md: 'text-xs px-2.5 py-1 font-semibold gap-1.5'
+    default: 'bg-theme-muted',
+    neutral: 'bg-theme-muted',
+    primary: 'bg-brand-primary',
+    success: 'bg-semantic-success animate-pulse',
+    warning: 'bg-semantic-warning',
+    danger: 'bg-semantic-danger',
+    info: 'bg-semantic-info'
   };
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border ${sizeStyles[size] || sizeStyles.md} ${
+      className={`inline-flex items-center h-6 px-space-3 rounded-radius-full border text-caption font-semibold gap-1.5 whitespace-nowrap select-none ${
         variantStyles[variant] || variantStyles.default
       } ${className}`}
     >
-      {dot && <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColors[variant] || dotColors.default}`} />}
+      {dot && <span className={`w-1.5 h-1.5 rounded-radius-full shrink-0 ${dotColors[variant] || dotColors.default}`} />}
       <span className="truncate">{children}</span>
     </span>
   );
@@ -60,7 +58,7 @@ export function StatusBadge({ status }) {
     case 'recommended':
       return <Badge variant="info">Recommended</Badge>;
     case 'analyzing':
-      return <Badge variant="purple" dot>Analyzing</Badge>;
+      return <Badge variant="primary" dot>Analyzing</Badge>;
     case 'pending_approval':
       return <Badge variant="warning" dot>Pending Review</Badge>;
     case 'scheduled':
@@ -82,22 +80,31 @@ export function RiskBadge({ riskLevel }) {
 
   switch (normalized) {
     case 'high':
-      return <Badge variant="danger" size="sm">High Risk</Badge>;
+      return <Badge variant="danger">High Risk</Badge>;
     case 'medium':
-      return <Badge variant="warning" size="sm">Medium Risk</Badge>;
+      return <Badge variant="warning">Medium Risk</Badge>;
     case 'low':
     default:
-      return <Badge variant="success" size="sm">Low Risk</Badge>;
+      return <Badge variant="success">Low Risk</Badge>;
   }
 }
 
 export function ExecutionModeBadge({ mode }) {
   const m = mode || 'MOCK_DEMO';
   if (m === 'RAZORPAY_TEST') {
-    return <Badge variant="info" size="sm" dot>RAZORPAY_TEST</Badge>;
+    return <Badge variant="success" dot>RAZORPAY_TEST</Badge>;
   }
   if (m === 'SIMULATION') {
-    return <Badge variant="purple" size="sm" dot>SIMULATION</Badge>;
+    return <Badge variant="info" dot>SIMULATION</Badge>;
   }
-  return <Badge variant="success" size="sm" dot>MOCK_DEMO</Badge>;
+  return <Badge variant="warning" dot>MOCK_DEMO</Badge>;
+}
+
+export function RoleBadge({ role }) {
+  const r = (role || 'merchant_admin').replace('_', ' ').toUpperCase();
+  return <Badge variant="neutral">{r}</Badge>;
+}
+
+export function AiAdvisoryBadge({ children = 'AI Advisory' }) {
+  return <Badge variant="primary">{children}</Badge>;
 }

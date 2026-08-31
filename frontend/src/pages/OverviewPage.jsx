@@ -1,12 +1,14 @@
 /**
  * frontend/src/pages/OverviewPage.jsx
- * Production-grade Merchant Overview Dashboard matching Razorpay design language.
+ * Merchant Overview Dashboard with dual-theme styling, 5-stage ghost-bar Funnel Chart,
+ * and high-contrast KPI hierarchy.
  */
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import { formatCurrency } from '../utils/formatters';
+import { useTheme } from '../context/ThemeContext';
 import {
   TrendingUp,
   AlertTriangle,
@@ -30,7 +32,8 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
-  Cell
+  Cell,
+  LabelList
 } from 'recharts';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import { StatCard } from '../components/ui/StatCard';
@@ -39,10 +42,19 @@ import { StatusBadge, RiskBadge, Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { EmptyState } from '../components/ui/EmptyState';
 
+const PIPELINE_STAGES = [
+  { stage: 'Detected', key: 'detected' },
+  { stage: 'Analyzing', key: 'analyzing' },
+  { stage: 'Recommended', key: 'recommended' },
+  { stage: 'Approved', key: 'approved' },
+  { stage: 'Recovered', key: 'recovered' }
+];
+
 export default function OverviewPage() {
+  const { isDark } = useTheme();
   const [overview, setOverview] = useState(null);
   const [failures, setFailures] = useState([]);
-  const [funnel, setFunnel] = useState([]);
+  const [rawFunnel, setRawFunnel] = useState([]);
   const [strategies, setStrategies] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -58,7 +70,7 @@ export default function OverviewPage() {
 
       setOverview(ovRes.data.data);
       setFailures(failRes.data.data.failures || []);
-      setFunnel(funRes.data.data.funnel || []);
+      setRawFunnel(funRes.data.data.funnel || []);
       setStrategies(stratRes.data.data.strategies || []);
     } catch (err) {
       console.error('Failed to load dashboard analytics', err);
@@ -80,27 +92,44 @@ export default function OverviewPage() {
     pendingApprovalsCount: 0
   };
 
+  // Funnel Data Transformation: Ensure all 5 stages always exist
+  const funnelMap = (rawFunnel || []).reduce((acc, item) => {
+    acc[item.stage?.toLowerCase()] = item.count || 0;
+    return acc;
+  }, {});
+
+  const completeFunnelData = PIPELINE_STAGES.map((stg) => {
+    const rawCount = funnelMap[stg.key] || funnelMap[stg.stage.toLowerCase()] || 0;
+    return {
+      stage: stg.stage,
+      count: rawCount,
+      // For charting: give zero-count stages a small placeholder width so the ghost bar outlines cleanly
+      displayVal: rawCount > 0 ? rawCount : 0.08,
+      isZero: rawCount === 0
+    };
+  });
+
   const customTooltipStyle = {
-    backgroundColor: '#0F172A',
-    borderColor: '#334155',
+    backgroundColor: isDark ? '#131826' : '#FFFFFF',
+    borderColor: isDark ? '#232B3D' : '#E7E9EF',
     borderRadius: '10px',
-    color: '#F8FAFC',
-    fontSize: '12px',
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)'
+    color: isDark ? '#F3F5F9' : '#101828',
+    fontSize: '13px',
+    boxShadow: isDark ? '0 4px 16px rgba(0,0,0,0.4)' : '0 4px 12px rgba(16,24,40,0.08)'
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-space-8 animate-fade-in">
       {/* Top Banner Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-surface-card via-slate-900 to-brand-950/40 border border-surface-border p-6 rounded-2xl shadow-card-subtle">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-4 bg-theme-surface border border-theme-border-subtle p-space-6 rounded-radius-md shadow-theme-sm">
         <div className="space-y-1">
-          <div className="inline-flex items-center space-x-2 text-xs font-semibold text-brand-400">
+          <div className="inline-flex items-center space-x-1.5 text-caption font-semibold text-brand-primary">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Razorpay Revenue Telemetry</span>
           </div>
-          <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Recovery Performance Dashboard</h2>
-          <p className="text-xs text-slate-400 max-w-2xl">
-            Real-time pipeline monitoring of failed payments, AI strategy recommendations, deterministic policy gates, and genuinely recovered revenue.
+          <h2 className="text-h1 text-theme-primary tracking-tight">Recovery Performance Dashboard</h2>
+          <p className="text-body-sm text-theme-muted max-w-2xl leading-relaxed">
+            Real-time pipeline telemetry: failed payment detection, AI strategy recommendations, deterministic policy gates, and genuinely recovered revenue.
           </p>
         </div>
 
@@ -122,8 +151,8 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      {/* 6 Key StatCards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      {/* 6 High-Impact StatCards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-space-4">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => <StatCardSkeleton key={i} />)
         ) : (
@@ -156,14 +185,14 @@ export default function OverviewPage() {
               value={kpis.totalFailedPaymentsCount}
               subtitle="Ingested webhooks"
               icon={Clock}
-              variant="default"
+              variant="danger"
             />
             <StatCard
               title="Active Pipeline"
               value={kpis.activeCasesCount}
               subtitle="In-flight workflows"
               icon={Layers}
-              variant="default"
+              variant="info"
             />
             <Link to="/review-queue" className="block transition group">
               <StatCard
@@ -171,8 +200,8 @@ export default function OverviewPage() {
                 value={kpis.pendingApprovalsCount}
                 subtitle="Review required →"
                 icon={UserCheck}
-                variant={kpis.pendingApprovalsCount > 0 ? 'warning' : 'default'}
-                className="group-hover:border-amber-500/50"
+                variant={kpis.pendingApprovalsCount > 0 ? 'warning' : 'muted'}
+                className="group-hover:border-semantic-warning/50"
               />
             </Link>
           </>
@@ -180,25 +209,77 @@ export default function OverviewPage() {
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recovery Pipeline Funnel */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-space-6">
+        {/* Recovery Pipeline Funnel - Fixed Ghost-Bar Implementation */}
         <Card>
           <CardHeader>
             <div>
               <CardTitle>Recovery Pipeline Progression</CardTitle>
-              <CardDescription>End-to-end case conversion across pipeline stages</CardDescription>
+              <CardDescription>End-to-end case conversion across all 5 sequential stages</CardDescription>
             </div>
             <Badge variant="info">Funnel</Badge>
           </CardHeader>
           <CardContent>
-            <div className="h-64 w-full pt-2">
+            <div className="h-64 w-full pt-space-2">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={funnel} layout="vertical" margin={{ left: 20, right: 20, top: 10, bottom: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" horizontal={false} />
-                  <XAxis type="number" stroke="#64748B" tick={{ fontSize: 11 }} />
-                  <YAxis dataKey="stage" type="category" stroke="#94A3B8" tick={{ fontSize: 11 }} width={120} />
-                  <Tooltip contentStyle={customTooltipStyle} />
-                  <Bar dataKey="count" fill="#0284C7" radius={[0, 6, 6, 0]} name="Cases" />
+                <BarChart
+                  data={completeFunnelData}
+                  layout="vertical"
+                  margin={{ left: 10, right: 35, top: 10, bottom: 10 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke={isDark ? '#232B3D' : '#E7E9EF'}
+                    horizontal={false}
+                  />
+                  <XAxis
+                    type="number"
+                    stroke={isDark ? '#7C8598' : '#98A2B3'}
+                    tick={{ fontSize: 11 }}
+                    allowDecimals={false}
+                  />
+                  <YAxis
+                    dataKey="stage"
+                    type="category"
+                    stroke={isDark ? '#B4BBCC' : '#475467'}
+                    tick={{ fontSize: 12, fontWeight: 500 }}
+                    width={110}
+                  />
+                  <Tooltip
+                    contentStyle={customTooltipStyle}
+                    formatter={(val, name, props) => [
+                      `${props.payload.count} cases`,
+                      'Stage Volume'
+                    ]}
+                  />
+                  <Bar dataKey="displayVal" radius={[0, 6, 6, 0]}>
+                    {completeFunnelData.map((entry, idx) => {
+                      if (entry.isZero) {
+                        return (
+                          <Cell
+                            key={`cell-${idx}`}
+                            fill="transparent"
+                            stroke={isDark ? '#2E3750' : '#D6DAE3'}
+                            strokeWidth={1.5}
+                            strokeDasharray="3 3"
+                          />
+                        );
+                      }
+                      return (
+                        <Cell
+                          key={`cell-${idx}`}
+                          fill={isDark ? '#4C82FB' : '#2E5CF0'}
+                        />
+                      );
+                    })}
+                    <LabelList
+                      dataKey="count"
+                      position="right"
+                      fill={isDark ? '#B4BBCC' : '#475467'}
+                      fontSize={12}
+                      fontWeight={600}
+                    />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -210,20 +291,40 @@ export default function OverviewPage() {
           <CardHeader>
             <div>
               <CardTitle>Failure Reasons Breakdown</CardTitle>
-              <CardDescription>Distribution of root causes vs. successful recoveries</CardDescription>
+              <CardDescription>Root causes distribution vs. successful recoveries</CardDescription>
             </div>
-            <Badge variant="purple">Categories</Badge>
+            <Badge variant="primary">Categories</Badge>
           </CardHeader>
           <CardContent>
-            <div className="h-64 w-full pt-2">
+            <div className="h-64 w-full pt-space-2">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={failures} margin={{ top: 10, right: 10, left: 10, bottom: 25 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
-                  <XAxis dataKey="failureReason" stroke="#64748B" tick={{ fontSize: 10 }} angle={-20} textAnchor="end" />
-                  <YAxis stroke="#64748B" tick={{ fontSize: 11 }} />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke={isDark ? '#232B3D' : '#E7E9EF'}
+                    vertical={false}
+                  />
+                  <XAxis
+                    dataKey="failureReason"
+                    stroke={isDark ? '#7C8598' : '#98A2B3'}
+                    tick={{ fontSize: 10 }}
+                    angle={-20}
+                    textAnchor="end"
+                  />
+                  <YAxis stroke={isDark ? '#7C8598' : '#98A2B3'} tick={{ fontSize: 11 }} />
                   <Tooltip contentStyle={customTooltipStyle} />
-                  <Bar dataKey="count" fill="#6366F1" name="Failed Count" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="recoveredCount" fill="#10B981" name="Recovered Count" radius={[4, 4, 0, 0]} />
+                  <Bar
+                    dataKey="count"
+                    fill={isDark ? '#F87171' : '#DC2626'}
+                    name="Failed Count"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="recoveredCount"
+                    fill={isDark ? '#34D399' : '#16A34A'}
+                    name="Recovered Count"
+                    radius={[4, 4, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -238,16 +339,19 @@ export default function OverviewPage() {
             <CardTitle>Recent Payment Recovery Cases</CardTitle>
             <CardDescription>Live telemetry stream from Razorpay webhook receiver</CardDescription>
           </div>
-          <Link to="/cases" className="text-xs text-brand-400 hover:text-brand-300 font-semibold inline-flex items-center gap-1">
+          <Link
+            to="/cases"
+            className="text-body-sm text-brand-primary hover:text-brand-hover font-semibold inline-flex items-center gap-1"
+          >
             View All Cases <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
         </CardHeader>
 
         <div className="overflow-x-auto">
           {loading ? (
-            <TableSkeleton rows={4} cols={7} />
+            <TableSkeleton rows={4} cols={8} />
           ) : (
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left">
               <thead>
                 <tr>
                   <th className="fintech-table-th">Payment / Case ID</th>
@@ -260,28 +364,28 @@ export default function OverviewPage() {
                   <th className="fintech-table-th text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-border/60">
+              <tbody className="divide-y divide-theme-border-subtle">
                 {(overview?.recentCases || []).map((c) => (
-                  <tr key={c._id} className="hover:bg-slate-800/40 transition">
-                    <td className="fintech-table-td font-mono font-semibold text-slate-300">
-                      <span className="text-slate-500">#</span>{c.paymentId?.providerPaymentId || c._id.slice(-8)}
+                  <tr key={c._id} className="hover:bg-theme-elevated/50 transition-colors">
+                    <td className="fintech-table-td font-mono font-semibold text-theme-primary">
+                      <span className="text-theme-muted">#</span>{c.paymentId?.providerPaymentId || c._id.slice(-8)}
                     </td>
-                    <td className="fintech-table-td font-medium text-slate-200">
+                    <td className="fintech-table-td font-medium text-theme-primary">
                       {c.customerId?.name || 'Rahul Sharma'}
                     </td>
-                    <td className="fintech-table-td font-bold font-mono text-white num-tabular">
+                    <td className="fintech-table-td font-bold font-mono text-theme-primary num-tabular">
                       {formatCurrency(c.amountAtRiskPaise)}
                     </td>
-                    <td className="fintech-table-td text-slate-400 font-mono text-[11px]">
+                    <td className="fintech-table-td text-theme-secondary font-mono text-caption">
                       {c.failureReason || 'insufficient_funds'}
                     </td>
                     <td className="fintech-table-td">
                       <RiskBadge riskLevel={c.riskLevel} />
                     </td>
-                    <td className="fintech-table-td font-mono font-semibold text-slate-200">
+                    <td className="fintech-table-td font-mono font-semibold text-theme-primary">
                       {c.recoveryProbability !== null && c.recoveryProbability !== undefined
                         ? `${(c.recoveryProbability * 100).toFixed(0)}%`
-                        : <span className="text-slate-500 font-sans text-xs">Pending</span>}
+                        : <span className="text-theme-muted text-caption">Pending</span>}
                     </td>
                     <td className="fintech-table-td">
                       <StatusBadge status={c.status} />
@@ -302,7 +406,7 @@ export default function OverviewPage() {
           {!loading && (!overview?.recentCases || overview.recentCases.length === 0) && (
             <EmptyState
               title="No recovery cases detected yet"
-              description="Click 'Simulate ₹4,999 Failure' in the sidebar to simulate an incoming Razorpay webhook event."
+              description="Click 'Simulate ₹4,999 Failure' in the sidebar to inject an incoming Razorpay payment event."
             />
           )}
         </div>

@@ -1,11 +1,7 @@
 /**
  * frontend/src/pages/CaseDetailPage.jsx
- * Production-grade Case Inspector & Interactive Recovery Workbench:
- * - Payment & Privacy-safe Customer Context
- * - Interactive 3-step action toolbar (AI Analysis -> Policy Engine -> Execution)
- * - Hybrid Explainability Panel (Logistic Regression ML vs Gemini LLM reasoning)
- * - Policy Decision & Triggered Rules card
- * - Immutable Chronological Audit Trail with trace IDs
+ * Case Inspector & Interactive Recovery Workbench with dual-theme tokens,
+ * Hybrid Explainability Panel, and Chronological Audit Timeline.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -21,24 +17,14 @@ import {
   User,
   CreditCard,
   History,
-  CheckCircle2,
-  AlertTriangle,
   Play,
   UserCheck,
   XCircle,
-  Sparkles,
-  Lock,
-  ExternalLink,
-  ChevronRight,
-  TrendingUp,
-  RefreshCw,
-  Clock,
-  Layers
+  Sparkles
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import { StatusBadge, RiskBadge, Badge, ExecutionModeBadge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
-import { Skeleton } from '../components/ui/Skeleton';
 
 export default function CaseDetailPage() {
   const { id } = useParams();
@@ -137,11 +123,11 @@ export default function CaseDetailPage() {
 
   if (loading && !caseData) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-12 bg-surface-card rounded-xl" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="h-48 bg-surface-card rounded-xl" />
-          <div className="h-48 bg-surface-card rounded-xl" />
+      <div className="space-y-space-6 animate-pulse">
+        <div className="h-12 bg-theme-surface rounded-radius-md" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-space-6">
+          <div className="h-48 bg-theme-surface rounded-radius-md" />
+          <div className="h-48 bg-theme-surface rounded-radius-md" />
         </div>
       </div>
     );
@@ -149,7 +135,7 @@ export default function CaseDetailPage() {
 
   if (!caseData) {
     return (
-      <div className="py-20 text-center text-rose-400 text-xs">
+      <div className="py-space-12 text-center text-semantic-danger text-body">
         Recovery case not found.
       </div>
     );
@@ -162,49 +148,49 @@ export default function CaseDetailPage() {
   const auditTimeline = caseData.auditTimeline || [];
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-space-6 animate-fade-in">
       {/* Top Header & Breadcrumb */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center space-x-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-4">
+        <div className="flex items-center space-x-space-3">
           <Link to="/cases">
             <Button size="sm" variant="outline" icon={ArrowLeft} />
           </Link>
           <div>
             <div className="flex items-center space-x-2.5">
-              <h2 className="text-xl md:text-2xl font-bold text-white font-mono tracking-tight">
+              <h2 className="text-h1 text-theme-primary font-mono tracking-tight">
                 Case #{payment.providerPaymentId || caseData._id.slice(-8)}
               </h2>
               <StatusBadge status={caseData.status} />
               <RiskBadge riskLevel={caseData.riskLevel} />
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-caption text-theme-muted mt-0.5">
               Occurred {formatDate(payment.occurredAt || caseData.createdAt)} &bull; Mode: <ExecutionModeBadge mode={caseData.executionMode} />
             </p>
           </div>
         </div>
 
         {actionFeedback && (
-          <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs px-3.5 py-1.5 rounded-lg flex items-center space-x-2 animate-fade-in">
-            <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="bg-semantic-success-bg border border-semantic-success/20 text-semantic-success text-body-sm px-space-4 py-space-2 rounded-radius-md flex items-center space-x-2 animate-fade-in">
+            <Sparkles className="w-4 h-4 shrink-0" />
             <span>{actionFeedback}</span>
           </div>
         )}
       </div>
 
       {/* Interactive Workflow Controls Card */}
-      <Card className="bg-gradient-to-r from-brand-950/60 via-surface-card to-indigo-950/60 border-brand-500/30 p-5 shadow-card-subtle">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <Card className="p-space-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-4">
           <div className="space-y-1">
-            <div className="flex items-center space-x-2 text-xs font-semibold text-brand-300">
-              <Sparkles className="w-4 h-4 text-brand-400" />
-              <span>Interactive FinTech Workflow Controls</span>
+            <div className="flex items-center space-x-2 text-caption font-semibold text-brand-primary">
+              <Sparkles className="w-4 h-4" />
+              <span>Interactive FinTech Pipeline Controls</span>
             </div>
-            <p className="text-xs text-slate-400">
-              Execute each stage of the recovery pipeline interactively:
+            <p className="text-body-sm text-theme-muted leading-relaxed">
+              Step through each recovery stage interactively: AI Recommendation &rarr; Deterministic Policy &rarr; Execution.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-space-3">
             {/* Step 1: AI Analysis */}
             <Button
               variant="secondary"
@@ -213,7 +199,6 @@ export default function CaseDetailPage() {
               loading={actionLoading}
               disabled={caseData.status === 'recovered'}
               onClick={runAiAnalysis}
-              className="bg-indigo-950/80 hover:bg-indigo-900 border-indigo-500/40 text-indigo-200"
             >
               1. Run AI Analysis
             </Button>
@@ -226,7 +211,6 @@ export default function CaseDetailPage() {
               loading={actionLoading}
               disabled={!recommendation || caseData.status === 'recovered'}
               onClick={evaluatePolicy}
-              className="bg-purple-950/80 hover:bg-purple-900 border-purple-500/40 text-purple-200"
             >
               2. Evaluate Policy
             </Button>
@@ -239,7 +223,6 @@ export default function CaseDetailPage() {
               loading={actionLoading}
               disabled={caseData.status === 'recovered' || caseData.status === 'pending_approval'}
               onClick={executeAction}
-              className="font-bold shadow-glow-success"
             >
               3. Execute Recovery (Demo)
             </Button>
@@ -272,40 +255,40 @@ export default function CaseDetailPage() {
       </Card>
 
       {/* Grid: Payment Summary & Customer Context */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-space-6">
         {/* Payment Summary Card */}
         <Card>
           <CardHeader>
             <div className="flex items-center space-x-2">
-              <CreditCard className="w-4 h-4 text-brand-400" />
+              <CreditCard className="w-4 h-4 text-brand-primary" />
               <CardTitle>Payment Summary</CardTitle>
             </div>
-            <Badge variant="slate">Transaction</Badge>
+            <Badge variant="neutral">Transaction</Badge>
           </CardHeader>
-          <CardContent className="space-y-3 pt-2 text-xs">
-            <div className="flex justify-between py-2 border-b border-surface-border/60">
-              <span className="text-slate-400">Amount at Risk:</span>
-              <span className="text-amber-400 font-extrabold font-mono text-sm num-tabular">
+          <CardContent className="space-y-space-3 text-body-sm">
+            <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
+              <span className="text-theme-muted">Amount at Risk:</span>
+              <span className="text-semantic-warning font-bold font-mono text-body num-tabular">
                 {formatCurrency(caseData.amountAtRiskPaise)}
               </span>
             </div>
-            <div className="flex justify-between py-2 border-b border-surface-border/60">
-              <span className="text-slate-400">Recovered Amount:</span>
-              <span className="text-emerald-400 font-extrabold font-mono text-sm num-tabular">
+            <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
+              <span className="text-theme-muted">Recovered Amount:</span>
+              <span className="text-semantic-success font-bold font-mono text-body num-tabular">
                 {formatCurrency(caseData.recoveredAmountPaise || 0)}
               </span>
             </div>
-            <div className="flex justify-between py-2 border-b border-surface-border/60">
-              <span className="text-slate-400">Payment Status:</span>
-              <span className="text-slate-200 uppercase font-mono font-semibold">{payment.status || 'failed'}</span>
+            <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
+              <span className="text-theme-muted">Payment Status:</span>
+              <span className="text-theme-primary uppercase font-mono font-semibold">{payment.status || 'failed'}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-surface-border/60">
-              <span className="text-slate-400">Failure Reason:</span>
-              <code className="text-rose-300 font-mono">{caseData.failureReason || 'insufficient_funds'}</code>
+            <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
+              <span className="text-theme-muted">Failure Reason:</span>
+              <code className="text-semantic-danger font-mono">{caseData.failureReason || 'insufficient_funds'}</code>
             </div>
-            <div className="flex justify-between py-2">
-              <span className="text-slate-400">Payment Method:</span>
-              <span className="text-slate-200 uppercase font-medium">{payment.paymentMethod || 'card'}</span>
+            <div className="flex justify-between py-space-2">
+              <span className="text-theme-muted">Payment Method:</span>
+              <span className="text-theme-primary uppercase font-medium">{payment.paymentMethod || 'card'}</span>
             </div>
           </CardContent>
         </Card>
@@ -314,35 +297,35 @@ export default function CaseDetailPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center space-x-2">
-              <User className="w-4 h-4 text-emerald-400" />
+              <User className="w-4 h-4 text-semantic-success" />
               <CardTitle>Customer Context (Privacy-Safe)</CardTitle>
             </div>
-            <span className="text-[10px] text-slate-500 font-mono bg-navy-950 px-2 py-0.5 rounded border border-surface-border">
+            <span className="text-caption text-theme-muted font-mono bg-theme-elevated px-space-2 py-0.5 rounded-radius-sm border border-theme-border-subtle">
               NO CARD/CVV STORED
             </span>
           </CardHeader>
-          <CardContent className="space-y-3 pt-2 text-xs">
-            <div className="flex justify-between py-2 border-b border-surface-border/60">
-              <span className="text-slate-400">Customer Reference:</span>
-              <span className="text-slate-300 font-mono">{customer.maskedEmail || customer.providerCustomerId || 'r***r@example.com'}</span>
+          <CardContent className="space-y-space-3 text-body-sm">
+            <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
+              <span className="text-theme-muted">Customer Reference:</span>
+              <span className="text-theme-secondary font-mono">{customer.maskedEmail || customer.providerCustomerId || 'r***r@example.com'}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-surface-border/60">
-              <span className="text-slate-400">Masked Phone:</span>
-              <span className="text-slate-300 font-mono">{customer.maskedPhone || '+91*****3210'}</span>
+            <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
+              <span className="text-theme-muted">Masked Phone:</span>
+              <span className="text-theme-secondary font-mono">{customer.maskedPhone || '+91*****3210'}</span>
             </div>
-            <div className="flex justify-between py-2 border-b border-surface-border/60">
-              <span className="text-slate-400">Payment History:</span>
-              <span className="text-slate-200">
-                <strong className="text-emerald-400 font-mono">{customer.successfulPaymentsCount || 0}</strong> successful &bull; <strong className="text-rose-400 font-mono">{customer.failedPaymentsCount || 0}</strong> failed
+            <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
+              <span className="text-theme-muted">Payment History:</span>
+              <span className="text-theme-primary">
+                <strong className="text-semantic-success font-mono">{customer.successfulPaymentsCount || 0}</strong> successful &bull; <strong className="text-semantic-danger font-mono">{customer.failedPaymentsCount || 0}</strong> failed
               </span>
             </div>
-            <div className="flex justify-between py-2 border-b border-surface-border/60">
-              <span className="text-slate-400">Recent Success Rate:</span>
-              <span className="text-brand-400 font-extrabold font-mono text-sm">{((customer.recentSuccessRate || 0.8) * 100).toFixed(0)}%</span>
+            <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
+              <span className="text-theme-muted">Recent Success Rate:</span>
+              <span className="text-brand-primary font-bold font-mono text-body">{((customer.recentSuccessRate || 0.8) * 100).toFixed(0)}%</span>
             </div>
-            <div className="flex justify-between py-2">
-              <span className="text-slate-400">Opted Out of Recovery:</span>
-              <span className={customer.optedOutOfRecovery ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold'}>
+            <div className="flex justify-between py-space-2">
+              <span className="text-theme-muted">Opted Out of Recovery:</span>
+              <span className={customer.optedOutOfRecovery ? 'text-semantic-danger font-bold' : 'text-semantic-success font-bold'}>
                 {customer.optedOutOfRecovery ? 'YES (COMMUNICATIONS BLOCKED)' : 'NO (CONSENT ACTIVE)'}
               </span>
             </div>
@@ -354,47 +337,47 @@ export default function CaseDetailPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center space-x-2.5">
-            <BrainCircuit className="w-5 h-5 text-indigo-400" />
+            <BrainCircuit className="w-5 h-5 text-brand-primary" />
             <div>
               <CardTitle>Hybrid Intelligence Explainability Panel</CardTitle>
               <CardDescription>Deterministic ML scoring side-by-side with Generative AI advisory reasoning</CardDescription>
             </div>
           </div>
-          <Badge variant="purple">Dual Engine</Badge>
+          <Badge variant="primary">Dual Engine</Badge>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-space-6">
             {/* Left: Logistic Regression Probability Model */}
-            <div className="bg-navy-950/80 p-5 rounded-xl border border-surface-border space-y-4">
+            <div className="bg-theme-elevated/60 p-space-6 rounded-radius-md border border-theme-border-subtle space-y-space-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2 text-xs font-semibold text-slate-300">
-                  <Cpu className="w-4 h-4 text-purple-400" />
+                <div className="flex items-center space-x-2 text-body-sm font-semibold text-theme-primary">
+                  <Cpu className="w-4 h-4 text-brand-primary" />
                   <span>Deterministic Logistic Regression Score</span>
                 </div>
-                <Badge variant="purple" size="sm">v1.1-trained</Badge>
+                <Badge variant="info">v1.1-trained</Badge>
               </div>
 
-              <div className="flex items-baseline space-x-3">
-                <span className="text-3xl font-extrabold text-white font-mono tracking-tight num-tabular">
+              <div className="flex items-baseline space-x-space-3">
+                <span className="text-display font-bold text-theme-primary font-mono tracking-tight num-tabular">
                   {caseData.recoveryProbability !== null && caseData.recoveryProbability !== undefined
                     ? `${(caseData.recoveryProbability * 100).toFixed(0)}%`
                     : 'Pending'}
                 </span>
-                <span className="text-xs text-slate-400">Calculated Recovery Probability</span>
+                <span className="text-body-sm text-theme-muted">Calculated Recovery Probability</span>
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-surface-border/60">
-                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Key Feature Influences:</p>
-                <div className="space-y-1.5 text-xs font-mono">
-                  <div className="flex justify-between text-emerald-400">
+              <div className="space-y-space-2 pt-space-2 border-t border-theme-border-subtle">
+                <p className="text-caption font-semibold text-theme-muted uppercase tracking-wider">Key Feature Influences:</p>
+                <div className="space-y-1.5 text-body-sm font-mono">
+                  <div className="flex justify-between text-semantic-success">
                     <span>+ Historical Success Ratio</span>
                     <span>+0.85</span>
                   </div>
-                  <div className="flex justify-between text-brand-400">
+                  <div className="flex justify-between text-brand-primary">
                     <span>+ Temporary Balance Category</span>
                     <span>+0.75</span>
                   </div>
-                  <div className="flex justify-between text-slate-400">
+                  <div className="flex justify-between text-theme-muted">
                     <span>- Retry Count Decay</span>
                     <span>-0.00</span>
                   </div>
@@ -403,41 +386,41 @@ export default function CaseDetailPage() {
             </div>
 
             {/* Right: Google Gemini AI Advisory */}
-            <div className="bg-navy-950/80 p-5 rounded-xl border border-surface-border space-y-4">
+            <div className="bg-theme-elevated/60 p-space-6 rounded-radius-md border border-theme-border-subtle space-y-space-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2 text-xs font-semibold text-slate-300">
-                  <Sparkles className="w-4 h-4 text-brand-400" />
+                <div className="flex items-center space-x-2 text-body-sm font-semibold text-theme-primary">
+                  <Sparkles className="w-4 h-4 text-brand-primary" />
                   <span>Google Gemini Strategy Advisory</span>
                 </div>
-                <Badge variant="info" size="sm">Advisory Only</Badge>
+                <Badge variant="info">Advisory Only</Badge>
               </div>
 
               {recommendation ? (
-                <div className="space-y-3">
+                <div className="space-y-space-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-slate-400">Recommended Action:</span>
-                    <span className="text-xs font-bold text-brand-400 font-mono bg-brand-500/10 px-2.5 py-1 rounded-lg border border-brand-500/20">
+                    <span className="text-body-sm text-theme-muted">Recommended Action:</span>
+                    <span className="text-body-sm font-bold text-brand-primary font-mono bg-brand-subtle-bg px-space-3 py-1 rounded-radius-sm border border-brand-primary/20">
                       {recommendation.recommended_action}
                       {recommendation.retry_after_hours ? ` (after ${recommendation.retry_after_hours}h)` : ''}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-slate-400">AI Confidence:</span>
-                    <span className="text-xs font-bold text-white font-mono">
+                    <span className="text-body-sm text-theme-muted">AI Confidence:</span>
+                    <span className="text-body-sm font-bold text-theme-primary font-mono">
                       {((recommendation.confidence || 0) * 100).toFixed(0)}%
                     </span>
                   </div>
 
                   <div>
-                    <span className="text-[11px] text-slate-400">Reasoning:</span>
-                    <p className="text-xs text-slate-200 mt-1 italic bg-surface-card p-3 rounded-xl border border-surface-border leading-relaxed">
+                    <span className="text-caption text-theme-muted">Reasoning:</span>
+                    <p className="text-body-sm text-theme-secondary mt-1 italic bg-theme-surface p-space-4 rounded-radius-md border border-theme-border-subtle leading-relaxed">
                       "{recommendation.reason}"
                     </p>
                   </div>
                 </div>
               ) : (
-                <div className="py-8 text-center text-slate-500 text-xs">
+                <div className="py-space-8 text-center text-theme-muted text-body-sm">
                   AI Analysis pending. Click "1. Run AI Analysis" above.
                 </div>
               )}
@@ -450,38 +433,38 @@ export default function CaseDetailPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center space-x-2.5">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <ShieldCheck className="w-5 h-5 text-semantic-success" />
             <div>
               <CardTitle>Deterministic Policy Engine Decision</CardTitle>
               <CardDescription>Authoritative 15-Rule financial safety and approval boundary</CardDescription>
             </div>
           </div>
-          <span className="text-xs font-mono text-slate-400">15-Rule Priority</span>
+          <span className="text-caption font-mono text-theme-muted">15-Rule Priority</span>
         </CardHeader>
         <CardContent>
           {policy ? (
-            <div className="bg-navy-950/80 p-5 rounded-xl border border-surface-border space-y-3.5 text-xs">
+            <div className="bg-theme-elevated/60 p-space-6 rounded-radius-md border border-theme-border-subtle space-y-space-3 text-body-sm">
               <div className="flex items-center justify-between">
-                <span className="text-slate-400">Policy Decision:</span>
-                <span className={`px-3 py-1 rounded-lg font-bold font-mono text-xs ${
-                  policy.decision === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                  : policy.decision === 'PENDING_APPROVAL' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                  : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                <span className="text-theme-muted">Policy Decision:</span>
+                <span className={`px-space-3 py-1 rounded-radius-sm font-bold font-mono text-caption ${
+                  policy.decision === 'APPROVED' ? 'bg-semantic-success-bg text-semantic-success border border-semantic-success/20'
+                  : policy.decision === 'PENDING_APPROVAL' ? 'bg-semantic-warning-bg text-semantic-warning border border-semantic-warning/20'
+                  : 'bg-semantic-danger-bg text-semantic-danger border border-semantic-danger/20'
                 }`}>
                   {policy.decision}
                 </span>
               </div>
 
               <div>
-                <span className="text-slate-400">Policy Reason:</span>
-                <p className="text-slate-200 font-medium mt-0.5 leading-relaxed">{policy.reason}</p>
+                <span className="text-theme-muted">Policy Reason:</span>
+                <p className="text-theme-primary font-medium mt-0.5 leading-relaxed">{policy.reason}</p>
               </div>
 
               <div>
-                <span className="text-slate-400">Triggered Rules:</span>
-                <div className="flex flex-wrap gap-2 mt-1.5">
+                <span className="text-theme-muted">Triggered Rules:</span>
+                <div className="flex flex-wrap gap-space-2 mt-1.5">
                   {(policy.triggeredRules || []).map((rule, idx) => (
-                    <span key={idx} className="px-2.5 py-1 bg-surface-card border border-surface-border rounded-md text-[11px] font-mono text-slate-300">
+                    <span key={idx} className="px-space-3 py-1 bg-theme-surface border border-theme-border-subtle rounded-radius-sm text-caption font-mono text-theme-secondary">
                       {rule}
                     </span>
                   ))}
@@ -489,7 +472,7 @@ export default function CaseDetailPage() {
               </div>
             </div>
           ) : (
-            <p className="text-xs text-slate-500 py-4 text-center">
+            <p className="text-body-sm text-theme-muted py-space-4 text-center">
               Policy evaluation pending. Click "2. Evaluate Policy" above.
             </p>
           )}
@@ -500,45 +483,45 @@ export default function CaseDetailPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center space-x-2.5">
-            <History className="w-5 h-5 text-brand-400" />
+            <History className="w-5 h-5 text-brand-primary" />
             <div>
               <CardTitle>Immutable Audit Trail Timeline</CardTitle>
               <CardDescription>Write-once chronological ledger tracking every event, actor, and trace ID</CardDescription>
             </div>
           </div>
-          <Badge variant="slate">{auditTimeline.length} Events</Badge>
+          <Badge variant="neutral">{auditTimeline.length} Events</Badge>
         </CardHeader>
         <CardContent>
-          <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-surface-border">
+          <div className="relative pl-space-6 space-y-space-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-theme-border-default">
             {auditTimeline.map((item, idx) => {
-              const actorColors = {
-                system: 'bg-slate-500',
-                ai: 'bg-indigo-500',
-                policy_engine: 'bg-purple-500',
-                human: 'bg-amber-500',
-                worker: 'bg-emerald-500'
+              const actorDotBg = {
+                system: 'bg-theme-muted',
+                ai: 'bg-brand-primary',
+                policy_engine: 'bg-semantic-warning',
+                human: 'bg-semantic-info',
+                worker: 'bg-semantic-success'
               };
 
               return (
                 <div key={item._id || idx} className="relative space-y-1.5">
                   {/* Timeline Node Dot */}
-                  <div className={`absolute -left-[27px] top-1.5 w-3 h-3 rounded-full ${actorColors[item.actor] || 'bg-slate-500'} ring-4 ring-surface-card`} />
+                  <div className={`absolute -left-[27px] top-1.5 w-3 h-3 rounded-radius-full ${actorDotBg[item.actor] || 'bg-theme-muted'} ring-4 ring-theme-surface`} />
 
-                  <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center justify-between text-body-sm">
                     <div className="flex items-center space-x-2">
-                      <span className="font-mono font-bold text-white">{item.eventType}</span>
-                      <span className="text-[10px] px-2 py-0.2 rounded-md uppercase font-mono bg-navy-950 text-slate-300 border border-surface-border">
+                      <span className="font-mono font-bold text-theme-primary">{item.eventType}</span>
+                      <span className="text-caption px-space-2 py-0.5 rounded-radius-sm uppercase font-mono bg-theme-elevated text-theme-secondary border border-theme-border-subtle">
                         {item.actor}
                       </span>
                     </div>
-                    <span className="text-[11px] text-slate-400 font-mono">{formatDate(item.createdAt)}</span>
+                    <span className="text-caption text-theme-muted font-mono">{formatDate(item.createdAt)}</span>
                   </div>
 
-                  <p className="text-xs text-slate-300 leading-relaxed bg-navy-950/60 p-2.5 rounded-lg border border-surface-border/60">
+                  <p className="text-body-sm text-theme-secondary leading-relaxed bg-theme-elevated/40 p-space-3 rounded-radius-md border border-theme-border-subtle">
                     {item.message}
                   </p>
 
-                  <p className="text-[10px] text-slate-500 font-mono">
+                  <p className="text-caption text-theme-muted font-mono">
                     Trace ID: {item.correlationId}
                   </p>
                 </div>

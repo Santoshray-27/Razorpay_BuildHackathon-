@@ -1,19 +1,17 @@
+@import './tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --color-primary: #0284C7;
-    --color-primary-hover: #0369A1;
-    --color-bg-base: #060B16;
-    --color-surface-card: #0F172A;
-    --color-border: #1E293B;
-  }
-
   body {
-    @apply bg-navy-950 text-slate-100 antialiased font-sans selection:bg-brand-500/30 selection:text-brand-200 min-h-screen;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+    -webkit-font-smoothing: antialiased;
   }
 
   /* Custom Clean Scrollbar */
@@ -23,50 +21,130 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #090E1A;
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #1E293B;
-    border-radius: 9999px;
+    background: var(--border-default);
+    border-radius: var(--radius-full);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #334155;
+    background: var(--text-muted);
+  }
+}
+
+@layer utilities {
+  /* Typography Scale */
+  .text-display {
+    font-size: var(--text-display);
+    line-height: var(--lh-display);
+    font-weight: var(--fw-display);
+    letter-spacing: var(--ls-display);
+  }
+
+  .text-h1 {
+    font-size: var(--text-h1);
+    line-height: var(--lh-h1);
+    font-weight: var(--fw-h1);
+    letter-spacing: var(--ls-h1);
+  }
+
+  .text-h2 {
+    font-size: var(--text-h2);
+    line-height: var(--lh-h2);
+    font-weight: var(--fw-h2);
+    letter-spacing: var(--ls-h2);
+  }
+
+  .text-h3 {
+    font-size: var(--text-h3);
+    line-height: var(--lh-h3);
+    font-weight: var(--fw-h3);
+    letter-spacing: var(--ls-h3);
+  }
+
+  .text-body {
+    font-size: var(--text-body);
+    line-height: var(--lh-body);
+    font-weight: var(--fw-body);
+  }
+
+  .text-body-sm {
+    font-size: var(--text-body-sm);
+    line-height: var(--lh-body-sm);
+    font-weight: var(--fw-body-sm);
+  }
+
+  .text-label {
+    font-size: var(--text-label);
+    line-height: var(--lh-label);
+    font-weight: var(--fw-label);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+  }
+
+  .text-caption {
+    font-size: var(--text-caption);
+    line-height: var(--lh-caption);
+    font-weight: var(--fw-caption);
+    letter-spacing: var(--ls-caption);
+  }
+
+  /* Tabular Numerals */
+  .num-tabular {
+    font-variant-numeric: tabular-nums;
   }
 }
 
 @layer components {
-  /* Razorpay FinTech Card Style */
+  /* Common FinTech Card */
   .fintech-card {
-    @apply bg-surface-card/90 border border-surface-border rounded-xl p-5 shadow-card-subtle backdrop-blur-sm transition-all duration-200;
-  }
-
-  .fintech-card-hover {
-    @apply hover:border-slate-700/80 hover:shadow-glow-brand;
-  }
-
-  /* Glass Surface */
-  .fintech-glass {
-    @apply bg-slate-900/60 backdrop-blur-md border border-slate-800/80;
-  }
-
-  /* Table Headers & Rows */
-  .fintech-table-th {
-    @apply px-4 py-3 text-left text-[11px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-900/80 border-b border-surface-border;
-  }
-
-  .fintech-table-td {
-    @apply px-4 py-3.5 text-sm text-slate-200 border-b border-surface-border/60 transition-colors;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-sm);
+    transition: all 200ms ease;
   }
 
   /* Input fields */
   .fintech-input {
-    @apply bg-surface-input border border-surface-border rounded-lg px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition-all duration-150;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    height: 40px;
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    font-size: var(--text-body);
+    color: var(--text-primary);
+    transition: all 150ms ease;
   }
 
-  /* Tabular Numerals for Currency & Counts */
-  .num-tabular {
-    font-variant-numeric: tabular-nums;
+  .fintech-input:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 2px rgba(46, 92, 240, 0.2);
+  }
+
+  /* Table Headers & Rows */
+  .fintech-table-th {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    font-size: var(--text-label);
+    font-weight: var(--fw-label);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background-color: var(--bg-elevated);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .fintech-table-td {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-body);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background-color 150ms ease;
   }
 }

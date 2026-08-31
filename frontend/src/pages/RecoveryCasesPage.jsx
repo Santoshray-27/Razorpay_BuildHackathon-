@@ -1,6 +1,6 @@
 /**
  * frontend/src/pages/RecoveryCasesPage.jsx
- * Filterable, paginated recovery case explorer with life-cycle badges and search.
+ * Filterable, paginated recovery case explorer with dual-theme styling and search.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -10,15 +10,13 @@ import { formatCurrency } from '../utils/formatters';
 import {
   Layers,
   Search,
-  Filter,
-  ArrowUpRight,
   RefreshCw,
   ChevronLeft,
   ChevronRight,
-  Sparkles
+  ArrowUpRight
 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
-import { StatusBadge, RiskBadge, Badge } from '../components/ui/Badge';
+import { Card } from '../components/ui/Card';
+import { StatusBadge, RiskBadge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { TableSkeleton } from '../components/ui/Skeleton';
 import { EmptyState } from '../components/ui/EmptyState';
@@ -65,12 +63,12 @@ export default function RecoveryCasesPage() {
   });
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-space-6 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Recovery Cases</h2>
-          <p className="text-xs text-slate-400">
+          <h2 className="text-h1 text-theme-primary tracking-tight">Recovery Cases</h2>
+          <p className="text-body-sm text-theme-muted mt-1">
             End-to-end lifecycle monitoring: detection, AI recommendation, policy enforcement, through execution.
           </p>
         </div>
@@ -86,18 +84,18 @@ export default function RecoveryCasesPage() {
       </div>
 
       {/* Filters & Search Toolbar */}
-      <Card className="p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-3 flex-1">
+      <Card className="p-space-4">
+        <div className="flex flex-wrap items-center justify-between gap-space-3">
+          <div className="flex flex-wrap items-center gap-space-3 flex-1">
             {/* Search */}
             <div className="relative min-w-[220px] flex-1 max-w-sm">
-              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+              <Search className="w-4 h-4 text-theme-muted absolute left-3.5 top-3" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by Payment ID, Case ID, or Customer..."
-                className="fintech-input w-full pl-9 text-xs"
+                className="fintech-input w-full pl-9 text-body-sm"
               />
             </div>
 
@@ -105,7 +103,7 @@ export default function RecoveryCasesPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="fintech-input text-xs"
+              className="fintech-input text-body-sm"
             >
               <option value="">All Statuses</option>
               <option value="detected">Detected</option>
@@ -123,7 +121,7 @@ export default function RecoveryCasesPage() {
             <select
               value={riskFilter}
               onChange={(e) => setRiskFilter(e.target.value)}
-              className="fintech-input text-xs"
+              className="fintech-input text-body-sm"
             >
               <option value="">All Risk Levels</option>
               <option value="low">Low Risk</option>
@@ -132,7 +130,7 @@ export default function RecoveryCasesPage() {
             </select>
           </div>
 
-          <span className="text-xs text-slate-400 font-mono">
+          <span className="text-caption font-mono text-theme-muted">
             Showing {filteredCases.length} of {pagination.total} cases
           </span>
         </div>
@@ -144,7 +142,7 @@ export default function RecoveryCasesPage() {
           {loading ? (
             <TableSkeleton rows={6} cols={8} />
           ) : (
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left">
               <thead>
                 <tr>
                   <th className="fintech-table-th">Payment / Case ID</th>
@@ -158,30 +156,30 @@ export default function RecoveryCasesPage() {
                   <th className="fintech-table-th text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-border/60">
+              <tbody className="divide-y divide-theme-border-subtle">
                 {filteredCases.map((c) => (
-                  <tr key={c._id} className="hover:bg-slate-800/40 transition">
-                    <td className="fintech-table-td font-mono font-semibold text-slate-300">
-                      <span className="text-slate-500">#</span>{c.paymentId?.providerPaymentId || c._id.slice(-8)}
+                  <tr key={c._id} className="hover:bg-theme-elevated/50 transition-colors">
+                    <td className="fintech-table-td font-mono font-semibold text-theme-primary">
+                      <span className="text-theme-muted">#</span>{c.paymentId?.providerPaymentId || c._id.slice(-8)}
                     </td>
-                    <td className="fintech-table-td font-medium text-slate-200">
+                    <td className="fintech-table-td font-medium text-theme-primary">
                       {c.customerId?.name || 'Rahul Sharma'}
                     </td>
-                    <td className="fintech-table-td font-bold font-mono text-white num-tabular">
+                    <td className="fintech-table-td font-bold font-mono text-theme-primary num-tabular">
                       {formatCurrency(c.amountAtRiskPaise)}
                     </td>
-                    <td className="fintech-table-td text-slate-400 font-mono text-[11px]">
+                    <td className="fintech-table-td text-theme-secondary font-mono text-caption">
                       {c.failureReason || 'insufficient_funds'}
                     </td>
                     <td className="fintech-table-td">
                       <RiskBadge riskLevel={c.riskLevel} />
                     </td>
-                    <td className="fintech-table-td font-mono font-semibold text-slate-200">
+                    <td className="fintech-table-td font-mono font-semibold text-theme-primary">
                       {c.recoveryProbability !== null && c.recoveryProbability !== undefined
                         ? `${(c.recoveryProbability * 100).toFixed(0)}%`
-                        : <span className="text-slate-500 font-sans text-xs">—</span>}
+                        : <span className="text-theme-muted text-caption">Pending</span>}
                     </td>
-                    <td className="fintech-table-td text-brand-300 font-mono text-[11px]">
+                    <td className="fintech-table-td text-brand-primary font-mono text-caption">
                       {c.latestRecommendation?.recommended_action || '—'}
                     </td>
                     <td className="fintech-table-td">
@@ -189,7 +187,7 @@ export default function RecoveryCasesPage() {
                     </td>
                     <td className="fintech-table-td text-right">
                       <Link to={`/cases/${c._id}`}>
-                        <Button size="sm" variant="primary" icon={ArrowUpRight}>
+                        <Button size="sm" variant="outline" icon={ArrowUpRight}>
                           Inspect
                         </Button>
                       </Link>
@@ -203,17 +201,17 @@ export default function RecoveryCasesPage() {
           {!loading && filteredCases.length === 0 && (
             <EmptyState
               title="No matching recovery cases"
-              description="Try adjusting your search query or status filters."
+              description="Try adjusting your search query or status filter."
             />
           )}
         </div>
 
         {/* Pagination Bar */}
-        <div className="p-4 bg-navy-950/60 border-t border-surface-border flex items-center justify-between text-xs text-slate-400">
+        <div className="p-space-4 bg-theme-elevated/40 border-t border-theme-border-subtle flex items-center justify-between text-caption text-theme-secondary">
           <span>
-            Page <strong className="text-slate-200">{pagination.page}</strong> of <strong className="text-slate-200">{pagination.pages}</strong>
+            Page <strong className="text-theme-primary">{pagination.page}</strong> of <strong className="text-theme-primary">{pagination.pages}</strong>
           </span>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-space-2">
             <Button
               size="sm"
               variant="outline"

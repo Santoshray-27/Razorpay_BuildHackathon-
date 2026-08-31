@@ -1,15 +1,15 @@
 /**
  * frontend/src/pages/PaymentsPage.jsx
- * Unified transaction ledger with search, currency formatting, and execution mode tags.
+ * Unified transaction ledger with dual-theme styling, search, and execution mode tags.
  */
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import { formatCurrency, formatDate } from '../utils/formatters';
-import { CreditCard, Search, ArrowUpRight, RefreshCw, Layers } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
-import { StatusBadge, ExecutionModeBadge, Badge } from '../components/ui/Badge';
+import { CreditCard, Search, RefreshCw, Layers } from 'lucide-react';
+import { Card } from '../components/ui/Card';
+import { StatusBadge, ExecutionModeBadge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { TableSkeleton } from '../components/ui/Skeleton';
 import { EmptyState } from '../components/ui/EmptyState';
@@ -46,12 +46,12 @@ export default function PaymentsPage() {
   });
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-space-6 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Merchant Payments</h2>
-          <p className="text-xs text-slate-400">
+          <h2 className="text-h1 text-theme-primary tracking-tight">Merchant Payments</h2>
+          <p className="text-body-sm text-theme-muted mt-1">
             Raw and normalized transaction records ingested from Razorpay webhooks and simulation engine.
           </p>
         </div>
@@ -67,15 +67,15 @@ export default function PaymentsPage() {
       </div>
 
       {/* Search Bar Card */}
-      <Card className="p-4">
+      <Card className="p-space-4">
         <div className="relative max-w-md w-full">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-2.5" />
+          <Search className="w-4 h-4 text-theme-muted absolute left-3.5 top-3" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by Payment ID, customer name, status, or failure reason..."
-            className="fintech-input w-full pl-9 text-xs"
+            className="fintech-input w-full pl-9 text-body-sm"
           />
         </div>
       </Card>
@@ -86,7 +86,7 @@ export default function PaymentsPage() {
           {loading ? (
             <TableSkeleton rows={6} cols={8} />
           ) : (
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left">
               <thead>
                 <tr>
                   <th className="fintech-table-th">Payment ID</th>
@@ -100,48 +100,44 @@ export default function PaymentsPage() {
                   <th className="fintech-table-th text-right">Recovery</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-border/60">
-                {filteredPayments.map((p) => {
-                  const isRecovered = p.status === 'recovered' || p.status === 'captured';
-                  const isFailed = p.status === 'failed';
-                  return (
-                    <tr key={p._id} className="hover:bg-slate-800/40 transition">
-                      <td className="fintech-table-td font-mono font-semibold text-slate-300">
-                        <span className="text-slate-500">#</span>{p.providerPaymentId || p._id.slice(-8)}
-                      </td>
-                      <td className="fintech-table-td font-medium text-slate-200">
-                        {p.customerId?.name || 'Rahul Sharma'}
-                      </td>
-                      <td className="fintech-table-td font-bold font-mono text-white num-tabular">
-                        {formatCurrency(p.amountPaise)}
-                      </td>
-                      <td className="fintech-table-td">
-                        <StatusBadge status={p.status} />
-                      </td>
-                      <td className="fintech-table-td uppercase text-slate-400 font-mono text-[10px]">
-                        {p.paymentMethod || 'card'}
-                      </td>
-                      <td className="fintech-table-td font-mono text-[11px] text-slate-400">
-                        {p.failureReason || '—'}
-                      </td>
-                      <td className="fintech-table-td">
-                        <ExecutionModeBadge mode={p.executionMode} />
-                      </td>
-                      <td className="fintech-table-td text-slate-400 text-[11px] font-mono">
-                        {formatDate(p.occurredAt || p.createdAt)}
-                      </td>
-                      <td className="fintech-table-td text-right">
-                        <Link
-                          to={`/cases`}
-                          className="inline-flex items-center space-x-1 text-xs text-brand-400 hover:text-brand-300 font-semibold"
-                        >
-                          <Layers className="w-3.5 h-3.5" />
-                          <span>Cases</span>
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
+              <tbody className="divide-y divide-theme-border-subtle">
+                {filteredPayments.map((p) => (
+                  <tr key={p._id} className="hover:bg-theme-elevated/50 transition-colors">
+                    <td className="fintech-table-td font-mono font-semibold text-theme-primary">
+                      <span className="text-theme-muted">#</span>{p.providerPaymentId || p._id.slice(-8)}
+                    </td>
+                    <td className="fintech-table-td font-medium text-theme-primary">
+                      {p.customerId?.name || 'Rahul Sharma'}
+                    </td>
+                    <td className="fintech-table-td font-bold font-mono text-theme-primary num-tabular">
+                      {formatCurrency(p.amountPaise)}
+                    </td>
+                    <td className="fintech-table-td">
+                      <StatusBadge status={p.status} />
+                    </td>
+                    <td className="fintech-table-td uppercase text-theme-secondary font-mono text-caption">
+                      {p.paymentMethod || 'card'}
+                    </td>
+                    <td className="fintech-table-td font-mono text-caption text-theme-secondary">
+                      {p.failureReason || '—'}
+                    </td>
+                    <td className="fintech-table-td">
+                      <ExecutionModeBadge mode={p.executionMode} />
+                    </td>
+                    <td className="fintech-table-td text-theme-muted text-caption font-mono">
+                      {formatDate(p.occurredAt || p.createdAt)}
+                    </td>
+                    <td className="fintech-table-td text-right">
+                      <Link
+                        to="/cases"
+                        className="inline-flex items-center space-x-1 text-body-sm text-brand-primary hover:text-brand-hover font-semibold"
+                      >
+                        <Layers className="w-3.5 h-3.5" />
+                        <span>Cases</span>
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           )}

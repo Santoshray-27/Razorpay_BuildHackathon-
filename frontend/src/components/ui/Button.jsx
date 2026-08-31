@@ -1,6 +1,6 @@
 /**
  * frontend/src/components/ui/Button.jsx
- * Accessible Razorpay-style button component with variants and loading state.
+ * Accessible interactive buttons with semantic theme variants, focus rings, and loading states.
  */
 
 import React from 'react';
@@ -10,41 +10,55 @@ export function Button({
   children,
   variant = 'primary', // 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost' | 'success'
   size = 'md', // 'sm' | 'md' | 'lg'
+  icon: Icon,
+  iconPosition = 'left',
   loading = false,
   disabled = false,
-  icon: Icon,
+  onClick,
+  type = 'button',
   className = '',
   ...props
 }) {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-navy-950 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none';
-
-  const sizeStyles = {
-    sm: 'text-xs px-2.5 py-1.5 gap-1.5',
-    md: 'text-xs md:text-sm px-3.5 py-2 gap-2',
-    lg: 'text-sm md:text-base px-5 py-2.5 gap-2.5 font-semibold'
+  const variantStyles = {
+    primary:
+      'bg-brand-primary text-white hover:bg-brand-hover border border-transparent shadow-theme-sm focus:ring-2 focus:ring-brand-primary/40 focus:ring-offset-2',
+    secondary:
+      'bg-transparent border border-theme-border-default text-theme-secondary hover:bg-theme-elevated hover:text-theme-primary focus:ring-2 focus:ring-brand-primary/20 focus:ring-offset-2',
+    outline:
+      'bg-theme-surface border border-theme-border-subtle text-theme-primary hover:bg-theme-elevated hover:border-theme-border-default focus:ring-2 focus:ring-brand-primary/20 focus:ring-offset-2',
+    danger:
+      'bg-transparent border border-semantic-danger/30 text-semantic-danger hover:bg-semantic-danger-bg focus:ring-2 focus:ring-semantic-danger/40 focus:ring-offset-2',
+    success:
+      'bg-semantic-success text-white hover:opacity-90 border border-transparent shadow-theme-sm focus:ring-2 focus:ring-semantic-success/40 focus:ring-offset-2',
+    ghost:
+      'bg-transparent text-theme-secondary hover:bg-theme-elevated hover:text-theme-primary border border-transparent focus:ring-2 focus:ring-brand-primary/20'
   };
 
-  const variantStyles = {
-    primary: 'bg-brand-600 hover:bg-brand-500 text-white shadow-sm focus:ring-brand-500 border border-brand-500/30',
-    secondary: 'bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 focus:ring-slate-600',
-    outline: 'bg-transparent hover:bg-slate-800/80 text-slate-300 hover:text-white border border-slate-700 focus:ring-slate-600',
-    success: 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm focus:ring-emerald-500 border border-emerald-500/30',
-    danger: 'bg-rose-600 hover:bg-rose-500 text-white shadow-sm focus:ring-rose-500 border border-rose-500/30',
-    ghost: 'bg-transparent hover:bg-slate-800/60 text-slate-400 hover:text-slate-200 focus:ring-slate-700'
+  const sizeStyles = {
+    sm: 'min-h-[32px] px-space-3 text-caption font-semibold rounded-radius-sm gap-1.5',
+    md: 'min-h-[40px] px-space-4 text-body font-semibold rounded-radius-md gap-2',
+    lg: 'min-h-[44px] px-space-6 text-h3 font-semibold rounded-radius-md gap-2.5'
   };
 
   return (
     <button
+      type={type}
+      onClick={onClick}
       disabled={disabled || loading}
-      className={`${baseStyles} ${sizeStyles[size] || sizeStyles.md} ${variantStyles[variant] || variantStyles.primary} ${className}`}
+      className={`inline-flex items-center justify-center font-sans tracking-normal select-none transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100 ${
+        sizeStyles[size] || sizeStyles.md
+      } ${variantStyles[variant] || variantStyles.primary} ${className}`}
       {...props}
     >
       {loading ? (
-        <Loader2 className="w-4 h-4 animate-spin text-current" />
+        <Loader2 className="w-4 h-4 animate-spin shrink-0" />
       ) : (
-        Icon && <Icon className="w-4 h-4 shrink-0" />
+        Icon && iconPosition === 'left' && <Icon className="w-4 h-4 shrink-0" />
       )}
-      <span>{children}</span>
+
+      {children && <span className="truncate">{children}</span>}
+
+      {!loading && Icon && iconPosition === 'right' && <Icon className="w-4 h-4 shrink-0" />}
     </button>
   );
 }

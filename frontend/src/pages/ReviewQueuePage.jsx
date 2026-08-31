@@ -1,29 +1,23 @@
 /**
  * frontend/src/pages/ReviewQueuePage.jsx
- * Production-grade Human-in-the-Loop Approval Workbench.
- * Displays cases escalated by policy (high-value >= ₹10,000, low AI confidence)
- * with modal justification controls.
+ * Human-in-the-Loop Approval Workbench with dual-theme styling and modal justification controls.
  */
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import { useAuth } from '../context/AuthContext';
-import { formatCurrency, formatDate } from '../utils/formatters';
+import { formatCurrency } from '../utils/formatters';
 import {
   UserCheck,
   CheckCircle2,
   XCircle,
   ArrowUpRight,
-  AlertTriangle,
   RefreshCw,
-  ShieldCheck,
-  Sparkles,
-  Layers,
-  Check
+  ShieldCheck
 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
-import { StatusBadge, RiskBadge, Badge } from '../components/ui/Badge';
+import { Card } from '../components/ui/Card';
+import { RiskBadge, Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { EmptyState } from '../components/ui/EmptyState';
@@ -89,16 +83,16 @@ export default function ReviewQueuePage() {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-space-6 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-4">
         <div>
           <div className="flex items-center space-x-2.5">
-            <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight">Human-in-the-Loop Review Queue</h2>
-            <Badge variant="purple" dot>{pendingCases.length} Pending</Badge>
+            <h2 className="text-h1 text-theme-primary tracking-tight">Human-in-the-Loop Review Queue</h2>
+            <Badge variant="warning" dot>{pendingCases.length} Pending</Badge>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Cases escalated by the Policy Engine: High Value (≥ ₹10,000), low AI confidence (&lt; 0.70), or frequency limits.
+          <p className="text-body-sm text-theme-muted mt-1">
+            Cases escalated by the Policy Engine: High Value (&ge; ₹10,000), low AI confidence (&lt; 0.70), or frequency limits.
           </p>
         </div>
         <Button
@@ -113,69 +107,69 @@ export default function ReviewQueuePage() {
       </div>
 
       {/* Review Queue Cards */}
-      <div className="space-y-4">
+      <div className="space-y-space-4">
         {loading ? (
           <TableSkeleton rows={3} cols={4} />
         ) : (
           pendingCases.map((c) => (
-            <Card key={c._id} className="border-amber-500/30 bg-gradient-to-r from-surface-card via-slate-900 to-amber-950/20 hover:border-amber-500/50 p-5 space-y-4">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-surface-border/60 pb-3">
+            <Card key={c._id} className="border-semantic-warning/30 p-space-6 space-y-space-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-3 border-b border-theme-border-subtle pb-space-3">
                 <div className="flex items-center space-x-3">
-                  <div className="p-2.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-xl">
+                  <div className="p-2.5 bg-semantic-warning-bg text-semantic-warning border border-semantic-warning/20 rounded-radius-md">
                     <UserCheck className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="flex items-center space-x-2">
-                      <span className="font-bold text-white font-mono text-sm">Case #{c._id.slice(-8)}</span>
+                      <span className="font-bold text-theme-primary font-mono text-body">Case #{c._id.slice(-8)}</span>
                       <RiskBadge riskLevel={c.riskLevel} />
                     </div>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      Customer: <strong className="text-slate-200 font-medium">{c.customerId?.name || 'Customer'}</strong> ({c.customerId?.maskedEmail || 'r***r@example.com'})
+                    <p className="text-body-sm text-theme-muted mt-0.5">
+                      Customer: <strong className="text-theme-primary font-medium">{c.customerId?.name || 'Customer'}</strong> ({c.customerId?.maskedEmail || 'r***r@example.com'})
                     </p>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-xs text-slate-400">Amount at Risk:</span>
-                  <p className="text-lg font-extrabold text-amber-400 font-mono num-tabular">
+                  <span className="text-caption text-theme-muted uppercase tracking-wider">Amount at Risk:</span>
+                  <p className="text-h2 font-bold text-semantic-warning font-mono num-tabular">
                     {formatCurrency(c.amountAtRiskPaise)}
                   </p>
                 </div>
               </div>
 
               {/* Escalation details summary */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs bg-navy-950/80 p-4 rounded-xl border border-surface-border">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-space-4 text-body-sm bg-theme-elevated/60 p-space-4 rounded-radius-md border border-theme-border-subtle">
                 <div>
-                  <span className="text-slate-400">AI Recommended Strategy:</span>
-                  <p className="font-mono font-bold text-brand-400 mt-0.5">
+                  <span className="text-theme-muted text-caption">AI Recommended Strategy:</span>
+                  <p className="font-mono font-bold text-brand-primary mt-0.5">
                     {c.latestRecommendation?.recommended_action || 'HUMAN_REVIEW'}
                   </p>
                 </div>
                 <div>
-                  <span className="text-slate-400">AI Confidence / Probability:</span>
-                  <p className="font-mono font-bold text-white mt-0.5">
+                  <span className="text-theme-muted text-caption">AI Confidence / Probability:</span>
+                  <p className="font-mono font-bold text-theme-primary mt-0.5">
                     {((c.latestRecommendation?.confidence || 0.65) * 100).toFixed(0)}% / {((c.recoveryProbability || 0.7) * 100).toFixed(0)}%
                   </p>
                 </div>
                 <div>
-                  <span className="text-slate-400">Escalation Policy Reason:</span>
-                  <p className="text-slate-200 mt-0.5 font-medium leading-relaxed">
+                  <span className="text-theme-muted text-caption">Escalation Policy Reason:</span>
+                  <p className="text-theme-primary mt-0.5 font-medium leading-relaxed">
                     {c.latestPolicyDecision?.reason || 'High-value transaction threshold exceeded (≥ ₹10,000).'}
                   </p>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+              <div className="flex flex-wrap items-center justify-between gap-space-3 pt-1">
                 <Link
                   to={`/cases/${c._id}`}
-                  className="text-xs text-brand-400 hover:text-brand-300 font-semibold flex items-center gap-1"
+                  className="text-body-sm text-brand-primary hover:text-brand-hover font-semibold flex items-center gap-1"
                 >
                   <span>Inspect Full Audit History</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </Link>
 
-                <div className="flex items-center space-x-2.5">
+                <div className="flex items-center space-x-space-3">
                   <Button
                     size="sm"
                     variant="danger"
@@ -191,7 +185,7 @@ export default function ReviewQueuePage() {
                     icon={CheckCircle2}
                     disabled={actionLoading}
                     onClick={() => openActionModal(c._id, 'approve')}
-                    className="shadow-glow-success font-semibold"
+                    className="font-semibold"
                   >
                     Authorize Recovery Action
                   </Button>
@@ -215,26 +209,26 @@ export default function ReviewQueuePage() {
         isOpen={modalState.isOpen}
         onClose={() => setModalState({ ...modalState, isOpen: false })}
         title={modalState.type === 'approve' ? 'Authorize Recovery Action' : 'Reject Recovery Action'}
-        description={`Record an explicit, auditable operator justification in the immutable ledger.`}
+        description="Record an explicit, auditable operator justification in the immutable ledger."
       >
-        <div className="space-y-4">
+        <div className="space-y-space-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+            <label className="block text-body-sm font-semibold text-theme-primary mb-space-2">
               Operator Justification Note:
             </label>
             <textarea
               rows={3}
               value={modalState.reason}
               onChange={(e) => setModalState({ ...modalState, reason: e.target.value })}
-              className="fintech-input w-full text-xs"
+              className="fintech-input w-full text-body-sm p-space-3 h-auto"
               placeholder="Provide reason for audit logging..."
             />
           </div>
 
-          <div className="flex items-center justify-end space-x-2.5 pt-2">
+          <div className="flex items-center justify-end space-x-space-3 pt-space-2">
             <Button
               size="sm"
-              variant="outline"
+              variant="secondary"
               onClick={() => setModalState({ ...modalState, isOpen: false })}
             >
               Cancel

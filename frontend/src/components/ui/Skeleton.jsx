@@ -1,39 +1,41 @@
 /**
  * frontend/src/components/ui/Skeleton.jsx
- * Shimmering loading placeholder components.
+ * Shimmer pulse placeholder for loading states with dual-theme adaptation.
  */
 
 import React from 'react';
 
 export function Skeleton({ className = '' }) {
   return (
-    <div className={`animate-pulse bg-slate-800/80 rounded-lg ${className}`} />
+    <div
+      className={`animate-pulse bg-theme-elevated rounded-radius-md ${className}`}
+    />
   );
 }
 
 export function StatCardSkeleton() {
   return (
-    <div className="bg-surface-card border border-surface-border rounded-xl p-5 space-y-3">
-      <div className="flex justify-between items-center">
-        <Skeleton className="h-4 w-28" />
-        <Skeleton className="h-8 w-8 rounded-lg" />
+    <div className="bg-theme-surface border border-theme-border-subtle rounded-radius-md p-space-6 shadow-theme-sm space-y-space-4">
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-3.5 w-24" />
+        <Skeleton className="h-9 w-9 rounded-radius-full" />
       </div>
-      <Skeleton className="h-8 w-36" />
-      <Skeleton className="h-3 w-20" />
+      <Skeleton className="h-9 w-32" />
+      <Skeleton className="h-3 w-28" />
     </div>
   );
 }
 
-export function TableSkeleton({ rows = 5, cols = 4 }) {
+export function TableSkeleton({ rows = 5, cols = 6 }) {
   return (
-    <div className="space-y-3 p-4">
-      <div className="flex space-x-4 border-b border-slate-800 pb-3">
+    <div className="w-full space-y-space-3 p-space-4">
+      <div className="flex space-x-space-4 pb-space-2 border-b border-theme-border-subtle">
         {Array.from({ length: cols }).map((_, i) => (
           <Skeleton key={i} className="h-4 flex-1" />
         ))}
       </div>
       {Array.from({ length: rows }).map((_, r) => (
-        <div key={r} className="flex space-x-4 py-2.5">
+        <div key={r} className="flex space-x-space-4 py-space-2 border-b border-theme-border-subtle/50">
           {Array.from({ length: cols }).map((_, c) => (
             <Skeleton key={c} className="h-4 flex-1" />
           ))}

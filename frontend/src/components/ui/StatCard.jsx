@@ -1,6 +1,7 @@
 /**
  * frontend/src/components/ui/StatCard.jsx
- * High-impact KPI Stat widget with iconography, tabular figures, and contextual subtitles.
+ * High-impact KPI widget with strict typographic hierarchy, 2px top accent border,
+ * circular 36px icon badge, and dual-theme tokens.
  */
 
 import React from 'react';
@@ -12,60 +13,78 @@ export function StatCard({
   icon: Icon,
   trend,
   trendPositive,
-  variant = 'default', // 'default' | 'primary' | 'success' | 'warning' | 'danger'
+  variant = 'default', // 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'muted'
   className = ''
 }) {
-  const variantStyles = {
+  const variantConfig = {
     default: {
-      border: 'border-surface-border',
-      iconBg: 'bg-slate-800 text-slate-300 border-slate-700',
-      valueColor: 'text-white'
+      topBorder: 'border-t-theme-border-default',
+      iconBg: 'bg-theme-elevated text-theme-secondary',
+      valueColor: 'text-theme-primary'
     },
     primary: {
-      border: 'border-brand-500/30',
-      iconBg: 'bg-brand-500/10 text-brand-400 border-brand-500/20',
-      valueColor: 'text-white'
+      topBorder: 'border-t-brand-primary',
+      iconBg: 'bg-brand-subtle-bg text-brand-primary',
+      valueColor: 'text-theme-primary'
     },
     success: {
-      border: 'border-emerald-500/30',
-      iconBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-      valueColor: 'text-emerald-400'
+      topBorder: 'border-t-semantic-success',
+      iconBg: 'bg-semantic-success-bg text-semantic-success',
+      valueColor: 'text-theme-primary'
     },
     warning: {
-      border: 'border-amber-500/30',
-      iconBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-      valueColor: 'text-amber-400'
+      topBorder: 'border-t-semantic-warning',
+      iconBg: 'bg-semantic-warning-bg text-semantic-warning',
+      valueColor: 'text-theme-primary'
     },
     danger: {
-      border: 'border-rose-500/30',
-      iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-      valueColor: 'text-rose-400'
+      topBorder: 'border-t-semantic-danger',
+      iconBg: 'bg-semantic-danger-bg text-semantic-danger',
+      valueColor: 'text-theme-primary'
+    },
+    info: {
+      topBorder: 'border-t-semantic-info',
+      iconBg: 'bg-semantic-info-bg text-semantic-info',
+      valueColor: 'text-theme-primary'
+    },
+    muted: {
+      topBorder: 'border-t-theme-border-subtle',
+      iconBg: 'bg-theme-elevated text-theme-muted',
+      valueColor: 'text-theme-primary'
     }
   };
 
-  const style = variantStyles[variant] || variantStyles.default;
+  const config = variantConfig[variant] || variantConfig.default;
 
   return (
-    <div className={`bg-surface-card border ${style.border} rounded-xl p-5 shadow-card-subtle transition-all duration-200 hover:border-slate-700 hover:shadow-card-subtle ${className}`}>
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{title}</span>
+    <div
+      className={`bg-theme-surface border border-theme-border-subtle border-t-2 ${config.topBorder} rounded-radius-md p-space-6 shadow-theme-sm transition-all duration-200 hover:shadow-theme-md hover:border-theme-border-default flex flex-col justify-between ${className}`}
+    >
+      {/* Top row: Label + 36px Circular Icon */}
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-label text-theme-muted tracking-[0.06em] select-none truncate">
+          {title}
+        </span>
         {Icon && (
-          <div className={`p-2 rounded-lg border ${style.iconBg}`}>
+          <div
+            className={`w-9 h-9 min-w-[36px] rounded-radius-full flex items-center justify-center shrink-0 ${config.iconBg}`}
+          >
             <Icon className="w-4 h-4" />
           </div>
         )}
       </div>
 
-      <div className="mt-3 flex items-baseline justify-between">
-        <span className={`text-2xl lg:text-3xl font-extrabold tracking-tight num-tabular ${style.valueColor}`}>
+      {/* Middle row: Hero Value (text-display) */}
+      <div className="mt-space-2 flex items-baseline justify-between gap-2">
+        <span className={`text-display tracking-tight num-tabular truncate ${config.valueColor}`}>
           {value}
         </span>
         {trend && (
           <span
-            className={`text-xs font-semibold px-2 py-0.5 rounded-md border ${
+            className={`text-caption px-space-2 py-0.5 rounded-radius-full font-semibold shrink-0 ${
               trendPositive
-                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                : 'bg-slate-800 text-slate-300 border-slate-700'
+                ? 'bg-semantic-success-bg text-semantic-success border border-semantic-success/20'
+                : 'bg-theme-elevated text-theme-secondary border border-theme-border-subtle'
             }`}
           >
             {trend}
@@ -73,8 +92,9 @@ export function StatCard({
         )}
       </div>
 
+      {/* Bottom row: Subtitle */}
       {subtitle && (
-        <p className="mt-2 text-xs text-slate-400 flex items-center gap-1.5 truncate">
+        <p className="mt-space-2 text-body-sm text-theme-secondary flex items-center gap-1.5 truncate">
           {subtitle}
         </p>
       )}

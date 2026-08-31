@@ -1,7 +1,7 @@
 /**
  * frontend/src/layouts/DashboardLayout.jsx
- * Production-grade FinTech navigation shell with responsive drawer, top bar,
- * execution mode indicator, and 1-click failed payment demo simulator.
+ * Unified FinTech dashboard navigation shell with dual-theme toggle, active 3px accent bars,
+ * responsive mobile drawer, and 1-click failed payment simulation.
  */
 
 import React, { useState } from 'react';
@@ -21,10 +21,11 @@ import {
   BarChart3,
   Menu,
   X,
-  CheckCircle2,
   ChevronRight
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
+import { ThemeToggle } from '../components/ui/ThemeToggle';
+import { ExecutionModeBadge, RoleBadge } from '../components/ui/Badge';
 
 export default function DashboardLayout() {
   const { user, logout } = useAuth();
@@ -73,47 +74,52 @@ export default function DashboardLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-navy-950 text-slate-100 flex flex-col md:flex-row font-sans">
+    <div className="min-h-screen bg-theme-base text-theme-primary flex flex-col md:flex-row font-sans transition-colors duration-200">
       {/* Mobile Header Bar */}
-      <div className="md:hidden bg-surface-card border-b border-surface-border px-4 py-3 flex items-center justify-between sticky top-0 z-50">
+      <div className="md:hidden bg-theme-surface border-b border-theme-border-subtle px-space-4 py-space-3 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center space-x-2.5">
-          <div className="p-1.5 bg-brand-500/10 text-brand-400 border border-brand-500/20 rounded-lg">
+          <div className="p-1.5 bg-brand-subtle-bg text-brand-primary border border-brand-primary/20 rounded-radius-md">
             <ShieldCheck className="w-5 h-5" />
           </div>
-          <span className="font-bold text-white tracking-tight">RazorRecover</span>
+          <span className="font-bold text-theme-primary text-h3 tracking-tight">RazorRecover</span>
         </div>
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 text-slate-400 hover:text-white rounded-lg bg-slate-900 border border-slate-800"
-          aria-label="Toggle navigation menu"
-        >
-          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="flex items-center space-x-2">
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 text-theme-secondary hover:text-theme-primary rounded-radius-md bg-theme-elevated border border-theme-border-subtle"
+            aria-label="Toggle navigation menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-surface-card/95 border-r border-surface-border flex flex-col shrink-0 z-50 transition-transform duration-300 md:translate-x-0 ${
+        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-theme-surface border-r border-theme-border-subtle flex flex-col shrink-0 z-50 transition-transform duration-300 md:translate-x-0 ${
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Brand Header */}
-        <div className="p-5 border-b border-surface-border/60 flex items-center space-x-3">
-          <div className="p-2.5 bg-gradient-to-br from-brand-600 to-indigo-700 text-white rounded-xl shadow-glow-brand">
+        <div className="p-space-6 border-b border-theme-border-subtle flex items-center space-x-3">
+          <div className="p-2 bg-brand-primary text-white rounded-radius-md shadow-theme-sm">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-sm font-bold text-white tracking-tight flex items-center gap-1.5">
+            <h1 className="text-h3 font-bold text-theme-primary tracking-tight flex items-center gap-1.5">
               RazorRecover
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-brand-500/10 text-brand-400 border border-brand-500/20 font-mono">v1.1</span>
+              <span className="text-caption px-1.5 py-0.2 rounded-radius-full bg-brand-subtle-bg text-brand-primary border border-brand-primary/20 font-mono">
+                v1.1
+              </span>
             </h1>
-            <p className="text-[11px] text-slate-400">Revenue Recovery Engine</p>
+            <p className="text-caption text-theme-muted">Revenue Recovery Engine</p>
           </div>
         </div>
 
-        {/* Navigation Links */}
-        <nav className="p-3.5 space-y-1 flex-1 overflow-y-auto">
-          <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+        {/* Navigation Links with 3px left accent bar for active link */}
+        <nav className="p-space-3 space-y-1 flex-1 overflow-y-auto">
+          <div className="px-space-3 py-space-2 text-label text-theme-muted tracking-[0.06em]">
             Platform
           </div>
           {navItems.map((item) => {
@@ -126,30 +132,30 @@ export default function DashboardLayout() {
                 to={item.to}
                 end={item.to === '/'}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-150 ${
+                className={`relative flex items-center justify-between px-space-4 py-2.5 rounded-radius-md text-body-sm font-medium transition-all duration-150 ${
                   isActive
-                    ? 'bg-brand-500/15 text-brand-300 border border-brand-500/30 font-semibold shadow-sm'
-                    : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                    ? 'bg-theme-elevated text-theme-primary font-semibold before:absolute before:left-0 before:top-2 before:bottom-2 before:w-[3px] before:bg-brand-primary before:rounded-r'
+                    : 'text-theme-secondary hover:bg-theme-elevated/60 hover:text-theme-primary'
                 }`}
               >
-                <div className="flex items-center space-x-2.5">
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-brand-400' : 'text-slate-400'}`} />
+                <div className="flex items-center space-x-3">
+                  <Icon className={`w-[18px] h-[18px] ${isActive ? 'text-brand-primary' : 'text-theme-secondary'}`} />
                   <span>{item.label}</span>
                 </div>
-                {isActive && <ChevronRight className="w-3.5 h-3.5 text-brand-400/80" />}
+                {isActive && <ChevronRight className="w-3.5 h-3.5 text-brand-primary/80" />}
               </NavLink>
             );
           })}
         </nav>
 
         {/* Judge Quick Demo Action Card */}
-        <div className="p-3.5 border-t border-surface-border/60 space-y-3">
-          <div className="bg-navy-950/80 p-3.5 rounded-xl border border-surface-border space-y-2">
-            <div className="flex items-center space-x-1.5 text-xs text-brand-400 font-semibold">
+        <div className="p-space-4 border-t border-theme-border-subtle space-y-space-3">
+          <div className="bg-theme-elevated/60 p-space-4 rounded-radius-md border border-theme-border-subtle space-y-space-2">
+            <div className="flex items-center space-x-1.5 text-caption font-semibold text-brand-primary">
               <Zap className="w-3.5 h-3.5" />
               <span>Judge Quick Demo</span>
             </div>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <p className="text-caption text-theme-secondary leading-relaxed">
               Inject a failed ₹4,999 payment event to evaluate AI + Policy recovery.
             </p>
             <Button
@@ -158,24 +164,22 @@ export default function DashboardLayout() {
               loading={simulating}
               icon={PlusCircle}
               onClick={triggerDemoPayment}
-              className="w-full text-xs"
+              className="w-full text-caption"
             >
               Simulate ₹4,999 Failure
             </Button>
           </div>
 
           {/* User Profile Footer */}
-          <div className="pt-1 flex items-center justify-between text-xs">
-            <div className="truncate">
-              <p className="font-semibold text-slate-200 truncate">{user?.name || 'Merchant Owner'}</p>
-              <span className="inline-block text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700 uppercase font-mono">
-                {user?.role?.replace('_', ' ') || 'Admin'}
-              </span>
+          <div className="pt-space-1 flex items-center justify-between">
+            <div className="truncate space-y-1">
+              <p className="text-body-sm font-semibold text-theme-primary truncate">{user?.name || 'Merchant Admin'}</p>
+              <RoleBadge role={user?.role} />
             </div>
             <button
               onClick={logout}
               title="Sign Out"
-              className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition"
+              className="p-2 text-theme-muted hover:text-semantic-danger hover:bg-theme-elevated rounded-radius-md transition"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -185,31 +189,30 @@ export default function DashboardLayout() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Header */}
-        <header className="h-16 bg-surface-card/80 border-b border-surface-border backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-40">
+        {/* Top Header Bar */}
+        <header className="h-16 bg-theme-surface/80 border-b border-theme-border-subtle backdrop-blur-md px-space-6 flex items-center justify-between sticky top-0 z-40">
           <div className="flex items-center space-x-3">
-            <span className="text-xs text-slate-400 hidden lg:inline">
-              Core Principle: <strong className="text-slate-200">"AI recommends. Backend policy decides."</strong>
+            <span className="text-caption text-theme-muted hidden lg:inline">
+              Core Principle: <strong className="text-theme-primary">"AI recommends. Backend policy decides."</strong>
             </span>
           </div>
 
-          {/* Badges & Environment Indicators */}
+          {/* Controls: Execution Mode Badge + Theme Toggle */}
           <div className="flex items-center space-x-3">
-            <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>EXECUTION MODE: MOCK_DEMO</span>
+            <ExecutionModeBadge mode="MOCK_DEMO" />
+
+            <div className="hidden sm:inline-flex items-center space-x-1.5 text-caption text-theme-muted bg-theme-elevated px-space-3 py-1 rounded-radius-md border border-theme-border-subtle font-mono">
+              <span>Merchant:</span>
+              <span className="text-theme-primary font-semibold">{user?.merchantId || 'merch_demo'}</span>
             </div>
 
-            <div className="hidden sm:inline-flex items-center space-x-1.5 text-xs text-slate-400 bg-navy-950/80 px-2.5 py-1 rounded-lg border border-surface-border">
-              <span>Merchant:</span>
-              <code className="text-brand-300 font-mono font-semibold">{user?.merchantId || 'merch_demo'}</code>
-            </div>
+            <ThemeToggle />
           </div>
         </header>
 
         {/* Global Toast Alert */}
         {toastMessage && (
-          <div className="bg-gradient-to-r from-brand-600 to-indigo-600 text-white text-xs font-medium px-5 py-2.5 flex items-center justify-between animate-fade-in shadow-md">
+          <div className="bg-brand-primary text-white text-body-sm font-medium px-space-6 py-space-3 flex items-center justify-between animate-fade-in shadow-theme-md">
             <div className="flex items-center space-x-2">
               <Sparkles className="w-4 h-4 shrink-0" />
               <span>{toastMessage}</span>
@@ -224,7 +227,7 @@ export default function DashboardLayout() {
         )}
 
         {/* Page Body */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
+        <main className="flex-1 p-space-4 md:p-space-6 lg:p-space-8 max-w-7xl w-full mx-auto space-y-space-8">
           <Outlet />
         </main>
       </div>

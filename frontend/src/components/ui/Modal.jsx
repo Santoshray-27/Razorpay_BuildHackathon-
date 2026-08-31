@@ -1,19 +1,12 @@
 /**
  * frontend/src/components/ui/Modal.jsx
- * Accessible dialog modal with backdrop blur and keyboard escape support.
+ * Accessible dialog modal with backdrop blur and keyboard escape listener.
  */
 
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 
-export function Modal({
-  isOpen,
-  onClose,
-  title,
-  description,
-  children,
-  className = ''
-}) {
+export function Modal({ isOpen, onClose, title, description, children, className = '' }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && isOpen) {
@@ -27,39 +20,27 @@ export function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-space-4 bg-black/60 backdrop-blur-sm animate-fade-in">
       <div
-        className="fixed inset-0 bg-navy-950/80 backdrop-blur-sm transition-opacity"
-        onClick={onClose}
-      />
-
-      {/* Modal Dialog */}
-      <div
-        className={`relative z-10 w-full max-w-lg bg-surface-card border border-surface-border rounded-2xl shadow-2xl overflow-hidden animate-slide-up ${className}`}
+        className={`bg-theme-surface border border-theme-border-default rounded-radius-lg max-w-lg w-full p-space-6 shadow-theme-md animate-slide-up space-y-space-4 relative ${className}`}
         role="dialog"
         aria-modal="true"
       >
-        {/* Header */}
-        <div className="p-5 border-b border-surface-border/60 flex items-start justify-between">
+        <div className="flex items-start justify-between">
           <div>
-            <h3 className="text-base font-semibold text-white tracking-tight">{title}</h3>
-            {description && (
-              <p className="text-xs text-slate-400 mt-0.5">{description}</p>
-            )}
+            <h3 className="text-h3 font-semibold text-theme-primary">{title}</h3>
+            {description && <p className="text-body-sm text-theme-muted mt-1">{description}</p>}
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-800 transition"
+            className="p-1.5 text-theme-muted hover:text-theme-primary hover:bg-theme-elevated rounded-radius-sm transition"
+            aria-label="Close dialog"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-5">
-          {children}
-        </div>
+        <div className="pt-space-2">{children}</div>
       </div>
     </div>
   );

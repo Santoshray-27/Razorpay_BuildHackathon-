@@ -1,0 +1,125 @@
+/**
+ * frontend/src/tokens.css
+ * Precision Design Tokens Specification for RazorRecover Dual-Theme System.
+ */
+
+:root {
+  /* Fonts */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Roboto Mono', monospace;
+
+  /* Typography Scale */
+  --text-display: 36px;
+  --lh-display: 44px;
+  --fw-display: 700;
+  --ls-display: -0.02em;
+
+  --text-h1: 28px;
+  --lh-h1: 36px;
+  --fw-h1: 700;
+  --ls-h1: -0.01em;
+
+  --text-h2: 20px;
+  --lh-h2: 28px;
+  --fw-h2: 600;
+  --ls-h2: -0.01em;
+
+  --text-h3: 16px;
+  --lh-h3: 24px;
+  --fw-h3: 600;
+  --ls-h3: normal;
+
+  --text-body: 14px;
+  --lh-body: 22px;
+  --fw-body: 400;
+  --ls-body: normal;
+
+  --text-body-sm: 13px;
+  --lh-body-sm: 20px;
+  --fw-body-sm: 400;
+  --ls-body-sm: normal;
+
+  --text-label: 12px;
+  --lh-label: 16px;
+  --fw-label: 600;
+  --ls-label: 0.06em;
+
+  --text-caption: 11px;
+  --lh-caption: 14px;
+  --fw-caption: 500;
+  --ls-caption: 0.02em;
+
+  /* Spacing Scale (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Radius Scale */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+
+  /* Elevation Shadows */
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-md: 0 4px 12px rgba(16, 24, 40, 0.08);
+
+  /* Light Theme (Default Root) */
+  --bg-base: #F7F8FA;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F0F2F6;
+  --border-subtle: #E7E9EF;
+  --border-default: #D6DAE3;
+
+  --text-primary: #101828;
+  --text-secondary: #475467;
+  --text-muted: #98A2B3;
+
+  --brand-primary: #2E5CF0;
+  --brand-hover: #1E47D6;
+  --brand-subtle-bg: #EAF0FF;
+
+  --color-success: #16A34A;
+  --color-success-bg: #ECFDF3;
+  --color-warning: #D97706;
+  --color-warning-bg: #FFFBEB;
+  --color-danger: #DC2626;
+  --color-danger-bg: #FEF2F2;
+  --color-info: #2563EB;
+  --color-info-bg: #EFF6FF;
+}
+
+/* Dark Theme Overrides */
+.dark {
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+
+  --bg-base: #0B0F19;
+  --bg-surface: #131826;
+  --bg-elevated: #1B2233;
+  --border-subtle: #232B3D;
+  --border-default: #2E3750;
+
+  --text-primary: #F3F5F9;
+  --text-secondary: #B4BBCC;
+  --text-muted: #7C8598;
+
+  --brand-primary: #4C82FB;
+  --brand-hover: #6B98FF;
+  --brand-subtle-bg: #1B2A4D;
+
+  --color-success: #34D399;
+  --color-success-bg: #10291F;
+  --color-warning: #FBBF24;
+  --color-warning-bg: #2E2410;
+  --color-danger: #F87171;
+  --color-danger-bg: #2E1717;
+  --color-info: #60A5FA;
+  --color-info-bg: #16233E;
+}

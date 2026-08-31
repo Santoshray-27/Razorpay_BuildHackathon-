@@ -1,80 +1,35 @@
-# RazorRecover API Documentation
+# API Reference Guide
 
-## Webhook Ingestion (`/api/webhooks`)
+All endpoints return standardized JSON with a `correlationId` tracking header.
 
-### 1. Razorpay Webhook Receiver
-* **Endpoint:** `POST /api/webhooks/razorpay`
-* **Headers:**
-  * `Content-Type: application/json`
-  * `x-razorpay-signature: <HMAC_SHA256_HEX>`
-  * `x-razorpay-event-id: <EVENT_ID>` *(optional, computed from SHA-256 payload hash if missing)*
-* **Description:** Receives and validates live or test mode webhook events directly from Razorpay. Uses route-level `express.raw()` body parser to guarantee 100% byte-accurate HMAC-SHA256 verification.
-* **Idempotency:** If the same `providerEventId` is sent multiple times, RazorRecover returns `200 OK` with `{ status: "ignored_duplicate" }` and writes a `DUPLICATE_EVENT_IGNORED` audit log without creating duplicate database records or queue jobs.
+## 1. Authentication
+* `POST /api/auth/register` — Register a merchant owner or operator (`merchant_admin` / `merchant_operator`).
+* `POST /api/auth/login` — Sign in and receive a JWT.
+* `GET /api/auth/me` — Retrieve current merchant session profile.
 
-#### Sample Request Body (Failed Payment):
-```json
-{
-  "entity": "event",
-  "account_id": "acc_demo_merchant",
-  "event": "payment.failed",
-  "contains": ["payment"],
-  "payload": {
-    "payment": {
-      "entity": {
-        "id": "pay_test_001",
-        "entity": "payment",
-        "amount": 499900,
-        "currency": "INR",
-        "status": "failed",
-        "order_id": "order_test_001",
-        "method": "card",
-        "error_code": "BAD_REQUEST_ERROR",
-        "error_description": "Payment failed due to insufficient funds",
-        "error_reason": "insufficient_funds",
-        "customer_id": "cust_test_001",
-        "email": "rahul.kumar@example.com",
-        "contact": "+919876543210",
-        "created_at": 1725100000
-      }
-    }
-  },
-  "created_at": 1725100000
-}
-```
+## 2. Ingestion & Webhooks
+* `POST /api/webhooks/razorpay` — Ingests signed Razorpay webhooks with raw-body HMAC-SHA256 signature verification.
+* `POST /api/webhooks/dev-fixture` — Local sandbox fixture injector (disabled in production).
 
----
+## 3. Payments & Recovery Cases
+* `GET /api/payments` — List merchant transactions with search & status filters.
+* `GET /api/recovery/cases` — List paginated recovery cases.
+* `GET /api/recovery/:id` — Retrieve full case inspector details, explainability scores, and immutable audit timeline.
+* `POST /api/recovery/:id/analyze` — Run hybrid ML probability + Gemini AI strategy recommendation.
+* `POST /api/recovery/:id/evaluate-policy` — Run deterministic 15-rule policy engine.
+* `POST /api/recovery/:id/schedule` — Schedule approved action into BullMQ queue.
+* `POST /api/recovery/:id/execute` — Execute recovery action directly for demo verification.
 
-### 2. Local Development & Simulator Fixture
-* **Endpoint:** `POST /api/webhooks/dev-fixture`
-* **Description:** Allows triggering payment failure and success workflows locally without needing an ngrok tunnel or public webhook URL.
-* **Security Guard:** Blocked with `403 Forbidden` if `NODE_ENV === 'production'`.
+## 4. Human Review & Policy Controls
+* `GET /api/recovery/pending-approvals` — List cases escalated to operator review.
+* `POST /api/recovery/:id/approve` — Approve escalated action (Role-gated: Admin/Operator).
+* `POST /api/recovery/:id/reject` — Reject escalated action (Role-gated: Admin/Operator).
+* `POST /api/recovery/:id/stop` — Terminate recovery process.
 
-#### Sample Payload:
-```json
-{
-  "merchantId": "merch_demo_01",
-  "event_id": "evt_dev_1001",
-  "payment_id": "pay_dev_1001",
-  "amount": 499900,
-  "currency": "INR",
-  "status": "failed",
-  "failure_reason": "insufficient_funds",
-  "payment_method": "card",
-  "execution_mode": "MOCK_DEMO"
-}
-```
-
----
-
-## Authentication (`/api/auth`)
-
-* `POST /api/auth/register` — Register a merchant user.
-* `POST /api/auth/login` — Authenticate and receive a signed JWT.
-* `GET /api/auth/me` — Retrieve sanitized authenticated user profile (`Authorization: Bearer <token>`).
-
----
-
-## Merchant Payments (`/api/payments`)
-
-* `GET /api/payments` — List payments scoped strictly to the authenticated merchant.
-* `GET /api/payments/:id` — Retrieve specific payment record with customer reference.
+## 5. Analytics & Simulation
+* `GET /api/analytics/overview` — Real-time KPIs (Revenue at Risk, Recovered Revenue, Recovery Rate %).
+* `GET /api/analytics/recovery` — Strategy conversion breakdown.
+* `GET /api/analytics/failures` — Failure reason distribution.
+* `GET /api/analytics/funnel` — Pipeline stage progression counts.
+* `POST /api/simulator/generate` — Generate 10,000 synthetic transaction dataset.
+* `POST /api/simulator/run` — Run 4-strategy comparative simulation benchmark.

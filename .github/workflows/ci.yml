@@ -1,4 +1,4 @@
-name: RazorRecover CI Pipeline
+name: RazorRecover CI
 
 on:
   push:
@@ -7,7 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  test-backend:
+  test:
+    name: Backend Test Suite & Build
     runs-on: ubuntu-latest
 
     services:
@@ -16,51 +17,39 @@ jobs:
         ports:
           - 27017:27017
       redis:
-        image: redis:7-alpine
+        image: redis:7.0-alpine
         ports:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: 'npm'
           cache-dependency-path: backend/package-lock.json
 
       - name: Install Backend Dependencies
-        working-directory: backend
-        run: npm ci || npm install
+        working-directory: ./backend
+        run: npm ci
 
-      - name: Run Backend Tests
-        working-directory: backend
+      - name: Run Backend Integration & Unit Tests
+        working-directory: ./backend
+        run: npm test -- --runInBand
         env:
           NODE_ENV: test
           MONGODB_URI: mongodb://localhost:27017/razorrecover_test
           REDIS_URL: redis://localhost:6379
-          JWT_SECRET: test_jwt_secret_key_at_least_32_chars_long
-          AI_ENABLED: false
-        run: npm test || echo "Tests will be added in upcoming phases"
-
-  build-frontend:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          JWT_SECRET: razorrecover_ci_test_secret_key_fintech_2026_super_safe
+          AI_ENABLED: "false"
 
       - name: Install Frontend Dependencies
-        working-directory: frontend
-        run: npm ci || npm install
+        working-directory: ./frontend
+        run: npm ci
 
-      - name: Build Frontend
-        working-directory: frontend
+      - name: Verify Frontend Production Build
+        working-directory: ./frontend
         run: npm run build

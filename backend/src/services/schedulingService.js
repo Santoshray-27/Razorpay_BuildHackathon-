@@ -15,6 +15,8 @@ import { buildCustomerContext } from './customerContextService.js';
 import { env } from '../config/env.js';
 import { logger } from '../observability/logger.js';
 
+import { isRedisConnected } from '../config/redis.js';
+
 /**
  * Schedules an approved recovery case into BullMQ queue.
  */
@@ -101,19 +103,23 @@ export async function scheduleApprovedAction(merchantId, caseId, correlationId) 
 
   // 4. Enqueue Job to BullMQ (Safe graceful fallback if Redis offline)
   try {
-    const queue = getRecoveryActionsQueue();
-    await queue.add(
-      'execute-recovery-action',
-      {
-        recoveryCaseId: caseId,
-        recoveryActionId: recoveryAction._id.toString(),
-        correlationId
-      },
-      {
-        delay: delayMs,
-        jobId: idempotencyKey
-      }
-    );
+    if (isRedisConnected()) {
+      const queue = getRecoveryActionsQueue();
+      await queue.add(
+        'execute-recovery-action',
+        {
+          recoveryCaseId: caseId,
+          recoveryActionId: recoveryAction._id.toString(),
+          correlationId
+        },
+        {
+          delay: delayMs,
+          jobId: idempotencyKey
+        }
+      );
+    } else {
+      logger.info('Redis connection not active. Job persisted in database and scheduled.');
+    }
   } catch (queueErr) {
     logger.warn('BullMQ job enqueue skipped or deferred (Redis offline or test mode)', {
       error: queueErr.message,

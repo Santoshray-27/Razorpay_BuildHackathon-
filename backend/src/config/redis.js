@@ -56,6 +56,10 @@ export function getRedisClient() {
   return redisClient;
 }
 
+export function isRedisConnected() {
+  return isRedisReady;
+}
+
 export async function connectRedis() {
   const client = getRedisClient();
   if (client.status === 'ready') return client;

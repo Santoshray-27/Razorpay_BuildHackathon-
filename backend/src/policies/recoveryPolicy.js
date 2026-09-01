@@ -150,7 +150,9 @@ export function evaluatePolicy({
   }
 
   // RULE 10: High-Value Transaction Threshold -> PENDING_APPROVAL
-  if (amountPaise >= config.highValueThresholdPaise) {
+  const isOperatorApproved = Boolean(recoveryCase.status === 'approved' || customerContext.isOperatorApproved);
+
+  if (!isOperatorApproved && amountPaise >= config.highValueThresholdPaise) {
     triggeredRules.push('RULE_10_HIGH_VALUE_THRESHOLD_EXCEEDED');
     return {
       decision: POLICY_DECISIONS.PENDING_APPROVAL,
@@ -162,7 +164,7 @@ export function evaluatePolicy({
   }
 
   // RULE 11: AI Confidence Below Threshold -> PENDING_APPROVAL
-  if (confidence < config.minAutoActionConfidence) {
+  if (!isOperatorApproved && confidence < config.minAutoActionConfidence) {
     triggeredRules.push('RULE_11_LOW_AI_CONFIDENCE');
     return {
       decision: POLICY_DECISIONS.PENDING_APPROVAL,
@@ -174,7 +176,7 @@ export function evaluatePolicy({
   }
 
   // RULE 12: Recovery Probability Below Threshold -> PENDING_APPROVAL
-  if (probability < config.minAutoRecoveryProbability) {
+  if (!isOperatorApproved && probability < config.minAutoRecoveryProbability) {
     triggeredRules.push('RULE_12_LOW_RECOVERY_PROBABILITY');
     return {
       decision: POLICY_DECISIONS.PENDING_APPROVAL,

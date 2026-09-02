@@ -1,6 +1,6 @@
 /**
  * frontend/src/pages/PaymentsPage.jsx
- * Unified transaction ledger with dual-theme styling, search, and execution mode tags.
+ * Unified transaction ledger with Light-First design tokens, search, and execution mode tags.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -102,7 +102,7 @@ export default function PaymentsPage() {
               </thead>
               <tbody className="divide-y divide-theme-border-subtle">
                 {filteredPayments.map((p) => (
-                  <tr key={p._id} className="hover:bg-theme-elevated/50 transition-colors">
+                  <tr key={p._id} className="hover:bg-theme-surface/50 transition-colors">
                     <td className="fintech-table-td font-mono font-semibold text-theme-primary">
                       <span className="text-theme-muted">#</span>{p.providerPaymentId || p._id.slice(-8)}
                     </td>
@@ -130,7 +130,7 @@ export default function PaymentsPage() {
                     <td className="fintech-table-td text-right">
                       <Link
                         to="/cases"
-                        className="inline-flex items-center space-x-1 text-body-sm text-brand-primary hover:text-brand-hover font-semibold"
+                        className="inline-flex items-center space-x-1 text-body-sm text-ink dark:text-accent font-bold hover:underline"
                       >
                         <Layers className="w-3.5 h-3.5" />
                         <span>Cases</span>

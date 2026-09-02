@@ -1,6 +1,11 @@
 /**
  * frontend/src/components/ui/Button.jsx
- * Accessible interactive buttons with semantic theme variants, focus rings, and loading states.
+ * Accessible interactive buttons with strict 3-tier hierarchy, focus rings, and loading states:
+ * - Primary:   #222831 (ink fill, light text)
+ * - Secondary: #CDF0EA (mint fill, ink text)
+ * - Accent:    #FCE38A (accent fill, ink text)
+ * - Success:   #DDFFBC (success fill, ink text)
+ * - Outline:   #FFFFFF fill, #DBE2EF border, ink text
  */
 
 import React from 'react';
@@ -8,7 +13,7 @@ import { Loader2 } from 'lucide-react';
 
 export function Button({
   children,
-  variant = 'primary', // 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost' | 'success'
+  variant = 'primary', // 'primary' | 'secondary' | 'accent' | 'outline' | 'success' | 'danger' | 'ghost'
   size = 'md', // 'sm' | 'md' | 'lg'
   icon: Icon,
   iconPosition = 'left',
@@ -21,23 +26,25 @@ export function Button({
 }) {
   const variantStyles = {
     primary:
-      'bg-brand-primary text-white hover:bg-brand-hover border border-transparent shadow-theme-sm focus:ring-2 focus:ring-brand-primary/40 focus:ring-offset-2',
+      'bg-ink text-theme-base hover:bg-brand-hover border border-transparent shadow-theme-sm focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2',
     secondary:
-      'bg-transparent border border-theme-border-default text-theme-secondary hover:bg-theme-elevated hover:text-theme-primary focus:ring-2 focus:ring-brand-primary/20 focus:ring-offset-2',
+      'bg-theme-surface text-ink hover:bg-theme-elevated border border-theme-border-default shadow-theme-sm focus-visible:ring-2 focus-visible:ring-ink/20 focus-visible:ring-offset-2',
+    accent:
+      'bg-accent text-ink hover:bg-accent-hover border border-transparent shadow-theme-sm focus-visible:ring-2 focus-visible:ring-ink/30 focus-visible:ring-offset-2 font-bold',
     outline:
-      'bg-theme-surface border border-theme-border-subtle text-theme-primary hover:bg-theme-elevated hover:border-theme-border-default focus:ring-2 focus:ring-brand-primary/20 focus:ring-offset-2',
-    danger:
-      'bg-transparent border border-semantic-danger/30 text-semantic-danger hover:bg-semantic-danger-bg focus:ring-2 focus:ring-semantic-danger/40 focus:ring-offset-2',
+      'bg-transparent border border-theme-border-default text-theme-primary hover:bg-theme-elevated hover:border-theme-border-default focus-visible:ring-2 focus-visible:ring-ink/20 focus-visible:ring-offset-2',
     success:
-      'bg-semantic-success text-white hover:opacity-90 border border-transparent shadow-theme-sm focus:ring-2 focus:ring-semantic-success/40 focus:ring-offset-2',
+      'bg-semantic-success-bg text-semantic-success hover:bg-semantic-success hover:text-white border border-semantic-success/40 shadow-theme-sm focus-visible:ring-2 focus-visible:ring-ink/20 focus-visible:ring-offset-2 font-semibold transition-colors',
+    danger:
+      'bg-semantic-danger-bg border border-semantic-danger/40 text-semantic-danger hover:bg-semantic-danger hover:text-white focus-visible:ring-2 focus-visible:ring-semantic-danger/40 focus-visible:ring-offset-2 font-semibold transition-colors',
     ghost:
-      'bg-transparent text-theme-secondary hover:bg-theme-elevated hover:text-theme-primary border border-transparent focus:ring-2 focus:ring-brand-primary/20'
+      'bg-transparent text-theme-secondary hover:bg-theme-elevated hover:text-theme-primary border border-transparent focus-visible:ring-2 focus-visible:ring-ink/20'
   };
 
   const sizeStyles = {
     sm: 'min-h-[32px] px-space-3 text-caption font-semibold rounded-radius-sm gap-1.5',
     md: 'min-h-[40px] px-space-4 text-body font-semibold rounded-radius-md gap-2',
-    lg: 'min-h-[44px] px-space-6 text-h3 font-semibold rounded-radius-md gap-2.5'
+    lg: 'min-h-[44px] px-space-6 text-h3 font-semibold rounded-radius-lg gap-2.5'
   };
 
   return (

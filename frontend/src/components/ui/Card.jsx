@@ -8,7 +8,7 @@ import React from 'react';
 export function Card({ children, className = '', ...props }) {
   return (
     <div
-      className={`bg-theme-surface border border-theme-border-subtle rounded-radius-md shadow-theme-sm transition-colors duration-200 ${className}`}
+      className={`bg-theme-surface border border-theme-border-subtle rounded-radius-lg shadow-theme-sm transition-colors duration-200 ${className}`}
       {...props}
     >
       {children}
@@ -54,7 +54,7 @@ export function CardContent({ children, className = '', ...props }) {
 export function CardFooter({ children, className = '', ...props }) {
   return (
     <div
-      className={`p-space-6 border-t border-theme-border-subtle bg-theme-elevated/40 flex items-center justify-between gap-space-4 rounded-b-radius-md ${className}`}
+      className={`p-space-6 border-t border-theme-border-subtle bg-theme-elevated/40 flex items-center justify-between gap-space-4 rounded-b-radius-lg ${className}`}
       {...props}
     >
       {children}

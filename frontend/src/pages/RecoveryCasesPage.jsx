@@ -1,6 +1,6 @@
 /**
  * frontend/src/pages/RecoveryCasesPage.jsx
- * Filterable, paginated recovery case explorer with dual-theme styling and search.
+ * Filterable, paginated recovery case explorer with Light-First design tokens.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -158,7 +158,7 @@ export default function RecoveryCasesPage() {
               </thead>
               <tbody className="divide-y divide-theme-border-subtle">
                 {filteredCases.map((c) => (
-                  <tr key={c._id} className="hover:bg-theme-elevated/50 transition-colors">
+                  <tr key={c._id} className="hover:bg-theme-surface/50 transition-colors">
                     <td className="fintech-table-td font-mono font-semibold text-theme-primary">
                       <span className="text-theme-muted">#</span>{c.paymentId?.providerPaymentId || c._id.slice(-8)}
                     </td>
@@ -174,12 +174,12 @@ export default function RecoveryCasesPage() {
                     <td className="fintech-table-td">
                       <RiskBadge riskLevel={c.riskLevel} />
                     </td>
-                    <td className="fintech-table-td font-mono font-semibold text-theme-primary">
+                    <td className="fintech-table-td font-mono font-bold text-theme-primary">
                       {c.recoveryProbability !== null && c.recoveryProbability !== undefined
                         ? `${(c.recoveryProbability * 100).toFixed(0)}%`
                         : <span className="text-theme-muted text-caption">Pending</span>}
                     </td>
-                    <td className="fintech-table-td text-brand-primary font-mono text-caption">
+                    <td className="fintech-table-td text-ink font-mono text-caption font-semibold">
                       {c.latestRecommendation?.recommended_action || '—'}
                     </td>
                     <td className="fintech-table-td">
@@ -207,7 +207,7 @@ export default function RecoveryCasesPage() {
         </div>
 
         {/* Pagination Bar */}
-        <div className="p-space-4 bg-theme-elevated/40 border-t border-theme-border-subtle flex items-center justify-between text-caption text-theme-secondary">
+        <div className="p-space-4 bg-theme-surface border-t border-theme-border-subtle flex items-center justify-between text-caption text-theme-secondary">
           <span>
             Page <strong className="text-theme-primary">{pagination.page}</strong> of <strong className="text-theme-primary">{pagination.pages}</strong>
           </span>

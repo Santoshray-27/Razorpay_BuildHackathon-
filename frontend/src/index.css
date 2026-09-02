@@ -98,7 +98,7 @@
 }
 
 @layer components {
-  /* Common FinTech Card */
+  /* Clean Light-Theme Card */
   .fintech-card {
     background-color: var(--bg-surface);
     border: 1px solid var(--border-subtle);
@@ -111,7 +111,7 @@
   /* Input fields */
   .fintech-input {
     background-color: var(--bg-surface);
-    border: 1px solid var(--border-default);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
     height: 40px;
     padding-left: var(--space-4);
@@ -124,7 +124,7 @@
   .fintech-input:focus {
     outline: none;
     border-color: var(--brand-primary);
-    box-shadow: 0 0 0 2px rgba(46, 92, 240, 0.2);
+    box-shadow: 0 0 0 2px rgba(34, 40, 49, 0.15);
   }
 
   /* Table Headers & Rows */

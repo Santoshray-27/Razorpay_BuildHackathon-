@@ -1,6 +1,6 @@
 /**
  * frontend/src/pages/SimulatorPage.jsx
- * 10,000-Transaction Simulation & Strategy Benchmark Workbench with dual-theme styling.
+ * 10,000-Transaction Simulation & Strategy Benchmark Workbench with Light-First design tokens.
  */
 
 import React, { useState } from 'react';
@@ -63,35 +63,35 @@ export default function SimulatorPage() {
       name: '1. No Recovery',
       recoveredRevenue: 0,
       recoveryRate: strategies.NO_RECOVERY.recoveryRate,
-      fillColor: isDark ? '#7C8598' : '#98A2B3'
+      fillColor: isDark ? '#9BA4B5' : '#CBD2DE'
     },
     {
       name: '2. Fixed 24h Retry',
       recoveredRevenue: strategies.FIXED_RETRY.recoveredRevenuePaise / 100,
       recoveryRate: strategies.FIXED_RETRY.recoveryRate,
-      fillColor: isDark ? '#B4BBCC' : '#64748B'
+      fillColor: isDark ? '#DBE2EF' : '#A4B0C4'
     },
     {
       name: '3. Rule-Based Heuristic',
       recoveredRevenue: strategies.RULE_BASED_RECOVERY.recoveredRevenuePaise / 100,
       recoveryRate: strategies.RULE_BASED_RECOVERY.recoveryRate,
-      fillColor: isDark ? '#60A5FA' : '#2563EB'
+      fillColor: isDark ? '#60A5FA' : '#76B7B2'
     },
     {
       name: '4. RazorRecover (AI+Policy)',
       recoveredRevenue: strategies.AI_ASSISTED_RECOVERY.recoveredRevenuePaise / 100,
       recoveryRate: strategies.AI_ASSISTED_RECOVERY.recoveryRate,
-      fillColor: isDark ? '#4C82FB' : '#2E5CF0'
+      fillColor: isDark ? '#F6C453' : '#20242C'
     }
   ] : [];
 
   const customTooltipStyle = {
-    backgroundColor: isDark ? '#131826' : '#FFFFFF',
-    borderColor: isDark ? '#232B3D' : '#E7E9EF',
-    borderRadius: '10px',
-    color: isDark ? '#F3F5F9' : '#101828',
+    backgroundColor: isDark ? '#222831' : '#FFFFFF',
+    borderColor: isDark ? '#39424E' : '#DBE2EF',
+    borderRadius: '12px',
+    color: isDark ? '#FEFCF3' : '#222831',
     fontSize: '13px',
-    boxShadow: isDark ? '0 4px 16px rgba(0,0,0,0.4)' : '0 4px 12px rgba(16,24,40,0.08)'
+    boxShadow: '0 4px 16px rgba(34, 40, 49, 0.08)'
   };
 
   return (
@@ -108,9 +108,9 @@ export default function SimulatorPage() {
           </p>
         </div>
 
-        <div className="text-caption text-theme-muted bg-theme-elevated px-space-4 py-space-2 rounded-radius-md border border-theme-border-subtle font-mono">
+        <div className="text-caption text-theme-muted bg-theme-surface px-space-4 py-space-2 rounded-radius-sm border border-theme-border-default font-mono">
           <span>Cost Control: </span>
-          <strong className="text-semantic-success font-semibold">Trained ML Model + Policy Proxy</strong>
+          <strong className="text-ink font-bold">Trained ML Model + Policy Proxy</strong>
         </div>
       </div>
 
@@ -118,7 +118,7 @@ export default function SimulatorPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center space-x-2">
-            <Cpu className="w-4 h-4 text-brand-primary" />
+            <Cpu className="w-4 h-4 text-ink" />
             <CardTitle>Simulation Configuration</CardTitle>
           </div>
           <Badge variant="neutral">Mulberry32 PRNG</Badge>
@@ -151,7 +151,7 @@ export default function SimulatorPage() {
             <div>
               <div className="flex justify-between items-center mb-space-1">
                 <label className="text-body-sm font-semibold text-theme-primary">Payment Failure Rate</label>
-                <span className="font-mono text-brand-primary font-bold">{failureRate}%</span>
+                <span className="font-mono text-ink font-bold">{failureRate}%</span>
               </div>
               <input
                 type="range"
@@ -159,7 +159,7 @@ export default function SimulatorPage() {
                 max="40"
                 value={failureRate}
                 onChange={(e) => setFailureRate(e.target.value)}
-                className="w-full mt-2 accent-brand-primary cursor-pointer"
+                className="w-full mt-2 accent-ink cursor-pointer"
               />
             </div>
           </div>
@@ -223,7 +223,7 @@ export default function SimulatorPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center space-x-2">
-                <BarChart3 className="w-4 h-4 text-brand-primary" />
+                <BarChart3 className="w-4 h-4 text-ink" />
                 <CardTitle>Revenue Recovered by Strategy (₹ INR)</CardTitle>
               </div>
               <Badge variant="info">Same Population & Seed ({seed})</Badge>
@@ -234,11 +234,11 @@ export default function SimulatorPage() {
                   <BarChart data={chartData} margin={{ top: 10, right: 20, left: 20, bottom: 20 }}>
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke={isDark ? '#232B3D' : '#E7E9EF'}
+                      stroke={isDark ? '#39424E' : '#DBE2EF'}
                       vertical={false}
                     />
-                    <XAxis dataKey="name" stroke={isDark ? '#7C8598' : '#98A2B3'} tick={{ fontSize: 11 }} />
-                    <YAxis stroke={isDark ? '#7C8598' : '#98A2B3'} tick={{ fontSize: 11 }} />
+                    <XAxis dataKey="name" stroke={isDark ? '#9BA4B5' : '#686D76'} tick={{ fontSize: 11 }} />
+                    <YAxis stroke={isDark ? '#9BA4B5' : '#686D76'} tick={{ fontSize: 11 }} />
                     <Tooltip
                       contentStyle={customTooltipStyle}
                       formatter={(val) => [`₹${Number(val).toLocaleString('en-IN')}`, 'Recovered Revenue']}
@@ -283,26 +283,26 @@ export default function SimulatorPage() {
                     return (
                       <tr
                         key={strat.strategyName}
-                        className={isAi ? 'bg-brand-subtle-bg/40 font-bold' : 'hover:bg-theme-elevated/40'}
+                        className={isAi ? 'bg-theme-surface/80 font-bold' : 'hover:bg-theme-surface/40'}
                       >
                         <td className="fintech-table-td font-sans font-semibold text-theme-primary flex items-center space-x-2">
-                          {isAi && <Sparkles className="w-3.5 h-3.5 text-brand-primary" />}
+                          {isAi && <Sparkles className="w-3.5 h-3.5 text-ink" />}
                           <span>{strat.displayName}</span>
                         </td>
-                        <td className={`fintech-table-td font-bold num-tabular ${isAi ? 'text-semantic-success' : 'text-theme-primary'}`}>
+                        <td className={`fintech-table-td font-bold num-tabular ${isAi ? 'text-ink' : 'text-theme-primary'}`}>
                           {formatCurrency(strat.recoveredRevenuePaise)}
                         </td>
-                        <td className={`fintech-table-td font-bold ${isAi ? 'text-brand-primary' : 'text-theme-secondary'}`}>
+                        <td className={`fintech-table-td font-bold ${isAi ? 'text-ink' : 'text-theme-secondary'}`}>
                           {strat.recoveryRate}%
                         </td>
-                        <td className="fintech-table-td text-semantic-success font-bold">
+                        <td className="fintech-table-td text-ink font-bold">
                           {strat.incrementalLiftPercentage > 0 ? `+${strat.incrementalLiftPercentage}%` : '—'}
                         </td>
                         <td className="fintech-table-td text-theme-secondary">{strat.totalActionsTaken}</td>
-                        <td className="fintech-table-td text-brand-primary">{strat.humanReviewCount}</td>
+                        <td className="fintech-table-td text-ink font-semibold">{strat.humanReviewCount}</td>
                         <td className="fintech-table-td text-theme-muted">{strat.policyBlockCount}</td>
                         <td className="fintech-table-td">
-                          <span className={strat.optOutComplianceRate === 100 ? 'text-semantic-success font-bold' : 'text-semantic-danger font-bold'}>
+                          <span className={strat.optOutComplianceRate === 100 ? 'text-ink font-bold' : 'text-semantic-danger font-bold'}>
                             {strat.optOutComplianceRate}%
                           </span>
                         </td>

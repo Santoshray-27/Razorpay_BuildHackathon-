@@ -1,6 +1,6 @@
 /**
  * frontend/src/pages/OverviewPage.jsx
- * Merchant Overview Dashboard with dual-theme styling, 5-stage ghost-bar Funnel Chart,
+ * Merchant Overview Dashboard with Light-First design tokens, 5-stage ghost-bar Funnel Chart,
  * and high-contrast KPI hierarchy.
  */
 
@@ -110,20 +110,20 @@ export default function OverviewPage() {
   });
 
   const customTooltipStyle = {
-    backgroundColor: isDark ? '#131826' : '#FFFFFF',
-    borderColor: isDark ? '#232B3D' : '#E7E9EF',
-    borderRadius: '10px',
-    color: isDark ? '#F3F5F9' : '#101828',
+    backgroundColor: isDark ? '#222831' : '#FFFFFF',
+    borderColor: isDark ? '#39424E' : '#DBE2EF',
+    borderRadius: '12px',
+    color: isDark ? '#FEFCF3' : '#222831',
     fontSize: '13px',
-    boxShadow: isDark ? '0 4px 16px rgba(0,0,0,0.4)' : '0 4px 12px rgba(16,24,40,0.08)'
+    boxShadow: '0 4px 16px rgba(34, 40, 49, 0.08)'
   };
 
   return (
     <div className="space-y-space-8 animate-fade-in">
       {/* Top Banner Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-4 bg-theme-surface border border-theme-border-subtle p-space-6 rounded-radius-md shadow-theme-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-4 bg-theme-surface border border-theme-border-subtle p-space-6 rounded-radius-lg shadow-theme-sm">
         <div className="space-y-1">
-          <div className="inline-flex items-center space-x-1.5 text-caption font-semibold text-brand-primary">
+          <div className="inline-flex items-center space-x-1.5 text-caption font-bold text-ink bg-accent px-space-3 py-0.5 rounded-radius-full">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Razorpay Revenue Telemetry</span>
           </div>
@@ -152,7 +152,7 @@ export default function OverviewPage() {
       </div>
 
       {/* 6 High-Impact StatCards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-space-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-space-4">
         {loading ? (
           Array.from({ length: 6 }).map((_, i) => <StatCardSkeleton key={i} />)
         ) : (
@@ -201,7 +201,7 @@ export default function OverviewPage() {
                 subtitle="Review required →"
                 icon={UserCheck}
                 variant={kpis.pendingApprovalsCount > 0 ? 'warning' : 'muted'}
-                className="group-hover:border-semantic-warning/50"
+                className="group-hover:border-accent"
               />
             </Link>
           </>
@@ -210,7 +210,7 @@ export default function OverviewPage() {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-space-6">
-        {/* Recovery Pipeline Funnel - Fixed Ghost-Bar Implementation */}
+        {/* Recovery Pipeline Funnel - Ghost-Bar Implementation */}
         <Card>
           <CardHeader>
             <div>
@@ -229,20 +229,20 @@ export default function OverviewPage() {
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke={isDark ? '#232B3D' : '#E7E9EF'}
+                    stroke={isDark ? '#39424E' : '#DBE2EF'}
                     horizontal={false}
                   />
                   <XAxis
                     type="number"
-                    stroke={isDark ? '#7C8598' : '#98A2B3'}
+                    stroke={isDark ? '#9BA4B5' : '#686D76'}
                     tick={{ fontSize: 11 }}
                     allowDecimals={false}
                   />
                   <YAxis
                     dataKey="stage"
                     type="category"
-                    stroke={isDark ? '#B4BBCC' : '#475467'}
-                    tick={{ fontSize: 12, fontWeight: 500 }}
+                    stroke={isDark ? '#DBE2EF' : '#222831'}
+                    tick={{ fontSize: 12, fontWeight: 600 }}
                     width={110}
                   />
                   <Tooltip
@@ -259,7 +259,7 @@ export default function OverviewPage() {
                           <Cell
                             key={`cell-${idx}`}
                             fill="transparent"
-                            stroke={isDark ? '#2E3750' : '#D6DAE3'}
+                            stroke={isDark ? '#485362' : '#C8D1E0'}
                             strokeWidth={1.5}
                             strokeDasharray="3 3"
                           />
@@ -268,16 +268,16 @@ export default function OverviewPage() {
                       return (
                         <Cell
                           key={`cell-${idx}`}
-                          fill={isDark ? '#4C82FB' : '#2E5CF0'}
+                          fill={isDark ? '#F6C453' : '#20242C'}
                         />
                       );
                     })}
                     <LabelList
                       dataKey="count"
                       position="right"
-                      fill={isDark ? '#B4BBCC' : '#475467'}
+                      fill={isDark ? '#DBE2EF' : '#222831'}
                       fontSize={12}
-                      fontWeight={600}
+                      fontWeight={700}
                     />
                   </Bar>
                 </BarChart>
@@ -301,27 +301,27 @@ export default function OverviewPage() {
                 <BarChart data={failures} margin={{ top: 10, right: 10, left: 10, bottom: 25 }}>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke={isDark ? '#232B3D' : '#E7E9EF'}
+                    stroke={isDark ? '#39424E' : '#DBE2EF'}
                     vertical={false}
                   />
                   <XAxis
                     dataKey="failureReason"
-                    stroke={isDark ? '#7C8598' : '#98A2B3'}
+                    stroke={isDark ? '#9BA4B5' : '#686D76'}
                     tick={{ fontSize: 10 }}
                     angle={-20}
                     textAnchor="end"
                   />
-                  <YAxis stroke={isDark ? '#7C8598' : '#98A2B3'} tick={{ fontSize: 11 }} />
+                  <YAxis stroke={isDark ? '#9BA4B5' : '#686D76'} tick={{ fontSize: 11 }} />
                   <Tooltip contentStyle={customTooltipStyle} />
                   <Bar
                     dataKey="count"
-                    fill={isDark ? '#F87171' : '#DC2626'}
+                    fill={isDark ? '#D96C6C' : '#D96C6C'}
                     name="Failed Count"
                     radius={[4, 4, 0, 0]}
                   />
                   <Bar
                     dataKey="recoveredCount"
-                    fill={isDark ? '#34D399' : '#16A34A'}
+                    fill={isDark ? '#9FDD8E' : '#9FDD8E'}
                     name="Recovered Count"
                     radius={[4, 4, 0, 0]}
                   />
@@ -341,7 +341,7 @@ export default function OverviewPage() {
           </div>
           <Link
             to="/cases"
-            className="text-body-sm text-brand-primary hover:text-brand-hover font-semibold inline-flex items-center gap-1"
+            className="text-body-sm text-ink dark:text-accent hover:underline font-bold inline-flex items-center gap-1"
           >
             View All Cases <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
@@ -366,7 +366,7 @@ export default function OverviewPage() {
               </thead>
               <tbody className="divide-y divide-theme-border-subtle">
                 {(overview?.recentCases || []).map((c) => (
-                  <tr key={c._id} className="hover:bg-theme-elevated/50 transition-colors">
+                  <tr key={c._id} className="hover:bg-theme-surface/50 transition-colors">
                     <td className="fintech-table-td font-mono font-semibold text-theme-primary">
                       <span className="text-theme-muted">#</span>{c.paymentId?.providerPaymentId || c._id.slice(-8)}
                     </td>
@@ -382,7 +382,7 @@ export default function OverviewPage() {
                     <td className="fintech-table-td">
                       <RiskBadge riskLevel={c.riskLevel} />
                     </td>
-                    <td className="fintech-table-td font-mono font-semibold text-theme-primary">
+                    <td className="fintech-table-td font-mono font-bold text-theme-primary">
                       {c.recoveryProbability !== null && c.recoveryProbability !== undefined
                         ? `${(c.recoveryProbability * 100).toFixed(0)}%`
                         : <span className="text-theme-muted text-caption">Pending</span>}

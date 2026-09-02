@@ -1,13 +1,13 @@
 /**
  * frontend/src/context/ThemeContext.jsx
- * Provides dual-theme (Light & Dark) state management with prefers-color-scheme fallback.
+ * Provides Light-First Dual-Theme state management with accessible toggle.
  */
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext({
-  theme: 'dark',
-  isDark: true,
+  theme: 'light',
+  isDark: false,
   toggleTheme: () => {},
   setTheme: () => {}
 });
@@ -17,7 +17,7 @@ export function ThemeProvider({ children }) {
     if (typeof window !== 'undefined' && window.matchMedia) {
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-    return 'dark';
+    return 'light';
   });
 
   useEffect(() => {

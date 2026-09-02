@@ -5,6 +5,7 @@
  * - Horizontal padding: space-3 (12px)
  * - Radius: radius-full (pill)
  * - Typography: text-caption with font-weight 600
+ * - High contrast: #222831 ink text on light badge fills
  */
 
 import React from 'react';
@@ -16,23 +17,23 @@ export function Badge({
   className = ''
 }) {
   const variantStyles = {
-    default: 'bg-theme-elevated text-theme-secondary border-theme-border-subtle',
-    neutral: 'bg-theme-elevated text-theme-secondary border-theme-border-subtle',
-    primary: 'bg-brand-subtle-bg text-brand-primary border-brand-primary/20',
-    success: 'bg-semantic-success-bg text-semantic-success border-semantic-success/20',
-    warning: 'bg-semantic-warning-bg text-semantic-warning border-semantic-warning/20',
-    danger: 'bg-semantic-danger-bg text-semantic-danger border-semantic-danger/20',
-    info: 'bg-semantic-info-bg text-semantic-info border-semantic-info/20'
+    default: 'bg-palette-surface text-theme-primary border-palette-surface-alt',
+    neutral: 'bg-theme-elevated text-theme-primary border-theme-border-subtle',
+    primary: 'bg-palette-surface text-theme-primary border-palette-surface-alt font-bold',
+    success: 'bg-badge-success-bg text-badge-success-text border-palette-success/40',
+    warning: 'bg-badge-warning-bg text-badge-warning-text border-palette-accent/40',
+    danger: 'bg-badge-danger-bg text-badge-danger-text border-palette-danger/40',
+    info: 'bg-badge-info-bg text-badge-info-text border-palette-mint/60'
   };
 
   const dotColors = {
-    default: 'bg-theme-muted',
-    neutral: 'bg-theme-muted',
-    primary: 'bg-brand-primary',
-    success: 'bg-semantic-success animate-pulse',
-    warning: 'bg-semantic-warning',
-    danger: 'bg-semantic-danger',
-    info: 'bg-semantic-info'
+    default: 'bg-palette-ink',
+    neutral: 'bg-palette-ink',
+    primary: 'bg-palette-ink',
+    success: 'bg-[#2D8A4E] animate-pulse',
+    warning: 'bg-[#B8860B]',
+    danger: 'bg-palette-danger',
+    info: 'bg-[#1D4ED8]'
   };
 
   return (
@@ -58,7 +59,7 @@ export function StatusBadge({ status }) {
     case 'recommended':
       return <Badge variant="info">Recommended</Badge>;
     case 'analyzing':
-      return <Badge variant="primary" dot>Analyzing</Badge>;
+      return <Badge variant="warning" dot>Analyzing</Badge>;
     case 'pending_approval':
       return <Badge variant="warning" dot>Pending Review</Badge>;
     case 'scheduled':
@@ -106,5 +107,5 @@ export function RoleBadge({ role }) {
 }
 
 export function AiAdvisoryBadge({ children = 'AI Advisory' }) {
-  return <Badge variant="primary">{children}</Badge>;
+  return <Badge variant="info">{children}</Badge>;
 }

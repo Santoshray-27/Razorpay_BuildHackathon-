@@ -14,12 +14,12 @@ export function ErrorState({
   className = ''
 }) {
   return (
-    <div className={`p-6 rounded-xl border border-rose-500/30 bg-rose-950/20 text-center flex flex-col items-center justify-center ${className}`}>
-      <div className="p-2.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-xl mb-2.5">
+    <div className={`p-space-6 rounded-radius-lg border border-semantic-danger/30 bg-semantic-danger-bg text-center flex flex-col items-center justify-center ${className}`}>
+      <div className="p-2.5 bg-semantic-danger/10 text-semantic-danger border border-semantic-danger/20 rounded-radius-md mb-2.5">
         <AlertTriangle className="w-5 h-5" />
       </div>
-      <h4 className="text-sm font-semibold text-rose-300">{title}</h4>
-      <p className="text-xs text-slate-400 max-w-md mt-1 mb-4 leading-relaxed">
+      <h4 className="text-body-sm font-semibold text-semantic-danger">{title}</h4>
+      <p className="text-caption text-theme-secondary max-w-md mt-1 mb-4 leading-relaxed">
         {message}
       </p>
       {onRetry && (

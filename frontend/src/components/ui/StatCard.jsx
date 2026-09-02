@@ -1,7 +1,7 @@
 /**
  * frontend/src/components/ui/StatCard.jsx
  * High-impact KPI widget with strict typographic hierarchy, 2px top accent border,
- * circular 36px icon badge, and dual-theme tokens.
+ * circular 36px icon badge, and light-first palette tokens.
  */
 
 import React from 'react';
@@ -19,38 +19,38 @@ export function StatCard({
   const variantConfig = {
     default: {
       topBorder: 'border-t-theme-border-default',
-      iconBg: 'bg-theme-elevated text-theme-secondary',
-      valueColor: 'text-theme-primary'
+      iconBg: 'bg-theme-surface text-ink border border-theme-border-default',
+      valueColor: 'text-ink'
     },
     primary: {
-      topBorder: 'border-t-brand-primary',
-      iconBg: 'bg-brand-subtle-bg text-brand-primary',
-      valueColor: 'text-theme-primary'
+      topBorder: 'border-t-ink',
+      iconBg: 'bg-mint text-ink border border-theme-border-default',
+      valueColor: 'text-ink'
     },
     success: {
       topBorder: 'border-t-semantic-success',
-      iconBg: 'bg-semantic-success-bg text-semantic-success',
-      valueColor: 'text-theme-primary'
+      iconBg: 'bg-semantic-success-bg text-semantic-success border border-semantic-success/40',
+      valueColor: 'text-ink'
     },
     warning: {
-      topBorder: 'border-t-semantic-warning',
-      iconBg: 'bg-semantic-warning-bg text-semantic-warning',
-      valueColor: 'text-theme-primary'
+      topBorder: 'border-t-accent',
+      iconBg: 'bg-accent-bg text-accent-hover border border-accent/40',
+      valueColor: 'text-ink'
     },
     danger: {
       topBorder: 'border-t-semantic-danger',
-      iconBg: 'bg-semantic-danger-bg text-semantic-danger',
-      valueColor: 'text-theme-primary'
+      iconBg: 'bg-semantic-danger-bg text-semantic-danger border border-semantic-danger/40',
+      valueColor: 'text-ink'
     },
     info: {
-      topBorder: 'border-t-semantic-info',
-      iconBg: 'bg-semantic-info-bg text-semantic-info',
-      valueColor: 'text-theme-primary'
+      topBorder: 'border-t-mint',
+      iconBg: 'bg-mint-bg text-mint border border-mint/60',
+      valueColor: 'text-ink'
     },
     muted: {
       topBorder: 'border-t-theme-border-subtle',
-      iconBg: 'bg-theme-elevated text-theme-muted',
-      valueColor: 'text-theme-primary'
+      iconBg: 'bg-theme-elevated text-theme-muted border border-theme-border-subtle',
+      valueColor: 'text-ink'
     }
   };
 
@@ -58,7 +58,7 @@ export function StatCard({
 
   return (
     <div
-      className={`bg-theme-surface border border-theme-border-subtle border-t-2 ${config.topBorder} rounded-radius-md p-space-6 shadow-theme-sm transition-all duration-200 hover:shadow-theme-md hover:border-theme-border-default flex flex-col justify-between ${className}`}
+      className={`bg-theme-surface border border-theme-border-subtle border-t-2 ${config.topBorder} rounded-radius-lg p-space-6 shadow-theme-sm transition-all duration-200 hover:shadow-theme-md hover:border-theme-border-default flex flex-col justify-between ${className}`}
     >
       {/* Top row: Label + 36px Circular Icon */}
       <div className="flex items-center justify-between gap-2">
@@ -81,10 +81,10 @@ export function StatCard({
         </span>
         {trend && (
           <span
-            className={`text-caption px-space-2 py-0.5 rounded-radius-full font-semibold shrink-0 ${
+            className={`text-caption px-space-2 py-0.5 rounded-radius-full font-bold shrink-0 ${
               trendPositive
-                ? 'bg-semantic-success-bg text-semantic-success border border-semantic-success/20'
-                : 'bg-theme-elevated text-theme-secondary border border-theme-border-subtle'
+                ? 'bg-semantic-success-bg text-semantic-success border border-semantic-success/40'
+                : 'bg-theme-surface text-ink border border-theme-border-default'
             }`}
           >
             {trend}

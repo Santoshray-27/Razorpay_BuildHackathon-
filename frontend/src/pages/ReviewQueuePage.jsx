@@ -1,6 +1,6 @@
 /**
  * frontend/src/pages/ReviewQueuePage.jsx
- * Human-in-the-Loop Approval Workbench with dual-theme styling and modal justification controls.
+ * Human-in-the-Loop Approval Workbench with Light-First design tokens and modal justification controls.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -112,10 +112,10 @@ export default function ReviewQueuePage() {
           <TableSkeleton rows={3} cols={4} />
         ) : (
           pendingCases.map((c) => (
-            <Card key={c._id} className="border-semantic-warning/30 p-space-6 space-y-space-4">
+            <Card key={c._id} className="border-t-2 border-t-accent p-space-6 space-y-space-4 shadow-theme-sm">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-3 border-b border-theme-border-subtle pb-space-3">
                 <div className="flex items-center space-x-3">
-                  <div className="p-2.5 bg-semantic-warning-bg text-semantic-warning border border-semantic-warning/20 rounded-radius-md">
+                  <div className="p-2.5 bg-semantic-warning-bg text-semantic-warning border border-accent/40 rounded-radius-sm">
                     <UserCheck className="w-5 h-5" />
                   </div>
                   <div>
@@ -131,28 +131,28 @@ export default function ReviewQueuePage() {
 
                 <div className="text-right">
                   <span className="text-caption text-theme-muted uppercase tracking-wider">Amount at Risk:</span>
-                  <p className="text-h2 font-bold text-semantic-warning font-mono num-tabular">
+                  <p className="text-h2 font-bold text-ink font-mono num-tabular">
                     {formatCurrency(c.amountAtRiskPaise)}
                   </p>
                 </div>
               </div>
 
               {/* Escalation details summary */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-space-4 text-body-sm bg-theme-elevated/60 p-space-4 rounded-radius-md border border-theme-border-subtle">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-space-4 text-body-sm bg-theme-surface dark:bg-theme-elevated p-space-4 rounded-radius-md border border-theme-border-default">
                 <div>
-                  <span className="text-theme-muted text-caption">AI Recommended Strategy:</span>
-                  <p className="font-mono font-bold text-brand-primary mt-0.5">
+                  <span className="text-theme-muted text-caption font-semibold">AI Recommended Strategy:</span>
+                  <p className="font-mono font-bold text-ink mt-0.5">
                     {c.latestRecommendation?.recommended_action || 'HUMAN_REVIEW'}
                   </p>
                 </div>
                 <div>
-                  <span className="text-theme-muted text-caption">AI Confidence / Probability:</span>
+                  <span className="text-theme-muted text-caption font-semibold">AI Confidence / Probability:</span>
                   <p className="font-mono font-bold text-theme-primary mt-0.5">
                     {((c.latestRecommendation?.confidence || 0.65) * 100).toFixed(0)}% / {((c.recoveryProbability || 0.7) * 100).toFixed(0)}%
                   </p>
                 </div>
                 <div>
-                  <span className="text-theme-muted text-caption">Escalation Policy Reason:</span>
+                  <span className="text-theme-muted text-caption font-semibold">Escalation Policy Reason:</span>
                   <p className="text-theme-primary mt-0.5 font-medium leading-relaxed">
                     {c.latestPolicyDecision?.reason || 'High-value transaction threshold exceeded (≥ ₹10,000).'}
                   </p>
@@ -163,7 +163,7 @@ export default function ReviewQueuePage() {
               <div className="flex flex-wrap items-center justify-between gap-space-3 pt-1">
                 <Link
                   to={`/cases/${c._id}`}
-                  className="text-body-sm text-brand-primary hover:text-brand-hover font-semibold flex items-center gap-1"
+                  className="text-body-sm text-ink dark:text-accent hover:underline font-bold flex items-center gap-1"
                 >
                   <span>Inspect Full Audit History</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
@@ -181,11 +181,11 @@ export default function ReviewQueuePage() {
                   </Button>
                   <Button
                     size="sm"
-                    variant="success"
+                    variant="accent"
                     icon={CheckCircle2}
                     disabled={actionLoading}
                     onClick={() => openActionModal(c._id, 'approve')}
-                    className="font-semibold"
+                    className="font-bold"
                   >
                     Authorize Recovery Action
                   </Button>
@@ -228,14 +228,14 @@ export default function ReviewQueuePage() {
           <div className="flex items-center justify-end space-x-space-3 pt-space-2">
             <Button
               size="sm"
-              variant="secondary"
+              variant="outline"
               onClick={() => setModalState({ ...modalState, isOpen: false })}
             >
               Cancel
             </Button>
             <Button
               size="sm"
-              variant={modalState.type === 'approve' ? 'success' : 'danger'}
+              variant={modalState.type === 'approve' ? 'accent' : 'danger'}
               loading={actionLoading}
               onClick={submitModalAction}
             >

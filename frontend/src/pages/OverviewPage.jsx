@@ -123,7 +123,7 @@ export default function OverviewPage() {
       {/* Top Banner Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-4 bg-theme-surface border border-theme-border-subtle p-space-6 rounded-radius-lg shadow-theme-sm">
         <div className="space-y-1">
-          <div className="inline-flex items-center space-x-1.5 text-caption font-bold text-ink bg-accent px-space-3 py-0.5 rounded-radius-full">
+          <div className="inline-flex items-center space-x-1.5 text-caption font-bold text-palette-ink bg-palette-accent px-space-3 py-0.5 rounded-radius-full">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Razorpay Revenue Telemetry</span>
           </div>
@@ -201,7 +201,7 @@ export default function OverviewPage() {
                 subtitle="Review required →"
                 icon={UserCheck}
                 variant={kpis.pendingApprovalsCount > 0 ? 'warning' : 'muted'}
-                className="group-hover:border-accent"
+                className="group-hover:border-palette-accent"
               />
             </Link>
           </>
@@ -341,7 +341,7 @@ export default function OverviewPage() {
           </div>
           <Link
             to="/cases"
-            className="text-body-sm text-ink dark:text-accent hover:underline font-bold inline-flex items-center gap-1"
+            className="text-body-sm text-palette-ink dark:text-palette-accent hover:underline font-bold inline-flex items-center gap-1"
           >
             View All Cases <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>

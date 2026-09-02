@@ -179,7 +179,7 @@ export default function RecoveryCasesPage() {
                         ? `${(c.recoveryProbability * 100).toFixed(0)}%`
                         : <span className="text-theme-muted text-caption">Pending</span>}
                     </td>
-                    <td className="fintech-table-td text-ink font-mono text-caption font-semibold">
+                    <td className="fintech-table-td text-palette-ink font-mono text-caption font-semibold">
                       {c.latestRecommendation?.recommended_action || '—'}
                     </td>
                     <td className="fintech-table-td">

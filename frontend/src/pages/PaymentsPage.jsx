@@ -130,7 +130,7 @@ export default function PaymentsPage() {
                     <td className="fintech-table-td text-right">
                       <Link
                         to="/cases"
-                        className="inline-flex items-center space-x-1 text-body-sm text-ink dark:text-accent font-bold hover:underline"
+                        className="inline-flex items-center space-x-1 text-body-sm text-palette-ink dark:text-palette-accent font-bold hover:underline"
                       >
                         <Layers className="w-3.5 h-3.5" />
                         <span>Cases</span>

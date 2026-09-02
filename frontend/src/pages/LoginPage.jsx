@@ -74,14 +74,14 @@ export default function LoginPage() {
       <div className="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-12 gap-space-8 relative z-10 items-center">
         {/* Left Column: Brand & Feature Highlights */}
         <div className="lg:col-span-6 space-y-space-6 text-left">
-          <div className="inline-flex items-center space-x-2 px-space-3 py-1 rounded-radius-full bg-accent text-ink text-caption font-bold border border-accent-hover/40 shadow-theme-sm">
+          <div className="inline-flex items-center space-x-2 px-space-3 py-1 rounded-radius-full bg-palette-accent text-palette-ink text-caption font-bold border border-palette-accent-hover/40 shadow-theme-sm">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Razorpay AI Buildathon 2026</span>
           </div>
 
           <div className="space-y-space-3">
             <div className="flex items-center space-x-3">
-              <div className="p-2.5 bg-ink text-theme-base rounded-radius-sm shadow-theme-sm">
+              <div className="p-2.5 bg-palette-ink text-theme-base rounded-radius-sm shadow-theme-sm">
                 <ShieldCheck className="w-7 h-7" />
               </div>
               <div>
@@ -98,7 +98,7 @@ export default function LoginPage() {
           <div className="space-y-space-3 pt-space-2">
             {highlights.map((h, i) => (
               <div key={i} className="flex items-start space-x-3 p-space-3 rounded-radius-lg bg-theme-surface border border-theme-border-subtle shadow-theme-sm">
-                <div className="p-1 rounded-radius-sm bg-mint text-ink mt-0.5">
+                <div className="p-1 rounded-radius-sm bg-palette-mint text-palette-ink mt-0.5">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                 </div>
                 <div>
@@ -119,9 +119,9 @@ export default function LoginPage() {
         {/* Right Column: Fast Track & Auth Form */}
         <div className="lg:col-span-6 space-y-space-4">
           {/* Judge & Reviewer 1-Click Fast Track Card */}
-          <div className="bg-semantic-warning-bg dark:bg-theme-surface border border-accent rounded-radius-lg p-space-6 shadow-theme-md space-y-space-3 relative overflow-hidden">
-            <div className="flex items-center space-x-2 text-caption font-bold text-ink">
-              <Zap className="w-4 h-4 text-ink" />
+          <div className="bg-badge-warning-bg dark:bg-theme-surface border border-palette-accent rounded-radius-lg p-space-6 shadow-theme-md space-y-space-3 relative overflow-hidden">
+            <div className="flex items-center space-x-2 text-caption font-bold text-palette-ink">
+              <Zap className="w-4 h-4 text-palette-ink" />
               <span>Judge & Evaluator Fast Track</span>
             </div>
             <p className="text-body-sm text-theme-secondary leading-relaxed">
@@ -148,14 +148,14 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => { setIsRegister(!isRegister); setError(null); }}
-                className="text-body-sm text-ink dark:text-accent hover:underline font-bold transition"
+                className="text-body-sm text-palette-ink dark:text-palette-accent hover:underline font-bold transition"
               >
                 {isRegister ? 'Have an account? Log in' : 'Need an account? Register'}
               </button>
             </div>
 
             {error && (
-              <div className="p-space-3 rounded-radius-sm bg-semantic-danger-bg border border-semantic-danger/40 text-semantic-danger text-body-sm font-semibold">
+              <div className="p-space-3 rounded-radius-sm bg-badge-danger-bg border border-badge-danger-text/40 text-badge-danger-text text-body-sm font-semibold">
                 {error}
               </div>
             )}

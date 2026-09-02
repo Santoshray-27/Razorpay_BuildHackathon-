@@ -22,7 +22,7 @@ export function Modal({ isOpen, onClose, title, description, children, className
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-space-4 bg-black/60 backdrop-blur-sm animate-fade-in">
       <div
-        className={`bg-theme-surface border border-theme-border-default rounded-radius-xl max-w-lg w-full p-space-6 shadow-theme-lg animate-slide-up space-y-space-4 relative ${className}`}
+        className={`bg-theme-surface border border-palette-surface-alt rounded-radius-xl max-w-lg w-full p-space-6 shadow-theme-lg animate-slide-up space-y-space-4 relative ${className}`}
         role="dialog"
         aria-modal="true"
       >

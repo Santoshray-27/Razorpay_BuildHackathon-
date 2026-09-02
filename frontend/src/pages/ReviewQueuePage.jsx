@@ -115,7 +115,7 @@ export default function ReviewQueuePage() {
             <Card key={c._id} className="border-t-2 border-t-accent p-space-6 space-y-space-4 shadow-theme-sm">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-3 border-b border-theme-border-subtle pb-space-3">
                 <div className="flex items-center space-x-3">
-                  <div className="p-2.5 bg-semantic-warning-bg text-semantic-warning border border-accent/40 rounded-radius-sm">
+                  <div className="p-2.5 bg-badge-warning-bg text-badge-warning-text border border-palette-accent/40 rounded-radius-sm">
                     <UserCheck className="w-5 h-5" />
                   </div>
                   <div>
@@ -131,17 +131,17 @@ export default function ReviewQueuePage() {
 
                 <div className="text-right">
                   <span className="text-caption text-theme-muted uppercase tracking-wider">Amount at Risk:</span>
-                  <p className="text-h2 font-bold text-ink font-mono num-tabular">
+                  <p className="text-h2 font-bold text-palette-ink font-mono num-tabular">
                     {formatCurrency(c.amountAtRiskPaise)}
                   </p>
                 </div>
               </div>
 
               {/* Escalation details summary */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-space-4 text-body-sm bg-theme-surface dark:bg-theme-elevated p-space-4 rounded-radius-md border border-theme-border-default">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-space-4 text-body-sm bg-theme-surface dark:bg-theme-elevated p-space-4 rounded-radius-md border border-palette-surface-alt">
                 <div>
                   <span className="text-theme-muted text-caption font-semibold">AI Recommended Strategy:</span>
-                  <p className="font-mono font-bold text-ink mt-0.5">
+                  <p className="font-mono font-bold text-palette-ink mt-0.5">
                     {c.latestRecommendation?.recommended_action || 'HUMAN_REVIEW'}
                   </p>
                 </div>
@@ -163,7 +163,7 @@ export default function ReviewQueuePage() {
               <div className="flex flex-wrap items-center justify-between gap-space-3 pt-1">
                 <Link
                   to={`/cases/${c._id}`}
-                  className="text-body-sm text-ink dark:text-accent hover:underline font-bold flex items-center gap-1"
+                  className="text-body-sm text-palette-ink dark:text-palette-accent hover:underline font-bold flex items-center gap-1"
                 >
                   <span>Inspect Full Audit History</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />

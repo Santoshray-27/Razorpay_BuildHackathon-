@@ -26,17 +26,17 @@ export function Button({
 }) {
   const variantStyles = {
     primary:
-      'bg-ink text-theme-base hover:bg-brand-hover border border-transparent shadow-theme-sm focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2',
+      'bg-palette-ink text-theme-base hover:bg-brand-hover border border-transparent shadow-theme-sm focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-2',
     secondary:
-      'bg-theme-surface text-ink hover:bg-theme-elevated border border-theme-border-default shadow-theme-sm focus-visible:ring-2 focus-visible:ring-ink/20 focus-visible:ring-offset-2',
+      'bg-theme-surface text-palette-ink hover:bg-theme-elevated border border-palette-surface-alt shadow-theme-sm focus-visible:ring-2 focus-visible:ring-ink/20 focus-visible:ring-offset-2',
     accent:
-      'bg-accent text-ink hover:bg-accent-hover border border-transparent shadow-theme-sm focus-visible:ring-2 focus-visible:ring-ink/30 focus-visible:ring-offset-2 font-bold',
+      'bg-palette-accent text-palette-ink hover:bg-palette-accent-hover border border-transparent shadow-theme-sm focus-visible:ring-2 focus-visible:ring-ink/30 focus-visible:ring-offset-2 font-bold',
     outline:
-      'bg-transparent border border-theme-border-default text-theme-primary hover:bg-theme-elevated hover:border-theme-border-default focus-visible:ring-2 focus-visible:ring-ink/20 focus-visible:ring-offset-2',
+      'bg-transparent border border-palette-surface-alt text-theme-primary hover:bg-theme-elevated hover:border-palette-surface-alt focus-visible:ring-2 focus-visible:ring-ink/20 focus-visible:ring-offset-2',
     success:
-      'bg-semantic-success-bg text-semantic-success hover:bg-semantic-success hover:text-white border border-semantic-success/40 shadow-theme-sm focus-visible:ring-2 focus-visible:ring-ink/20 focus-visible:ring-offset-2 font-semibold transition-colors',
+      'bg-badge-success-bg text-badge-success-text hover:bg-badge-success-text hover:text-white border border-badge-success-text/40 shadow-theme-sm focus-visible:ring-2 focus-visible:ring-ink/20 focus-visible:ring-offset-2 font-semibold transition-colors',
     danger:
-      'bg-semantic-danger-bg border border-semantic-danger/40 text-semantic-danger hover:bg-semantic-danger hover:text-white focus-visible:ring-2 focus-visible:ring-semantic-danger/40 focus-visible:ring-offset-2 font-semibold transition-colors',
+      'bg-badge-danger-bg border border-badge-danger-text/40 text-badge-danger-text hover:bg-badge-danger-text hover:text-white focus-visible:ring-2 focus-visible:ring-semantic-danger/40 focus-visible:ring-offset-2 font-semibold transition-colors',
     ghost:
       'bg-transparent text-theme-secondary hover:bg-theme-elevated hover:text-theme-primary border border-transparent focus-visible:ring-2 focus-visible:ring-ink/20'
   };

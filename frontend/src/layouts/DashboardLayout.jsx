@@ -97,19 +97,19 @@ export default function DashboardLayout() {
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-ink flex flex-col shrink-0 z-50 transition-transform duration-300 md:translate-x-0 ${
+        className={`fixed md:sticky top-0 left-0 h-screen w-64 bg-palette-ink flex flex-col shrink-0 z-50 transition-transform duration-300 md:translate-x-0 ${
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Brand Header */}
         <div className="p-space-6 border-b border-white/10 flex items-center space-x-3">
-          <div className="p-2 bg-accent text-ink rounded-radius-sm shadow-theme-sm">
+          <div className="p-2 bg-palette-accent text-palette-ink rounded-radius-sm shadow-theme-sm">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
             <h1 className="text-h3 font-bold text-white tracking-tight flex items-center gap-1.5">
               RazorRecover
-              <span className="text-caption px-1.5 py-0.5 rounded-radius-full bg-mint text-ink font-mono font-bold">
+              <span className="text-caption px-1.5 py-0.5 rounded-radius-full bg-palette-mint text-palette-ink font-mono font-bold">
                 v1.1
               </span>
             </h1>
@@ -134,12 +134,12 @@ export default function DashboardLayout() {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`relative flex items-center justify-between px-space-4 py-2.5 rounded-radius-sm text-body-sm font-medium transition-all duration-150 ${
                   isActive
-                    ? 'bg-white/10 text-white font-bold shadow-theme-sm before:absolute before:left-0 before:top-2 before:bottom-2 before:w-[3px] before:bg-accent before:rounded-r'
+                    ? 'bg-white/10 text-white font-bold shadow-theme-sm before:absolute before:left-0 before:top-2 before:bottom-2 before:w-[3px] before:bg-palette-accent before:rounded-r'
                     : 'text-white/60 hover:bg-white/5 hover:text-white'
                 }`}
               >
                 <div className="flex items-center space-x-3">
-                  <Icon className={`w-[18px] h-[18px] ${isActive ? 'text-accent' : 'text-white/60'}`} />
+                  <Icon className={`w-[18px] h-[18px] ${isActive ? 'text-palette-accent' : 'text-white/60'}`} />
                   <span>{item.label}</span>
                 </div>
                 {isActive && <ChevronRight className="w-3.5 h-3.5 text-white/70" />}
@@ -151,8 +151,8 @@ export default function DashboardLayout() {
         {/* Judge Quick Demo Action Card */}
         <div className="p-space-4 border-t border-white/10 space-y-space-3">
           <div className="bg-white/5 p-space-4 rounded-radius-md border border-white/10 space-y-space-2 shadow-theme-sm">
-            <div className="flex items-center space-x-1.5 text-caption font-bold text-accent">
-              <Zap className="w-3.5 h-3.5 text-accent" />
+            <div className="flex items-center space-x-1.5 text-caption font-bold text-palette-accent">
+              <Zap className="w-3.5 h-3.5 text-palette-accent" />
               <span>Judge Quick Demo</span>
             </div>
             <p className="text-caption text-white/70 leading-relaxed">
@@ -179,7 +179,7 @@ export default function DashboardLayout() {
             <button
               onClick={logout}
               title="Sign Out"
-              className="p-2 text-white/50 hover:text-semantic-danger hover:bg-white/10 rounded-radius-sm transition"
+              className="p-2 text-white/50 hover:text-badge-danger-text hover:bg-white/10 rounded-radius-sm transition"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -190,7 +190,7 @@ export default function DashboardLayout() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header Bar */}
-        <header className="h-16 bg-theme-base border-b border-theme-border-default px-space-6 flex items-center justify-between sticky top-0 z-40 shadow-theme-sm">
+        <header className="h-16 bg-theme-base border-b border-palette-surface-alt px-space-6 flex items-center justify-between sticky top-0 z-40 shadow-theme-sm">
           <div className="flex items-center space-x-3">
             <span className="text-caption text-theme-secondary hidden lg:inline">
               Core Principle: <strong className="text-theme-primary">"AI recommends. Backend policy decides."</strong>
@@ -212,9 +212,9 @@ export default function DashboardLayout() {
 
         {/* Global Toast Alert */}
         {toastMessage && (
-          <div className="bg-ink text-white text-body-sm font-medium px-space-6 py-space-3 flex items-center justify-between animate-fade-in shadow-theme-md">
+          <div className="bg-palette-ink text-white text-body-sm font-medium px-space-6 py-space-3 flex items-center justify-between animate-fade-in shadow-theme-md">
             <div className="flex items-center space-x-2">
-              <Sparkles className="w-4 h-4 shrink-0 text-accent" />
+              <Sparkles className="w-4 h-4 shrink-0 text-palette-accent" />
               <span>{toastMessage}</span>
             </div>
             <button

@@ -108,9 +108,9 @@ export default function SimulatorPage() {
           </p>
         </div>
 
-        <div className="text-caption text-theme-muted bg-theme-surface px-space-4 py-space-2 rounded-radius-sm border border-theme-border-default font-mono">
+        <div className="text-caption text-theme-muted bg-theme-surface px-space-4 py-space-2 rounded-radius-sm border border-palette-surface-alt font-mono">
           <span>Cost Control: </span>
-          <strong className="text-ink font-bold">Trained ML Model + Policy Proxy</strong>
+          <strong className="text-palette-ink font-bold">Trained ML Model + Policy Proxy</strong>
         </div>
       </div>
 
@@ -118,7 +118,7 @@ export default function SimulatorPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center space-x-2">
-            <Cpu className="w-4 h-4 text-ink" />
+            <Cpu className="w-4 h-4 text-palette-ink" />
             <CardTitle>Simulation Configuration</CardTitle>
           </div>
           <Badge variant="neutral">Mulberry32 PRNG</Badge>
@@ -151,7 +151,7 @@ export default function SimulatorPage() {
             <div>
               <div className="flex justify-between items-center mb-space-1">
                 <label className="text-body-sm font-semibold text-theme-primary">Payment Failure Rate</label>
-                <span className="font-mono text-ink font-bold">{failureRate}%</span>
+                <span className="font-mono text-palette-ink font-bold">{failureRate}%</span>
               </div>
               <input
                 type="range"
@@ -159,7 +159,7 @@ export default function SimulatorPage() {
                 max="40"
                 value={failureRate}
                 onChange={(e) => setFailureRate(e.target.value)}
-                className="w-full mt-2 accent-ink cursor-pointer"
+                className="w-full mt-2 accent-palette-ink cursor-pointer"
               />
             </div>
           </div>
@@ -223,7 +223,7 @@ export default function SimulatorPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center space-x-2">
-                <BarChart3 className="w-4 h-4 text-ink" />
+                <BarChart3 className="w-4 h-4 text-palette-ink" />
                 <CardTitle>Revenue Recovered by Strategy (₹ INR)</CardTitle>
               </div>
               <Badge variant="info">Same Population & Seed ({seed})</Badge>
@@ -286,23 +286,23 @@ export default function SimulatorPage() {
                         className={isAi ? 'bg-theme-surface/80 font-bold' : 'hover:bg-theme-surface/40'}
                       >
                         <td className="fintech-table-td font-sans font-semibold text-theme-primary flex items-center space-x-2">
-                          {isAi && <Sparkles className="w-3.5 h-3.5 text-ink" />}
+                          {isAi && <Sparkles className="w-3.5 h-3.5 text-palette-ink" />}
                           <span>{strat.displayName}</span>
                         </td>
-                        <td className={`fintech-table-td font-bold num-tabular ${isAi ? 'text-ink' : 'text-theme-primary'}`}>
+                        <td className={`fintech-table-td font-bold num-tabular ${isAi ? 'text-palette-ink' : 'text-theme-primary'}`}>
                           {formatCurrency(strat.recoveredRevenuePaise)}
                         </td>
-                        <td className={`fintech-table-td font-bold ${isAi ? 'text-ink' : 'text-theme-secondary'}`}>
+                        <td className={`fintech-table-td font-bold ${isAi ? 'text-palette-ink' : 'text-theme-secondary'}`}>
                           {strat.recoveryRate}%
                         </td>
-                        <td className="fintech-table-td text-ink font-bold">
+                        <td className="fintech-table-td text-palette-ink font-bold">
                           {strat.incrementalLiftPercentage > 0 ? `+${strat.incrementalLiftPercentage}%` : '—'}
                         </td>
                         <td className="fintech-table-td text-theme-secondary">{strat.totalActionsTaken}</td>
-                        <td className="fintech-table-td text-ink font-semibold">{strat.humanReviewCount}</td>
+                        <td className="fintech-table-td text-palette-ink font-semibold">{strat.humanReviewCount}</td>
                         <td className="fintech-table-td text-theme-muted">{strat.policyBlockCount}</td>
                         <td className="fintech-table-td">
-                          <span className={strat.optOutComplianceRate === 100 ? 'text-ink font-bold' : 'text-semantic-danger font-bold'}>
+                          <span className={strat.optOutComplianceRate === 100 ? 'text-palette-ink font-bold' : 'text-badge-danger-text font-bold'}>
                             {strat.optOutComplianceRate}%
                           </span>
                         </td>

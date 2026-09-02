@@ -19,38 +19,38 @@ export function StatCard({
   const variantConfig = {
     default: {
       topBorder: 'border-t-theme-border-default',
-      iconBg: 'bg-theme-surface text-ink border border-theme-border-default',
-      valueColor: 'text-ink'
+      iconBg: 'bg-theme-surface text-palette-ink border border-palette-surface-alt',
+      valueColor: 'text-palette-ink'
     },
     primary: {
       topBorder: 'border-t-ink',
-      iconBg: 'bg-mint text-ink border border-theme-border-default',
-      valueColor: 'text-ink'
+      iconBg: 'bg-palette-mint text-palette-ink border border-palette-surface-alt',
+      valueColor: 'text-palette-ink'
     },
     success: {
       topBorder: 'border-t-semantic-success',
-      iconBg: 'bg-semantic-success-bg text-semantic-success border border-semantic-success/40',
-      valueColor: 'text-ink'
+      iconBg: 'bg-badge-success-bg text-badge-success-text border border-badge-success-text/40',
+      valueColor: 'text-palette-ink'
     },
     warning: {
       topBorder: 'border-t-accent',
-      iconBg: 'bg-accent-bg text-accent-hover border border-accent/40',
-      valueColor: 'text-ink'
+      iconBg: 'bg-palette-accent-bg text-palette-accent-hover border border-palette-accent/40',
+      valueColor: 'text-palette-ink'
     },
     danger: {
       topBorder: 'border-t-semantic-danger',
-      iconBg: 'bg-semantic-danger-bg text-semantic-danger border border-semantic-danger/40',
-      valueColor: 'text-ink'
+      iconBg: 'bg-badge-danger-bg text-badge-danger-text border border-badge-danger-text/40',
+      valueColor: 'text-palette-ink'
     },
     info: {
       topBorder: 'border-t-mint',
-      iconBg: 'bg-mint-bg text-mint border border-mint/60',
-      valueColor: 'text-ink'
+      iconBg: 'bg-palette-mint-bg text-palette-mint border border-palette-mint/60',
+      valueColor: 'text-palette-ink'
     },
     muted: {
       topBorder: 'border-t-theme-border-subtle',
       iconBg: 'bg-theme-elevated text-theme-muted border border-theme-border-subtle',
-      valueColor: 'text-ink'
+      valueColor: 'text-palette-ink'
     }
   };
 
@@ -58,7 +58,7 @@ export function StatCard({
 
   return (
     <div
-      className={`bg-theme-surface border border-theme-border-subtle border-t-2 ${config.topBorder} rounded-radius-lg p-space-6 shadow-theme-sm transition-all duration-200 hover:shadow-theme-md hover:border-theme-border-default flex flex-col justify-between ${className}`}
+      className={`bg-theme-surface border border-theme-border-subtle border-t-2 ${config.topBorder} rounded-radius-lg p-space-6 shadow-theme-sm transition-all duration-200 hover:shadow-theme-md hover:border-palette-surface-alt flex flex-col justify-between ${className}`}
     >
       {/* Top row: Label + 36px Circular Icon */}
       <div className="flex items-center justify-between gap-2">
@@ -83,8 +83,8 @@ export function StatCard({
           <span
             className={`text-caption px-space-2 py-0.5 rounded-radius-full font-bold shrink-0 ${
               trendPositive
-                ? 'bg-semantic-success-bg text-semantic-success border border-semantic-success/40'
-                : 'bg-theme-surface text-ink border border-theme-border-default'
+                ? 'bg-badge-success-bg text-badge-success-text border border-badge-success-text/40'
+                : 'bg-theme-surface text-palette-ink border border-palette-surface-alt'
             }`}
           >
             {trend}

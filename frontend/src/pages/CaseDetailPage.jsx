@@ -135,7 +135,7 @@ export default function CaseDetailPage() {
 
   if (!caseData) {
     return (
-      <div className="py-space-12 text-center text-semantic-danger text-body">
+      <div className="py-space-12 text-center text-badge-danger-text text-body">
         Recovery case not found.
       </div>
     );
@@ -170,7 +170,7 @@ export default function CaseDetailPage() {
         </div>
 
         {actionFeedback && (
-          <div className="bg-semantic-success-bg border border-semantic-success/40 text-semantic-success text-body-sm px-space-4 py-space-2 rounded-radius-sm flex items-center space-x-2 animate-fade-in shadow-theme-sm font-semibold">
+          <div className="bg-badge-success-bg border border-badge-success-text/40 text-badge-success-text text-body-sm px-space-4 py-space-2 rounded-radius-sm flex items-center space-x-2 animate-fade-in shadow-theme-sm font-semibold">
             <Sparkles className="w-4 h-4 shrink-0" />
             <span>{actionFeedback}</span>
           </div>
@@ -181,8 +181,8 @@ export default function CaseDetailPage() {
       <Card className="p-space-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-4">
           <div className="space-y-1">
-            <div className="flex items-center space-x-2 text-caption font-bold text-ink">
-              <Sparkles className="w-4 h-4 text-ink" />
+            <div className="flex items-center space-x-2 text-caption font-bold text-palette-ink">
+              <Sparkles className="w-4 h-4 text-palette-ink" />
               <span>Interactive FinTech Pipeline Controls</span>
             </div>
             <p className="text-body-sm text-theme-muted leading-relaxed">
@@ -260,7 +260,7 @@ export default function CaseDetailPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center space-x-2">
-              <CreditCard className="w-4 h-4 text-ink" />
+              <CreditCard className="w-4 h-4 text-palette-ink" />
               <CardTitle>Payment Summary</CardTitle>
             </div>
             <Badge variant="neutral">Transaction</Badge>
@@ -268,13 +268,13 @@ export default function CaseDetailPage() {
           <CardContent className="space-y-space-3 text-body-sm">
             <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
               <span className="text-theme-muted">Amount at Risk:</span>
-              <span className="text-ink font-bold font-mono text-body num-tabular">
+              <span className="text-palette-ink font-bold font-mono text-body num-tabular">
                 {formatCurrency(caseData.amountAtRiskPaise)}
               </span>
             </div>
             <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
               <span className="text-theme-muted">Recovered Amount:</span>
-              <span className="text-ink font-bold font-mono text-body num-tabular">
+              <span className="text-palette-ink font-bold font-mono text-body num-tabular">
                 {formatCurrency(caseData.recoveredAmountPaise || 0)}
               </span>
             </div>
@@ -284,7 +284,7 @@ export default function CaseDetailPage() {
             </div>
             <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
               <span className="text-theme-muted">Failure Reason:</span>
-              <code className="text-semantic-danger font-mono font-semibold">{caseData.failureReason || 'insufficient_funds'}</code>
+              <code className="text-badge-danger-text font-mono font-semibold">{caseData.failureReason || 'insufficient_funds'}</code>
             </div>
             <div className="flex justify-between py-space-2">
               <span className="text-theme-muted">Payment Method:</span>
@@ -297,10 +297,10 @@ export default function CaseDetailPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center space-x-2">
-              <User className="w-4 h-4 text-ink" />
+              <User className="w-4 h-4 text-palette-ink" />
               <CardTitle>Customer Context (Privacy-Safe)</CardTitle>
             </div>
-            <span className="text-caption text-theme-muted font-mono bg-theme-surface px-space-2 py-0.5 rounded-radius-sm border border-theme-border-default">
+            <span className="text-caption text-theme-muted font-mono bg-theme-surface px-space-2 py-0.5 rounded-radius-sm border border-palette-surface-alt">
               NO CARD/CVV STORED
             </span>
           </CardHeader>
@@ -316,16 +316,16 @@ export default function CaseDetailPage() {
             <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
               <span className="text-theme-muted">Payment History:</span>
               <span className="text-theme-primary">
-                <strong className="text-ink font-mono">{customer.successfulPaymentsCount || 0}</strong> successful &bull; <strong className="text-ink font-mono">{customer.failedPaymentsCount || 0}</strong> failed
+                <strong className="text-palette-ink font-mono">{customer.successfulPaymentsCount || 0}</strong> successful &bull; <strong className="text-palette-ink font-mono">{customer.failedPaymentsCount || 0}</strong> failed
               </span>
             </div>
             <div className="flex justify-between py-space-2 border-b border-theme-border-subtle">
               <span className="text-theme-muted">Recent Success Rate:</span>
-              <span className="text-ink font-bold font-mono text-body">{((customer.recentSuccessRate || 0.8) * 100).toFixed(0)}%</span>
+              <span className="text-palette-ink font-bold font-mono text-body">{((customer.recentSuccessRate || 0.8) * 100).toFixed(0)}%</span>
             </div>
             <div className="flex justify-between py-space-2">
               <span className="text-theme-muted">Opted Out of Recovery:</span>
-              <span className={customer.optedOutOfRecovery ? 'text-semantic-danger font-bold' : 'text-ink font-bold'}>
+              <span className={customer.optedOutOfRecovery ? 'text-badge-danger-text font-bold' : 'text-palette-ink font-bold'}>
                 {customer.optedOutOfRecovery ? 'YES (COMMUNICATIONS BLOCKED)' : 'NO (CONSENT ACTIVE)'}
               </span>
             </div>
@@ -337,7 +337,7 @@ export default function CaseDetailPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center space-x-2.5">
-            <BrainCircuit className="w-5 h-5 text-ink" />
+            <BrainCircuit className="w-5 h-5 text-palette-ink" />
             <div>
               <CardTitle>Hybrid Intelligence Explainability Panel</CardTitle>
               <CardDescription>Deterministic ML scoring side-by-side with Generative AI advisory reasoning</CardDescription>
@@ -348,10 +348,10 @@ export default function CaseDetailPage() {
         <CardContent>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-space-6">
             {/* Left: Logistic Regression Probability Model */}
-            <div className="bg-theme-surface dark:bg-theme-elevated p-space-6 rounded-radius-md border border-theme-border-default space-y-space-4">
+            <div className="bg-theme-surface dark:bg-theme-elevated p-space-6 rounded-radius-md border border-palette-surface-alt space-y-space-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2 text-body-sm font-semibold text-theme-primary">
-                  <Cpu className="w-4 h-4 text-ink" />
+                  <Cpu className="w-4 h-4 text-palette-ink" />
                   <span>Deterministic Logistic Regression Score</span>
                 </div>
                 <Badge variant="neutral">v1.1-trained</Badge>
@@ -369,11 +369,11 @@ export default function CaseDetailPage() {
               <div className="space-y-space-2 pt-space-2 border-t border-theme-border-subtle">
                 <p className="text-caption font-semibold text-theme-muted uppercase tracking-wider">Key Feature Influences:</p>
                 <div className="space-y-1.5 text-body-sm font-mono">
-                  <div className="flex justify-between text-ink font-medium">
+                  <div className="flex justify-between text-palette-ink font-medium">
                     <span>+ Historical Success Ratio</span>
                     <span className="font-bold">+0.85</span>
                   </div>
-                  <div className="flex justify-between text-ink font-medium">
+                  <div className="flex justify-between text-palette-ink font-medium">
                     <span>+ Temporary Balance Category</span>
                     <span className="font-bold">+0.75</span>
                   </div>
@@ -386,10 +386,10 @@ export default function CaseDetailPage() {
             </div>
 
             {/* Right: Google Gemini AI Advisory */}
-            <div className="bg-theme-surface dark:bg-theme-elevated p-space-6 rounded-radius-md border border-theme-border-default space-y-space-4">
+            <div className="bg-theme-surface dark:bg-theme-elevated p-space-6 rounded-radius-md border border-palette-surface-alt space-y-space-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2 text-body-sm font-semibold text-theme-primary">
-                  <Sparkles className="w-4 h-4 text-ink" />
+                  <Sparkles className="w-4 h-4 text-palette-ink" />
                   <span>Google Gemini Strategy Advisory</span>
                 </div>
                 <Badge variant="info">Advisory Only</Badge>
@@ -399,7 +399,7 @@ export default function CaseDetailPage() {
                 <div className="space-y-space-3">
                   <div className="flex items-center justify-between">
                     <span className="text-body-sm text-theme-muted">Recommended Action:</span>
-                    <span className="text-body-sm font-bold text-ink font-mono bg-accent px-space-3 py-1 rounded-radius-sm border border-accent-hover/40">
+                    <span className="text-body-sm font-bold text-palette-ink font-mono bg-palette-accent px-space-3 py-1 rounded-radius-sm border border-palette-accent-hover/40">
                       {recommendation.recommended_action}
                       {recommendation.retry_after_hours ? ` (after ${recommendation.retry_after_hours}h)` : ''}
                     </span>
@@ -433,7 +433,7 @@ export default function CaseDetailPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center space-x-2.5">
-            <ShieldCheck className="w-5 h-5 text-ink" />
+            <ShieldCheck className="w-5 h-5 text-palette-ink" />
             <div>
               <CardTitle>Deterministic Policy Engine Decision</CardTitle>
               <CardDescription>Authoritative 15-Rule financial safety and approval boundary</CardDescription>
@@ -443,13 +443,13 @@ export default function CaseDetailPage() {
         </CardHeader>
         <CardContent>
           {policy ? (
-            <div className="bg-theme-surface dark:bg-theme-elevated p-space-6 rounded-radius-md border border-theme-border-default space-y-space-3 text-body-sm">
+            <div className="bg-theme-surface dark:bg-theme-elevated p-space-6 rounded-radius-md border border-palette-surface-alt space-y-space-3 text-body-sm">
               <div className="flex items-center justify-between">
                 <span className="text-theme-muted">Policy Decision:</span>
                 <span className={`px-space-3 py-1 rounded-radius-sm font-bold font-mono text-caption ${
-                  policy.decision === 'APPROVED' ? 'bg-semantic-success-bg text-semantic-success border border-semantic-success/40'
-                  : policy.decision === 'PENDING_APPROVAL' ? 'bg-semantic-warning-bg text-semantic-warning border border-accent/40'
-                  : 'bg-semantic-danger-bg text-semantic-danger border border-semantic-danger/40'
+                  policy.decision === 'APPROVED' ? 'bg-badge-success-bg text-badge-success-text border border-badge-success-text/40'
+                  : policy.decision === 'PENDING_APPROVAL' ? 'bg-badge-warning-bg text-badge-warning-text border border-palette-accent/40'
+                  : 'bg-badge-danger-bg text-badge-danger-text border border-badge-danger-text/40'
                 }`}>
                   {policy.decision}
                 </span>
@@ -483,7 +483,7 @@ export default function CaseDetailPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center space-x-2.5">
-            <History className="w-5 h-5 text-ink" />
+            <History className="w-5 h-5 text-palette-ink" />
             <div>
               <CardTitle>Immutable Audit Trail Timeline</CardTitle>
               <CardDescription>Write-once chronological ledger tracking every event, actor, and trace ID</CardDescription>
@@ -496,10 +496,10 @@ export default function CaseDetailPage() {
             {auditTimeline.map((item, idx) => {
               const actorDotBg = {
                 system: 'bg-theme-muted',
-                ai: 'bg-ink',
-                policy_engine: 'bg-accent',
-                human: 'bg-mint',
-                worker: 'bg-semantic-success'
+                ai: 'bg-palette-ink',
+                policy_engine: 'bg-palette-accent',
+                human: 'bg-palette-mint',
+                worker: 'bg-badge-success-text'
               };
 
               return (
@@ -510,14 +510,14 @@ export default function CaseDetailPage() {
                   <div className="flex items-center justify-between text-body-sm">
                     <div className="flex items-center space-x-2">
                       <span className="font-mono font-bold text-theme-primary">{item.eventType}</span>
-                      <span className="text-caption px-space-2 py-0.5 rounded-radius-sm uppercase font-mono bg-theme-surface text-theme-secondary border border-theme-border-default">
+                      <span className="text-caption px-space-2 py-0.5 rounded-radius-sm uppercase font-mono bg-theme-surface text-theme-secondary border border-palette-surface-alt">
                         {item.actor}
                       </span>
                     </div>
                     <span className="text-caption text-theme-muted font-mono">{formatDate(item.createdAt)}</span>
                   </div>
 
-                  <p className="text-body-sm text-theme-secondary leading-relaxed bg-theme-surface/50 dark:bg-theme-elevated/40 p-space-3 rounded-radius-md border border-theme-border-default">
+                  <p className="text-body-sm text-theme-secondary leading-relaxed bg-theme-surface/50 dark:bg-theme-elevated/40 p-space-3 rounded-radius-md border border-palette-surface-alt">
                     {item.message}
                   </p>
 

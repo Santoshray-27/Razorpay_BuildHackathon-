@@ -1,39 +1,56 @@
 /**
  * frontend/src/context/AuthContext.jsx
- * Authentication state provider with auto-token management and 1-click Demo credentials login.
+ * Authentication state provider with auto-token management, session restoration,
+ * and 1-click Demo credentials login.
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { apiClient } from '../api/client';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('razorrecover_token'));
+  const [token, setToken] = useState(() => {
+    return typeof window !== 'undefined' ? localStorage.getItem('razorrecover_token') : null;
+  });
   const [loading, setLoading] = useState(true);
 
-  // Fetch current user on startup if token exists
-  useEffect(() => {
-    async function loadUser() {
-      if (!token) {
-        setUser(null);
-        setLoading(false);
-        return;
-      }
-      try {
-        const res = await apiClient.get('/auth/me');
-        setUser(res.data.data.user);
-      } catch (err) {
-        localStorage.removeItem('razorrecover_token');
-        setToken(null);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
+  const loadUser = useCallback(async (currentToken) => {
+    if (!currentToken) {
+      setUser(null);
+      setLoading(false);
+      return;
     }
-    loadUser();
-  }, [token]);
+    try {
+      const res = await apiClient.get('/auth/me');
+      setUser(res.data.data.user);
+    } catch (err) {
+      localStorage.removeItem('razorrecover_token');
+      setToken(null);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Fetch current user on startup or when token changes
+  useEffect(() => {
+    loadUser(token);
+  }, [token, loadUser]);
+
+  // Listen for unauthorized 401 events dispatched by API client
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      setToken(null);
+      setUser(null);
+      setLoading(false);
+    };
+    if (typeof window !== 'undefined') {
+      window.addEventListener('auth:unauthorized', handleUnauthorized);
+      return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    }
+  }, []);
 
   const login = async (email, password) => {
     const res = await apiClient.post('/auth/login', { email, password });

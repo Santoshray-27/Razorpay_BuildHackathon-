@@ -20,6 +20,7 @@ import { StatusBadge, RiskBadge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { TableSkeleton } from '../components/ui/Skeleton';
 import { EmptyState } from '../components/ui/EmptyState';
+import { ErrorState } from '../components/ui/ErrorState';
 
 export default function RecoveryCasesPage() {
   const [cases, setCases] = useState([]);
@@ -28,9 +29,11 @@ export default function RecoveryCasesPage() {
   const [riskFilter, setRiskFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchCases = async (page = 1) => {
     setLoading(true);
+    setError(null);
     try {
       const res = await apiClient.get('/recovery/cases', {
         params: {
@@ -43,7 +46,7 @@ export default function RecoveryCasesPage() {
       setCases(res.data.data.cases || []);
       setPagination(res.data.data.pagination || { page: 1, limit: 15, total: 0, pages: 1 });
     } catch (err) {
-      console.error('Failed to load recovery cases', err);
+      setError(err.response?.data?.error?.message || err.message || 'Failed to load recovery cases.');
     } finally {
       setLoading(false);
     }
@@ -135,6 +138,14 @@ export default function RecoveryCasesPage() {
           </span>
         </div>
       </Card>
+
+      {error && cases.length === 0 && (
+        <ErrorState
+          title="Failed to Load Recovery Cases"
+          message={error}
+          onRetry={() => fetchCases(pagination.page)}
+        />
+      )}
 
       {/* Cases Table */}
       <Card className="overflow-hidden">

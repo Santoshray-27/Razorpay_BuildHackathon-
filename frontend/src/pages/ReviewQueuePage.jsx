@@ -22,11 +22,13 @@ import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { EmptyState } from '../components/ui/EmptyState';
 import { TableSkeleton } from '../components/ui/Skeleton';
+import { ErrorState } from '../components/ui/ErrorState';
 
 export default function ReviewQueuePage() {
   const { user } = useAuth();
   const [pendingCases, setPendingCases] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
 
   // Modal State
@@ -39,11 +41,12 @@ export default function ReviewQueuePage() {
 
   const fetchPendingCases = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await apiClient.get('/recovery/pending-approvals');
       setPendingCases(res.data.data.cases || []);
     } catch (err) {
-      console.error('Failed to load pending approvals', err);
+      setError(err.response?.data?.error?.message || err.message || 'Failed to load pending approvals.');
     } finally {
       setLoading(false);
     }
@@ -105,6 +108,14 @@ export default function ReviewQueuePage() {
           Refresh Queue
         </Button>
       </div>
+
+      {error && pendingCases.length === 0 && (
+        <ErrorState
+          title="Failed to Load Review Queue"
+          message={error}
+          onRetry={fetchPendingCases}
+        />
+      )}
 
       {/* Review Queue Cards */}
       <div className="space-y-space-4">

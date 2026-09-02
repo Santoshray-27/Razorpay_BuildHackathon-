@@ -40,6 +40,7 @@ import { StatCardSkeleton, TableSkeleton } from '../components/ui/Skeleton';
 import { StatusBadge, RiskBadge, Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { EmptyState } from '../components/ui/EmptyState';
+import { ErrorState } from '../components/ui/ErrorState';
 
 const PIPELINE_STAGES = [
   { stage: 'Detected', key: 'detected' },
@@ -55,9 +56,11 @@ export default function OverviewPage() {
   const [rawFunnel, setRawFunnel] = useState([]);
   const [strategies, setStrategies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchDashboardData = async () => {
     setLoading(true);
+    setError(null);
     try {
       const [ovRes, failRes, funRes, stratRes] = await Promise.all([
         apiClient.get('/analytics/overview'),
@@ -71,7 +74,7 @@ export default function OverviewPage() {
       setRawFunnel(funRes.data.data.funnel || []);
       setStrategies(stratRes.data.data.strategies || []);
     } catch (err) {
-      console.error('Failed to load dashboard analytics', err);
+      setError(err.response?.data?.error?.message || err.message || 'Unable to connect to recovery analytics server.');
     } finally {
       setLoading(false);
     }
@@ -148,6 +151,14 @@ export default function OverviewPage() {
           </Link>
         </div>
       </div>
+
+      {error && !overview && (
+        <ErrorState
+          title="Dashboard Telemetry Unavailable"
+          message={error}
+          onRetry={fetchDashboardData}
+        />
+      )}
 
       {/* 6 High-Impact StatCards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-space-4">

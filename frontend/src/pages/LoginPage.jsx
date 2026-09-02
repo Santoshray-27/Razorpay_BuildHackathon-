@@ -1,10 +1,11 @@
 /**
  * frontend/src/pages/LoginPage.jsx
- * Production-grade FinTech authentication page with Light-First design tokens
- * and 1-click Demo Merchant Login for evaluators.
+ * Production-grade FinTech authentication page with Light-First design tokens,
+ * immediate /dashboard redirection upon authentication, and 1-click Demo Merchant Login.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   ShieldCheck,
@@ -14,13 +15,17 @@ import {
   Mail,
   User,
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  AlertCircle
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 
 export default function LoginPage() {
-  const { login, register, demoLogin } = useAuth();
-  const [isRegister, setIsRegister] = useState(false);
+  const { user, token, loading: authLoading, login, register, demoLogin } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [isRegister, setIsRegister] = useState(location.pathname === '/register');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,8 +33,18 @@ export default function LoginPage() {
   const [demoLoading, setDemoLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  useEffect(() => {
+    setIsRegister(location.pathname === '/register');
+  }, [location.pathname]);
+
+  // If already authenticated and not loading, redirect directly to dashboard
+  if (token && !authLoading) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading || demoLoading) return;
     setLoading(true);
     setError(null);
     try {
@@ -38,20 +53,23 @@ export default function LoginPage() {
       } else {
         await login(email, password);
       }
+      navigate('/dashboard', { replace: true });
     } catch (err) {
-      setError(err.response?.data?.error?.message || err.message || 'Authentication failed');
+      setError(err.response?.data?.error?.message || err.message || 'Authentication failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleDemoSignIn = async () => {
+    if (loading || demoLoading) return;
     setDemoLoading(true);
     setError(null);
     try {
       await demoLogin('merchant_admin');
+      navigate('/dashboard', { replace: true });
     } catch (err) {
-      setError(err.response?.data?.error?.message || err.message || 'Demo login failed');
+      setError(err.response?.data?.error?.message || err.message || 'Demo login failed. Please try again.');
     } finally {
       setDemoLoading(false);
     }
@@ -125,11 +143,12 @@ export default function LoginPage() {
               variant="accent"
               size="lg"
               loading={demoLoading}
+              disabled={loading || demoLoading}
               icon={ArrowRight}
               onClick={handleDemoSignIn}
               className="w-full text-body font-bold"
             >
-              Sign In as Demo Merchant Admin
+              {demoLoading ? 'Signing In to Dashboard...' : 'Sign In as Demo Merchant Admin'}
             </Button>
           </div>
 
@@ -141,7 +160,12 @@ export default function LoginPage() {
               </h2>
               <button
                 type="button"
-                onClick={() => { setIsRegister(!isRegister); setError(null); }}
+                onClick={() => {
+                  const nextState = !isRegister;
+                  setIsRegister(nextState);
+                  setError(null);
+                  navigate(nextState ? '/register' : '/login', { replace: true });
+                }}
                 className="text-body-sm text-palette-ink hover:underline font-bold transition"
               >
                 {isRegister ? 'Have an account? Log in' : 'Need an account? Register'}
@@ -149,55 +173,62 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="p-space-3 rounded-radius-sm bg-badge-danger-bg border border-badge-danger-text/40 text-badge-danger-text text-body-sm font-semibold">
-                {error}
+              <div className="p-space-3 rounded-radius-md bg-badge-danger-bg border border-palette-danger text-badge-danger-text text-body-sm flex items-start space-x-2 animate-fade-in">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-badge-danger-text" />
+                <span>{error}</span>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-space-4">
               {isRegister && (
                 <div>
-                  <label className="block text-body-sm font-semibold text-theme-primary mb-space-1">Merchant / Owner Name</label>
+                  <label className="block text-caption font-semibold text-theme-secondary mb-1">
+                    Merchant Full Name
+                  </label>
                   <div className="relative">
                     <User className="w-4 h-4 text-theme-muted absolute left-3.5 top-3" />
                     <input
                       type="text"
                       required
+                      placeholder="e.g. Rahul Sharma"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="Santosh Ray"
-                      className="fintech-input w-full pl-9 text-body-sm"
+                      className="fintech-input w-full pl-10"
                     />
                   </div>
                 </div>
               )}
 
               <div>
-                <label className="block text-body-sm font-semibold text-theme-primary mb-space-1">Email Address</label>
+                <label className="block text-caption font-semibold text-theme-secondary mb-1">
+                  Email Address
+                </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-theme-muted absolute left-3.5 top-3" />
                   <input
                     type="email"
                     required
+                    placeholder="merchant@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="merchant@example.com"
-                    className="fintech-input w-full pl-9 text-body-sm"
+                    className="fintech-input w-full pl-10"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-body-sm font-semibold text-theme-primary mb-space-1">Password</label>
+                <label className="block text-caption font-semibold text-theme-secondary mb-1">
+                  Password
+                </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-theme-muted absolute left-3.5 top-3" />
                   <input
                     type="password"
                     required
+                    placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="fintech-input w-full pl-9 text-body-sm"
+                    className="fintech-input w-full pl-10"
                   />
                 </div>
               </div>
@@ -205,11 +236,12 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 variant="primary"
-                size="md"
+                size="lg"
                 loading={loading}
-                className="w-full text-body-sm font-bold"
+                disabled={loading || demoLoading}
+                className="w-full text-body font-bold mt-space-2"
               >
-                {isRegister ? 'Register Merchant' : 'Sign In with Credentials'}
+                {loading ? 'Authenticating...' : isRegister ? 'Create Merchant Account' : 'Sign In to Merchant Portal'}
               </Button>
             </form>
           </div>

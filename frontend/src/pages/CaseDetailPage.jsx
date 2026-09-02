@@ -25,22 +25,33 @@ import {
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import { StatusBadge, RiskBadge, Badge, ExecutionModeBadge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
+import { Modal } from '../components/ui/Modal';
+import { ErrorState } from '../components/ui/ErrorState';
 
 export default function CaseDetailPage() {
   const { id } = useParams();
   const { user } = useAuth();
   const [caseData, setCaseData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [actionFeedback, setActionFeedback] = useState(null);
 
+  // Modal State for Human Review
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    type: 'approve', // 'approve' | 'reject'
+    reason: ''
+  });
+
   const fetchCaseDetails = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await apiClient.get(`/recovery/${id}`);
       setCaseData(res.data.data.recoveryCase);
     } catch (err) {
-      console.error('Failed to load case details', err);
+      setError(err.response?.data?.error?.message || err.message || 'Failed to load recovery case details.');
     } finally {
       setLoading(false);
     }
@@ -52,6 +63,7 @@ export default function CaseDetailPage() {
 
   // Workflow Actions
   const runAiAnalysis = async () => {
+    if (actionLoading) return;
     setActionLoading(true);
     try {
       const res = await apiClient.post(`/recovery/${id}/analyze`);
@@ -66,6 +78,7 @@ export default function CaseDetailPage() {
   };
 
   const evaluatePolicy = async () => {
+    if (actionLoading) return;
     setActionLoading(true);
     try {
       const res = await apiClient.post(`/recovery/${id}/evaluate-policy`);
@@ -79,6 +92,7 @@ export default function CaseDetailPage() {
   };
 
   const executeAction = async () => {
+    if (actionLoading) return;
     setActionLoading(true);
     try {
       const res = await apiClient.post(`/recovery/${id}/execute`);
@@ -91,31 +105,31 @@ export default function CaseDetailPage() {
     }
   };
 
-  const approveCase = async () => {
-    const reason = prompt('Enter approval justification for audit log:', 'Operator verified customer VIP status and approved retry');
-    if (reason === null) return;
-    setActionLoading(true);
-    try {
-      await apiClient.post(`/recovery/${id}/approve`, { reason });
-      setActionFeedback('👤 Case approved by operator. Eligible for scheduling.');
-      await fetchCaseDetails();
-    } catch (err) {
-      alert(`Approval failed: ${err.response?.data?.error?.message || err.message}`);
-    } finally {
-      setActionLoading(false);
-    }
+  const openActionModal = (type) => {
+    setModalState({
+      isOpen: true,
+      type,
+      reason: type === 'approve'
+        ? 'Operator verified customer VIP status and approved recovery retry'
+        : 'Operator rejected recovery action'
+    });
   };
 
-  const rejectCase = async () => {
-    const reason = prompt('Enter rejection reason for audit log:', 'Rejected by merchant operator');
-    if (reason === null) return;
+  const submitModalAction = async () => {
+    if (!modalState.reason.trim() || actionLoading) return;
     setActionLoading(true);
     try {
-      await apiClient.post(`/recovery/${id}/reject`, { reason });
-      setActionFeedback('🛑 Case stopped by operator.');
+      if (modalState.type === 'approve') {
+        await apiClient.post(`/recovery/${id}/approve`, { reason: modalState.reason });
+        setActionFeedback('👤 Case approved by operator. Eligible for scheduling.');
+      } else {
+        await apiClient.post(`/recovery/${id}/reject`, { reason: modalState.reason });
+        setActionFeedback('🛑 Case stopped by operator.');
+      }
+      setModalState({ isOpen: false, type: 'approve', reason: '' });
       await fetchCaseDetails();
     } catch (err) {
-      alert(`Rejection failed: ${err.response?.data?.error?.message || err.message}`);
+      alert(`Action failed: ${err.response?.data?.error?.message || err.message}`);
     } finally {
       setActionLoading(false);
     }
@@ -235,7 +249,8 @@ export default function CaseDetailPage() {
                   size="sm"
                   icon={UserCheck}
                   loading={actionLoading}
-                  onClick={approveCase}
+                  disabled={actionLoading}
+                  onClick={() => openActionModal('approve')}
                 >
                   Approve Action
                 </Button>
@@ -244,7 +259,8 @@ export default function CaseDetailPage() {
                   size="sm"
                   icon={XCircle}
                   loading={actionLoading}
-                  onClick={rejectCase}
+                  disabled={actionLoading}
+                  onClick={() => openActionModal('reject')}
                 >
                   Reject / Stop
                 </Button>
@@ -530,6 +546,52 @@ export default function CaseDetailPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Operator Review Modal */}
+      <Modal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ ...modalState, isOpen: false })}
+        title={modalState.type === 'approve' ? 'Approve Recovery Action' : 'Reject Recovery Action'}
+        description={
+          modalState.type === 'approve'
+            ? 'Authorize scheduled recovery execution. Stamped into immutable audit ledger.'
+            : 'Stop recovery process for this payment. Case will transition to stopped.'
+        }
+      >
+        <div className="space-y-space-4">
+          <div>
+            <label className="block text-caption font-semibold text-theme-secondary mb-1">
+              Reviewer Justification Note
+            </label>
+            <textarea
+              rows={3}
+              value={modalState.reason}
+              onChange={(e) => setModalState({ ...modalState, reason: e.target.value })}
+              placeholder="Enter justification for audit log..."
+              className="fintech-input w-full h-auto py-2 text-body-sm font-sans"
+            />
+          </div>
+
+          <div className="flex justify-end space-x-3 pt-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setModalState({ ...modalState, isOpen: false })}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant={modalState.type === 'approve' ? 'accent' : 'danger'}
+              size="sm"
+              loading={actionLoading}
+              disabled={actionLoading || !modalState.reason.trim()}
+              onClick={submitModalAction}
+            >
+              {modalState.type === 'approve' ? 'Confirm Approval' : 'Confirm Rejection'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

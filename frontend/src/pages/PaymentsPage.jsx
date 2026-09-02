@@ -13,19 +13,22 @@ import { StatusBadge, ExecutionModeBadge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { TableSkeleton } from '../components/ui/Skeleton';
 import { EmptyState } from '../components/ui/EmptyState';
+import { ErrorState } from '../components/ui/ErrorState';
 
 export default function PaymentsPage() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
 
   const fetchPayments = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await apiClient.get('/payments');
       setPayments(res.data.data.payments || []);
     } catch (err) {
-      console.error('Failed to fetch payments', err);
+      setError(err.response?.data?.error?.message || err.message || 'Failed to fetch payments.');
     } finally {
       setLoading(false);
     }
@@ -79,6 +82,14 @@ export default function PaymentsPage() {
           />
         </div>
       </Card>
+
+      {error && payments.length === 0 && (
+        <ErrorState
+          title="Failed to Load Payments"
+          message={error}
+          onRetry={fetchPayments}
+        />
+      )}
 
       {/* Payments Table Card */}
       <Card className="overflow-hidden">

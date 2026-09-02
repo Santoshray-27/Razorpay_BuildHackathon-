@@ -29,16 +29,20 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../co
 import { StatCard } from '../components/ui/StatCard';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
+import { ErrorState } from '../components/ui/ErrorState';
 
 export default function SimulatorPage() {
   const [count, setCount] = useState(10000);
   const [seed, setSeed] = useState(42);
   const [failureRate, setFailureRate] = useState(18);
   const [running, setRunning] = useState(false);
+  const [error, setError] = useState(null);
   const [results, setResults] = useState(null);
 
   const runBenchmark = async () => {
+    if (running) return;
     setRunning(true);
+    setError(null);
     try {
       const res = await apiClient.post('/simulator/run', {
         count: Number(count),
@@ -47,7 +51,7 @@ export default function SimulatorPage() {
       });
       setResults(res.data.data.benchmark);
     } catch (err) {
-      alert(`Simulation benchmark failed: ${err.response?.data?.error?.message || err.message}`);
+      setError(err.response?.data?.error?.message || err.message || 'Simulation benchmark execution failed.');
     } finally {
       setRunning(false);
     }
@@ -168,6 +172,7 @@ export default function SimulatorPage() {
               size="lg"
               icon={Play}
               loading={running}
+              disabled={running}
               onClick={runBenchmark}
               className="font-bold text-body"
             >
@@ -176,6 +181,14 @@ export default function SimulatorPage() {
           </div>
         </CardContent>
       </Card>
+
+      {error && !strategies && (
+        <ErrorState
+          title="Benchmark Execution Failed"
+          message={error}
+          onRetry={runBenchmark}
+        />
+      )}
 
       {/* Benchmark Results */}
       {strategies && (

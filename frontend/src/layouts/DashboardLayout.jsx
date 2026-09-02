@@ -19,6 +19,7 @@ import {
   Sparkles,
   Zap,
   BarChart3,
+  Sliders,
   Menu,
   X,
   ChevronRight
@@ -36,6 +37,7 @@ export default function DashboardLayout() {
 
   // Quick 1-click trigger for a ₹4,999 failed payment demo
   const triggerDemoPayment = async () => {
+    if (simulating) return;
     setSimulating(true);
     try {
       const paymentId = `pay_demo_${Date.now().toString().slice(-6)}`;
@@ -58,22 +60,28 @@ export default function DashboardLayout() {
       navigate('/cases');
       setMobileMenuOpen(false);
     } catch (err) {
-      alert(`Simulation failed: ${err.message}`);
+      alert(`Simulation failed: ${err.response?.data?.error?.message || err.message}`);
     } finally {
       setSimulating(false);
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
+
   const navItems = [
-    { to: '/', label: 'Overview', icon: LayoutDashboard },
+    { to: '/dashboard', label: 'Overview', icon: LayoutDashboard },
     { to: '/cases', label: 'Recovery Cases', icon: Layers },
     { to: '/review-queue', label: 'Human Review Queue', icon: UserCheck },
     { to: '/payments', label: 'All Payments', icon: CreditCard },
-    { to: '/simulator', label: 'Simulation & Benchmark', icon: BarChart3 }
+    { to: '/simulator', label: 'Simulation & Benchmark', icon: BarChart3 },
+    { to: '/settings', label: 'Policy & Settings', icon: Sliders }
   ];
 
   return (
-    <div className="min-h-screen bg-theme-base text-theme-primary flex flex-col md:flex-row font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-theme-base text-theme-primary flex flex-col md:flex-row font-sans">
       {/* Mobile Header Bar */}
       <div className="md:hidden bg-theme-surface border-b border-theme-border-subtle px-space-4 py-space-3 flex items-center justify-between sticky top-0 z-50 shadow-theme-sm">
         <div className="flex items-center space-x-2.5">
@@ -83,10 +91,9 @@ export default function DashboardLayout() {
           <span className="font-bold text-theme-primary text-h3 tracking-tight">RazorRecover</span>
         </div>
         <div className="flex items-center space-x-2">
-          <ThemeToggle />
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-theme-secondary hover:text-theme-primary rounded-radius-sm bg-palette-surface border border-theme-border-subtle"
+            className="p-2 text-theme-secondary hover:text-theme-primary rounded-radius-sm bg-theme-surface border border-theme-border-subtle"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -123,13 +130,17 @@ export default function DashboardLayout() {
           </div>
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = item.to === '/' ? location.pathname === '/' : location.pathname.startsWith(item.to);
+            const isActive =
+              location.pathname === item.to ||
+              (item.to === '/dashboard' && (location.pathname === '/' || location.pathname === '/analytics' || location.pathname === '/overview')) ||
+              (item.to === '/review-queue' && location.pathname === '/review') ||
+              (item.to !== '/dashboard' && item.to !== '/review-queue' && location.pathname.startsWith(item.to));
 
             return (
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === '/'}
+                end={item.to === '/dashboard'}
                 onClick={() => setMobileMenuOpen(false)}
                 className={`relative flex items-center justify-between px-space-4 py-2.5 rounded-radius-sm text-body-sm font-medium transition-all duration-150 ${
                   isActive
@@ -161,11 +172,12 @@ export default function DashboardLayout() {
               size="sm"
               variant="accent"
               loading={simulating}
+              disabled={simulating}
               icon={PlusCircle}
               onClick={triggerDemoPayment}
               className="w-full text-caption font-bold"
             >
-              Simulate ₹4,999 Failure
+              {simulating ? 'Ingesting Webhook...' : 'Simulate ₹4,999 Failure'}
             </Button>
           </div>
 
@@ -176,8 +188,9 @@ export default function DashboardLayout() {
               <RoleBadge role={user?.role} />
             </div>
             <button
-              onClick={logout}
+              onClick={handleLogout}
               title="Sign Out"
+              aria-label="Sign Out"
               className="p-2 text-white/50 hover:text-badge-danger-text hover:bg-white/10 rounded-radius-sm transition"
             >
               <LogOut className="w-4 h-4" />
@@ -217,6 +230,7 @@ export default function DashboardLayout() {
             <button
               onClick={() => setToastMessage(null)}
               className="text-white/80 hover:text-white font-bold ml-4"
+              aria-label="Close notification"
             >
               ✕
             </button>

@@ -120,6 +120,58 @@ describe('Phase 6 — Deterministic Policy Engine & Human Approvals', () => {
     expect(result.scheduledAfterHours).toBe(6);
   });
 
+  // HUMAN OPERATOR AUTHORIZATION TESTS
+  test('Human Authorization: Low probability (< 0.70) with humanAuthorized=true returns APPROVED', () => {
+    const result = evaluatePolicy({
+      payment: { amountPaise: 499900 },
+      recoveryCase: { status: 'approved', retryCount: 0 },
+      customerContext: { optedOutOfRecovery: false },
+      recommendation: {
+        recommended_action: 'RETRY_LATER',
+        confidence: 0.65,
+        recovery_probability: 0.55, // Below 0.70 threshold
+        retry_after_hours: 6
+      },
+      humanAuthorized: true
+    });
+    expect(result.decision).toBe('APPROVED');
+    expect(result.triggeredRules).toContain('HUMAN_AUTHORIZATION_HONORED');
+    expect(result.finalAction).toBe('RETRY_LATER');
+  });
+
+  test('Human Authorization: Low probability (< 0.70) without humanAuthorized returns PENDING_APPROVAL', () => {
+    const result = evaluatePolicy({
+      payment: { amountPaise: 499900 },
+      recoveryCase: { status: 'recommended', retryCount: 0 },
+      customerContext: { optedOutOfRecovery: false },
+      recommendation: {
+        recommended_action: 'RETRY_LATER',
+        confidence: 0.85,
+        recovery_probability: 0.55, // Below 0.70 threshold
+        retry_after_hours: 6
+      },
+      humanAuthorized: false
+    });
+    expect(result.decision).toBe('PENDING_APPROVAL');
+    expect(result.triggeredRules).toContain('RULE_12_LOW_RECOVERY_PROBABILITY');
+  });
+
+  test('Human Authorization: Opted-out customer is still STOPPED even with humanAuthorized=true (Hard Stop)', () => {
+    const result = evaluatePolicy({
+      payment: { amountPaise: 499900 },
+      recoveryCase: { status: 'approved', retryCount: 0 },
+      customerContext: { optedOutOfRecovery: true }, // Explicit opt-out
+      recommendation: {
+        recommended_action: 'RETRY_LATER',
+        confidence: 0.85,
+        recovery_probability: 0.85
+      },
+      humanAuthorized: true
+    });
+    expect(result.decision).toBe('STOPPED');
+    expect(result.triggeredRules).toContain('RULE_3_CUSTOMER_OPTED_OUT');
+  });
+
   // INTEGRATION ENDPOINT TESTS
 
   test('POST /api/recovery/:id/evaluate-policy & POST /api/recovery/:id/approve flow', async () => {

@@ -294,6 +294,9 @@ export async function approveCase(merchantId, caseId, reviewer, reason = '', cor
   }
 
   recoveryCase.status = 'approved';
+  recoveryCase.approvedBy = reviewer.id || reviewer._id?.toString() || reviewer.name || 'operator';
+  recoveryCase.approvedAt = new Date();
+  recoveryCase.approvalReason = reason || 'Approved by operator';
   await recoveryCase.save();
 
   // Record reviewer audit log

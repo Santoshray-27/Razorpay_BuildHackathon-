@@ -5,6 +5,8 @@
 
 import * as recoveryService from '../services/recoveryService.js';
 import * as schedulingService from '../services/schedulingService.js';
+import { RecoveryCase } from '../models/RecoveryCase.js';
+import { RecoveryAction } from '../models/RecoveryAction.js';
 import { processRecoveryActionJob } from '../jobs/recoveryWorker.js';
 
 export async function listRecoveryCases(req, res, next) {
@@ -184,12 +186,47 @@ export async function scheduleCaseAction(req, res, next) {
 
 export async function executeCaseActionDirect(req, res, next) {
   try {
-    // 1. Schedule / prepare action
-    const { recoveryCase, recoveryAction } = await schedulingService.scheduleApprovedAction(
-      req.user.merchantId,
-      req.params.id,
-      req.correlationId
-    );
+    let recoveryCase = await RecoveryCase.findOne({ _id: req.params.id, merchantId: req.user.merchantId });
+    if (!recoveryCase) {
+      const error = new Error('Recovery case not found');
+      error.statusCode = 404;
+      error.code = 'RECOVERY_CASE_NOT_FOUND';
+      throw error;
+    }
+
+    if (recoveryCase.status === 'recovered') {
+      const error = new Error("Cannot execute recovery on case in terminal status 'recovered'");
+      error.statusCode = 400;
+      error.code = 'INVALID_STATUS_FOR_SCHEDULING';
+      throw error;
+    }
+
+    // 1. Schedule / prepare action if not yet scheduled
+    let recoveryAction;
+    if (recoveryCase.status !== 'scheduled') {
+      const scheduled = await schedulingService.scheduleApprovedAction(
+        req.user.merchantId,
+        req.params.id,
+        req.correlationId
+      );
+      recoveryCase = scheduled.recoveryCase;
+      recoveryAction = scheduled.recoveryAction;
+    } else {
+      recoveryAction = await RecoveryAction.findOne({
+        recoveryCaseId: recoveryCase._id,
+        status: { $in: ['scheduled', 'pending'] }
+      }).sort({ createdAt: -1 });
+
+      if (!recoveryAction) {
+        const scheduled = await schedulingService.scheduleApprovedAction(
+          req.user.merchantId,
+          req.params.id,
+          req.correlationId
+        );
+        recoveryCase = scheduled.recoveryCase;
+        recoveryAction = scheduled.recoveryAction;
+      }
+    }
 
     // 2. Direct inline execution for demo/testing without waiting for delayed background worker
     const result = await processRecoveryActionJob({

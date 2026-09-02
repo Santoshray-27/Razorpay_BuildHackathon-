@@ -6,6 +6,7 @@
 import { verifyWebhookSignature } from '../utils/crypto.js';
 import { razorpayWebhookSchema, devFixtureSchema } from '../validators/webhookValidator.js';
 import * as webhookService from '../services/webhookService.js';
+import { processStoredWebhookEvent } from '../services/paymentProcessingService.js';
 import { env } from '../config/env.js';
 import { logger } from '../observability/logger.js';
 
@@ -164,11 +165,22 @@ export async function handleDevFixture(req, res, next) {
       correlationId: req.correlationId
     });
 
+    let pipelineResult = null;
+    if (!result.isDuplicate && result.event) {
+      try {
+        pipelineResult = await processStoredWebhookEvent(result.event, req.correlationId);
+      } catch (err) {
+        logger.error('Dev fixture pipeline processing error', { error: err.message, correlationId: req.correlationId });
+      }
+    }
+
     res.status(200).json({
       success: true,
       data: {
         status: result.isDuplicate ? 'ignored_duplicate' : 'accepted',
         eventId: providerEventId,
+        paymentId: pipelineResult?.payment?._id || null,
+        caseId: pipelineResult?.recoveryCase?._id || null,
         message: result.message,
         fixtureData: syntheticRazorpayPayload
       },

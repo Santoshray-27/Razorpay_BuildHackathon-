@@ -42,7 +42,8 @@ export async function scheduleApprovedAction(merchantId, caseId, correlationId) 
     payment: recoveryCase.paymentId,
     recoveryCase,
     customerContext,
-    recommendation: recoveryCase.latestRecommendation || {}
+    recommendation: recoveryCase.latestRecommendation || {},
+    humanAuthorized: recoveryCase.status === 'approved'
   });
 
   if (recheckPolicy.decision !== 'APPROVED') {
@@ -66,7 +67,10 @@ export async function scheduleApprovedAction(merchantId, caseId, correlationId) 
     throw error;
   }
 
-  const actionType = recoveryCase.latestPolicyDecision?.finalAction || recoveryCase.latestRecommendation?.recommended_action || 'RETRY_LATER';
+  let actionType = recoveryCase.latestPolicyDecision?.finalAction || recoveryCase.latestRecommendation?.recommended_action || 'RETRY_LATER';
+  if (actionType === 'HUMAN_REVIEW') {
+    actionType = 'RETRY_LATER';
+  }
   const retryCount = recoveryCase.retryCount || 0;
   const idempotencyKey = `act_${caseId}_${retryCount}_${actionType}`;
 

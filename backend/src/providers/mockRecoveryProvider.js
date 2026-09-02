@@ -16,8 +16,8 @@ export async function executeMockAction({
 
   switch (actionType) {
     case 'RETRY_LATER': {
-      // Deterministic simulation outcome based on calculated probability threshold
-      const isSimulatedSuccess = probability >= 0.60 && !customerContext.optedOutOfRecovery;
+      // Deterministic simulation outcome based on calculated probability threshold or human operator authorization
+      const isSimulatedSuccess = (probability >= 0.50 || recoveryCase.approvedAt || recoveryCase.status === 'approved') && !customerContext.optedOutOfRecovery;
 
       if (isSimulatedSuccess) {
         return {

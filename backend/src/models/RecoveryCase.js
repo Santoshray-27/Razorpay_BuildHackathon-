@@ -114,6 +114,18 @@ const recoveryCaseSchema = new mongoose.Schema(
       enum: ['RAZORPAY_TEST', 'MOCK_DEMO', 'SIMULATION'],
       default: 'MOCK_DEMO',
       index: true
+    },
+    approvedBy: {
+      type: String,
+      default: null
+    },
+    approvedAt: {
+      type: Date,
+      default: null
+    },
+    approvalReason: {
+      type: String,
+      default: null
     }
   },
   {

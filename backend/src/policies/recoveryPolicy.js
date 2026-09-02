@@ -18,11 +18,12 @@ export const POLICY_DECISIONS = {
 /**
  * Pure policy evaluation function.
  * @param {object} params
- * @param {object} params.payment
- * @param {object} params.recoveryCase
- * @param {object} params.customerContext
- * @param {object} params.recommendation
+ * @param {object} [params.payment]
+ * @param {object} [params.recoveryCase]
+ * @param {object} [params.customerContext]
+ * @param {object} [params.recommendation]
  * @param {object} [params.config=policyConfig]
+ * @param {boolean} [params.humanAuthorized=false] - Explicit flag indicating prior human operator authorization
  * @returns {object} { decision, finalAction, scheduledAfterHours, policyVersion, triggeredRules, reason }
  */
 export function evaluatePolicy({
@@ -30,17 +31,25 @@ export function evaluatePolicy({
   recoveryCase = {},
   customerContext = {},
   recommendation = {},
-  config = policyConfig
+  config = policyConfig,
+  humanAuthorized = false
 }) {
   const triggeredRules = [];
   const amountPaise = Number(payment.amountPaise) || Number(recoveryCase.amountAtRiskPaise) || 0;
   const retryCount = Number(recoveryCase.retryCount) || 0;
   const reminderCount = Number(recoveryCase.reminderCount) || 0;
-  const recommendedAction = recommendation.recommended_action || recoveryCase.latestRecommendation?.recommended_action || 'HUMAN_REVIEW';
+  const recommendedAction = recommendation.recommended_action || recoveryCase.latestRecommendation?.recommended_action || recoveryCase.latestPolicyDecision?.finalAction || 'HUMAN_REVIEW';
   const confidence = Number(recommendation.confidence) || Number(recoveryCase.latestRecommendation?.confidence) || 0.85;
   const probability = Number(recommendation.recovery_probability) || Number(recoveryCase.recoveryProbability) || Number(recoveryCase.latestRecommendation?.recovery_probability) || 0;
 
-  // RULE 1: Payment or Case already recovered -> STOP
+  const isHumanAuthorized = Boolean(
+    humanAuthorized ||
+    recoveryCase.status === 'approved' ||
+    customerContext.isOperatorApproved ||
+    recoveryCase.approvedAt
+  );
+
+  // RULE 1: Payment or Case already recovered -> STOP (HARD STOP)
   if (payment.status === 'recovered' || payment.status === 'captured' || recoveryCase.status === 'recovered') {
     triggeredRules.push('RULE_1_ALREADY_RECOVERED');
     return {
@@ -52,7 +61,7 @@ export function evaluatePolicy({
     };
   }
 
-  // RULE 2: Customer completed payment via another method -> STOP
+  // RULE 2: Customer completed payment via another method -> STOP (HARD STOP)
   if (customerContext.completedViaAlternativeMethod) {
     triggeredRules.push('RULE_2_PAID_VIA_ALTERNATIVE_METHOD');
     return {
@@ -64,7 +73,7 @@ export function evaluatePolicy({
     };
   }
 
-  // RULE 3: Customer opted out of recovery -> STOP
+  // RULE 3: Customer opted out of recovery -> STOP (HARD STOP)
   if (customerContext.optedOutOfRecovery) {
     triggeredRules.push('RULE_3_CUSTOMER_OPTED_OUT');
     return {
@@ -76,7 +85,7 @@ export function evaluatePolicy({
     };
   }
 
-  // RULE 4: Recovery window expired -> EXPIRED / STOP
+  // RULE 4: Recovery window expired -> EXPIRED / STOP (HARD STOP)
   if (recoveryCase.recoveryWindowEndsAt && new Date(recoveryCase.recoveryWindowEndsAt).getTime() < Date.now()) {
     triggeredRules.push('RULE_4_RECOVERY_WINDOW_EXPIRED');
     return {
@@ -88,7 +97,7 @@ export function evaluatePolicy({
     };
   }
 
-  // RULE 5: Retry count reached limit -> STOP
+  // RULE 5: Retry count reached limit -> STOP (HARD STOP)
   if (retryCount >= config.maxRetriesPerCase) {
     triggeredRules.push('RULE_5_MAX_RETRIES_REACHED');
     return {
@@ -112,7 +121,7 @@ export function evaluatePolicy({
     };
   }
 
-  // RULE 7: Active action lock exists -> Block / Defer
+  // RULE 7: Active action lock exists -> Block / Defer (HARD STOP)
   if (recoveryCase.activeActionLock) {
     triggeredRules.push('RULE_7_ACTIVE_ACTION_LOCK');
     return {
@@ -124,7 +133,7 @@ export function evaluatePolicy({
     };
   }
 
-  // RULE 8: Duplicate webhook / action -> IGNORE
+  // RULE 8: Duplicate webhook / action -> IGNORE (HARD STOP)
   if (recoveryCase.isDuplicateAction) {
     triggeredRules.push('RULE_8_DUPLICATE_ACTION');
     return {
@@ -136,23 +145,50 @@ export function evaluatePolicy({
     };
   }
 
-  // RULE 9: Unsupported / Malformed recommendation -> HUMAN_REVIEW
+  // RULE 9: Unsupported action type -> Stop / Reject
   const validActions = ['RETRY_LATER', 'SEND_REMINDER', 'OFFER_ALTERNATIVE_METHOD', 'HUMAN_REVIEW', 'STOP_RECOVERY'];
-  if (!validActions.includes(recommendedAction) || recommendedAction === 'HUMAN_REVIEW') {
+  if (!validActions.includes(recommendedAction)) {
     triggeredRules.push('RULE_9_UNSUPPORTED_OR_EXPLICIT_REVIEW');
     return {
       decision: POLICY_DECISIONS.PENDING_APPROVAL,
       finalAction: 'HUMAN_REVIEW',
       policyVersion: config.version,
       triggeredRules,
-      reason: 'Recommendation is HUMAN_REVIEW or unsupported action type. Human merchant approval required.'
+      reason: 'Recommendation is an unsupported action type. Human merchant approval required.'
+    };
+  }
+
+  // If human operator has authorized this case, skip soft escalation gates (Rules 10, 11, 12, 13)
+  if (isHumanAuthorized) {
+    triggeredRules.push('HUMAN_AUTHORIZATION_HONORED');
+    const finalActionToUse = (recommendedAction === 'HUMAN_REVIEW' || !recommendedAction)
+      ? 'RETRY_LATER'
+      : recommendedAction;
+
+    return {
+      decision: POLICY_DECISIONS.APPROVED,
+      finalAction: finalActionToUse,
+      scheduledAfterHours: (finalActionToUse === 'RETRY_LATER' ? (recommendation.retry_after_hours || recoveryCase.latestRecommendation?.retry_after_hours || 6) : 0),
+      policyVersion: config.version,
+      triggeredRules,
+      reason: 'Human operator authorization honored. Case approved for scheduled execution.'
+    };
+  }
+
+  // RULE 9b: Explicit HUMAN_REVIEW recommendation -> PENDING_APPROVAL
+  if (recommendedAction === 'HUMAN_REVIEW') {
+    triggeredRules.push('RULE_9_UNSUPPORTED_OR_EXPLICIT_REVIEW');
+    return {
+      decision: POLICY_DECISIONS.PENDING_APPROVAL,
+      finalAction: 'HUMAN_REVIEW',
+      policyVersion: config.version,
+      triggeredRules,
+      reason: 'Recommendation is HUMAN_REVIEW. Human merchant approval required.'
     };
   }
 
   // RULE 10: High-Value Transaction Threshold -> PENDING_APPROVAL
-  const isOperatorApproved = Boolean(recoveryCase.status === 'approved' || customerContext.isOperatorApproved);
-
-  if (!isOperatorApproved && amountPaise >= config.highValueThresholdPaise) {
+  if (amountPaise >= config.highValueThresholdPaise) {
     triggeredRules.push('RULE_10_HIGH_VALUE_THRESHOLD_EXCEEDED');
     return {
       decision: POLICY_DECISIONS.PENDING_APPROVAL,
@@ -164,7 +200,7 @@ export function evaluatePolicy({
   }
 
   // RULE 11: AI Confidence Below Threshold -> PENDING_APPROVAL
-  if (!isOperatorApproved && confidence < config.minAutoActionConfidence) {
+  if (confidence < config.minAutoActionConfidence) {
     triggeredRules.push('RULE_11_LOW_AI_CONFIDENCE');
     return {
       decision: POLICY_DECISIONS.PENDING_APPROVAL,
@@ -176,7 +212,7 @@ export function evaluatePolicy({
   }
 
   // RULE 12: Recovery Probability Below Threshold -> PENDING_APPROVAL
-  if (!isOperatorApproved && probability < config.minAutoRecoveryProbability) {
+  if (probability < config.minAutoRecoveryProbability) {
     triggeredRules.push('RULE_12_LOW_RECOVERY_PROBABILITY');
     return {
       decision: POLICY_DECISIONS.PENDING_APPROVAL,

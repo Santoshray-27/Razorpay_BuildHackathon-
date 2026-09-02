@@ -46,6 +46,18 @@ export default {
           'info-text': 'var(--badge-info-text)',
           'danger-bg': 'var(--badge-danger-bg)',
           'danger-text': 'var(--badge-danger-text)',
+        },
+        ink: 'var(--color-ink)',
+        accent: 'var(--color-accent)',
+        'accent-hover': 'var(--color-accent-hover)',
+        mint: 'var(--color-mint)',
+        semantic: {
+          'warning-bg': 'var(--badge-warning-bg)',
+          'warning': 'var(--badge-warning-text)',
+          'danger-bg': 'var(--badge-danger-bg)',
+          'danger': 'var(--badge-danger-text)',
+          'success-bg': 'var(--badge-success-bg)',
+          'success': 'var(--badge-success-text)',
         }
       },
       spacing: {

@@ -348,7 +348,7 @@ export default function CaseDetailPage() {
         <CardContent>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-space-6">
             {/* Left: Logistic Regression Probability Model */}
-            <div className="bg-theme-surface dark:bg-theme-elevated p-space-6 rounded-radius-md border border-palette-surface-alt space-y-space-4">
+            <div className="bg-theme-surface p-space-6 rounded-radius-md border border-palette-surface-alt space-y-space-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2 text-body-sm font-semibold text-theme-primary">
                   <Cpu className="w-4 h-4 text-palette-ink" />
@@ -386,7 +386,7 @@ export default function CaseDetailPage() {
             </div>
 
             {/* Right: Google Gemini AI Advisory */}
-            <div className="bg-theme-surface dark:bg-theme-elevated p-space-6 rounded-radius-md border border-palette-surface-alt space-y-space-4">
+            <div className="bg-theme-surface p-space-6 rounded-radius-md border border-palette-surface-alt space-y-space-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2 text-body-sm font-semibold text-theme-primary">
                   <Sparkles className="w-4 h-4 text-palette-ink" />
@@ -443,7 +443,7 @@ export default function CaseDetailPage() {
         </CardHeader>
         <CardContent>
           {policy ? (
-            <div className="bg-theme-surface dark:bg-theme-elevated p-space-6 rounded-radius-md border border-palette-surface-alt space-y-space-3 text-body-sm">
+            <div className="bg-theme-surface p-space-6 rounded-radius-md border border-palette-surface-alt space-y-space-3 text-body-sm">
               <div className="flex items-center justify-between">
                 <span className="text-theme-muted">Policy Decision:</span>
                 <span className={`px-space-3 py-1 rounded-radius-sm font-bold font-mono text-caption ${
@@ -517,7 +517,7 @@ export default function CaseDetailPage() {
                     <span className="text-caption text-theme-muted font-mono">{formatDate(item.createdAt)}</span>
                   </div>
 
-                  <p className="text-body-sm text-theme-secondary leading-relaxed bg-theme-surface/50 dark:bg-theme-elevated/40 p-space-3 rounded-radius-md border border-palette-surface-alt">
+                  <p className="text-body-sm text-theme-secondary leading-relaxed bg-theme-surface/50 p-space-3 rounded-radius-md border border-palette-surface-alt">
                     {item.message}
                   </p>
 

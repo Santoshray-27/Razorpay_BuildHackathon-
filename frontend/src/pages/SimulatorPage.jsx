@@ -6,7 +6,6 @@
 import React, { useState } from 'react';
 import { apiClient } from '../api/client';
 import { formatCurrency } from '../utils/formatters';
-import { useTheme } from '../context/ThemeContext';
 import {
   Play,
   TrendingUp,
@@ -32,7 +31,6 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 
 export default function SimulatorPage() {
-  const { isDark } = useTheme();
   const [count, setCount] = useState(10000);
   const [seed, setSeed] = useState(42);
   const [failureRate, setFailureRate] = useState(18);
@@ -57,39 +55,39 @@ export default function SimulatorPage() {
 
   const strategies = results?.strategies;
 
-  // Chart data preparation
+  // Chart data preparation (Light Theme Palette)
   const chartData = strategies ? [
     {
       name: '1. No Recovery',
       recoveredRevenue: 0,
       recoveryRate: strategies.NO_RECOVERY.recoveryRate,
-      fillColor: isDark ? '#9BA4B5' : '#CBD2DE'
+      fillColor: '#CBD2DE'
     },
     {
       name: '2. Fixed 24h Retry',
       recoveredRevenue: strategies.FIXED_RETRY.recoveredRevenuePaise / 100,
       recoveryRate: strategies.FIXED_RETRY.recoveryRate,
-      fillColor: isDark ? '#DBE2EF' : '#A4B0C4'
+      fillColor: '#A4B0C4'
     },
     {
       name: '3. Rule-Based Heuristic',
       recoveredRevenue: strategies.RULE_BASED_RECOVERY.recoveredRevenuePaise / 100,
       recoveryRate: strategies.RULE_BASED_RECOVERY.recoveryRate,
-      fillColor: isDark ? '#60A5FA' : '#76B7B2'
+      fillColor: '#76B7B2'
     },
     {
       name: '4. RazorRecover (AI+Policy)',
       recoveredRevenue: strategies.AI_ASSISTED_RECOVERY.recoveredRevenuePaise / 100,
       recoveryRate: strategies.AI_ASSISTED_RECOVERY.recoveryRate,
-      fillColor: isDark ? '#F6C453' : '#20242C'
+      fillColor: '#222831'
     }
   ] : [];
 
   const customTooltipStyle = {
-    backgroundColor: isDark ? '#222831' : '#FFFFFF',
-    borderColor: isDark ? '#39424E' : '#DBE2EF',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#DBE2EF',
     borderRadius: '12px',
-    color: isDark ? '#FEFCF3' : '#222831',
+    color: '#222831',
     fontSize: '13px',
     boxShadow: '0 4px 16px rgba(34, 40, 49, 0.08)'
   };
@@ -234,11 +232,11 @@ export default function SimulatorPage() {
                   <BarChart data={chartData} margin={{ top: 10, right: 20, left: 20, bottom: 20 }}>
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      stroke={isDark ? '#39424E' : '#DBE2EF'}
+                      stroke="#DBE2EF"
                       vertical={false}
                     />
-                    <XAxis dataKey="name" stroke={isDark ? '#9BA4B5' : '#686D76'} tick={{ fontSize: 11 }} />
-                    <YAxis stroke={isDark ? '#9BA4B5' : '#686D76'} tick={{ fontSize: 11 }} />
+                    <XAxis dataKey="name" stroke="#686D76" tick={{ fontSize: 11 }} />
+                    <YAxis stroke="#686D76" tick={{ fontSize: 11 }} />
                     <Tooltip
                       contentStyle={customTooltipStyle}
                       formatter={(val) => [`₹${Number(val).toLocaleString('en-IN')}`, 'Recovered Revenue']}

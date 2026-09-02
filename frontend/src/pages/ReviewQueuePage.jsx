@@ -138,7 +138,7 @@ export default function ReviewQueuePage() {
               </div>
 
               {/* Escalation details summary */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-space-4 text-body-sm bg-theme-surface dark:bg-theme-elevated p-space-4 rounded-radius-md border border-palette-surface-alt">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-space-4 text-body-sm bg-theme-surface p-space-4 rounded-radius-md border border-palette-surface-alt">
                 <div>
                   <span className="text-theme-muted text-caption font-semibold">AI Recommended Strategy:</span>
                   <p className="font-mono font-bold text-palette-ink mt-0.5">
@@ -163,7 +163,7 @@ export default function ReviewQueuePage() {
               <div className="flex flex-wrap items-center justify-between gap-space-3 pt-1">
                 <Link
                   to={`/cases/${c._id}`}
-                  className="text-body-sm text-palette-ink dark:text-palette-accent hover:underline font-bold flex items-center gap-1"
+                  className="text-body-sm text-palette-ink hover:underline font-bold flex items-center gap-1"
                 >
                   <span>Inspect Full Audit History</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />

@@ -1,9 +1,9 @@
 /**
  * frontend/src/tokens.css
- * Complete Light-Theme-First Design Tokens for RazorRecover.
+ * Light-Theme Design System Tokens for RazorRecover.
  *
  * Exact Color Palette Specification:
- *   --color-ink         #222831   Text, headings, icons, dark surfaces, primary buttons
+ *   --color-ink         #222831   Text, headings, icons, primary buttons
  *   --color-bg          #FEFCF3   Default page background (the ~60% color)
  *   --color-bg-alt      #FEFDCA   Alternating section background, subtle highlight/notice fill
  *   --color-surface     #E3FDFD   Card / panel background
@@ -97,7 +97,7 @@
   --color-danger: #F87171;
   --color-danger-bg: #FEE2E2;
 
-  /* ── Semantic System Mapping (Light Theme Default) ── */
+  /* ── Semantic System Mapping (Light Theme Only) ── */
   --bg-base: var(--color-bg);
   --bg-surface: #FFFFFF;
   --bg-elevated: var(--color-surface);
@@ -132,36 +132,4 @@
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
-}
-
-/* ── Dark Theme Overrides (Derived directly from Ink & Accent) ── */
-.dark {
-  --bg-base: #181D24;
-  --bg-surface: #222831;
-  --bg-elevated: #2B333E;
-  --bg-alt: #333C48;
-
-  --border-subtle: #39424E;
-  --border-default: #485362;
-
-  --text-primary: #FEFCF3;
-  --text-secondary: #DBE2EF;
-  --text-muted: #9BA4B5;
-
-  --brand-primary: var(--color-accent);
-  --brand-hover: var(--color-accent-hover);
-  --brand-subtle-bg: #333C48;
-
-  --badge-success-bg: #1F382B;
-  --badge-success-text: #DDFFBC;
-  --badge-warning-bg: #3D351D;
-  --badge-warning-text: #FCE38A;
-  --badge-info-bg: #1C3338;
-  --badge-info-text: #CDF0EA;
-  --badge-danger-bg: #3D1F1F;
-  --badge-danger-text: #FCA5A5;
-
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 32px rgba(0, 0, 0, 0.45);
 }

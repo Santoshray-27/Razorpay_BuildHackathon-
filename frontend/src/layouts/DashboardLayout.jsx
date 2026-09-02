@@ -24,7 +24,6 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
-import { ThemeToggle } from '../components/ui/ThemeToggle';
 import { ExecutionModeBadge, RoleBadge } from '../components/ui/Badge';
 
 export default function DashboardLayout() {
@@ -197,7 +196,7 @@ export default function DashboardLayout() {
             </span>
           </div>
 
-          {/* Controls: Execution Mode Badge + Merchant Chip + Theme Toggle */}
+          {/* Controls: Execution Mode Badge + Merchant Chip */}
           <div className="flex items-center space-x-3">
             <ExecutionModeBadge mode="MOCK_DEMO" />
 
@@ -205,8 +204,6 @@ export default function DashboardLayout() {
               <span>Merchant:</span>
               <span className="text-theme-primary">{user?.merchantId || 'merch_demo'}</span>
             </div>
-
-            <ThemeToggle />
           </div>
         </header>
 

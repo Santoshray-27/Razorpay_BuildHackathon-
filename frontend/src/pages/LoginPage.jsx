@@ -17,7 +17,6 @@ import {
   Sparkles
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
-import { ThemeToggle } from '../components/ui/ThemeToggle';
 
 export default function LoginPage() {
   const { login, register, demoLogin } = useAuth();
@@ -65,12 +64,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-theme-base flex items-center justify-center p-space-4 lg:p-space-8 relative overflow-hidden font-sans transition-colors duration-200">
-      {/* Top right theme toggle */}
-      <div className="absolute top-space-6 right-space-6 z-20">
-        <ThemeToggle />
-      </div>
-
+    <div className="min-h-screen bg-theme-base flex items-center justify-center p-space-4 lg:p-space-8 relative overflow-hidden font-sans">
       <div className="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-12 gap-space-8 relative z-10 items-center">
         {/* Left Column: Brand & Feature Highlights */}
         <div className="lg:col-span-6 space-y-space-6 text-left">
@@ -119,7 +113,7 @@ export default function LoginPage() {
         {/* Right Column: Fast Track & Auth Form */}
         <div className="lg:col-span-6 space-y-space-4">
           {/* Judge & Reviewer 1-Click Fast Track Card */}
-          <div className="bg-badge-warning-bg dark:bg-theme-surface border border-palette-accent rounded-radius-lg p-space-6 shadow-theme-md space-y-space-3 relative overflow-hidden">
+          <div className="bg-badge-warning-bg border border-palette-accent rounded-radius-lg p-space-6 shadow-theme-md space-y-space-3 relative overflow-hidden">
             <div className="flex items-center space-x-2 text-caption font-bold text-palette-ink">
               <Zap className="w-4 h-4 text-palette-ink" />
               <span>Judge & Evaluator Fast Track</span>
@@ -148,7 +142,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => { setIsRegister(!isRegister); setError(null); }}
-                className="text-body-sm text-palette-ink dark:text-palette-accent hover:underline font-bold transition"
+                className="text-body-sm text-palette-ink hover:underline font-bold transition"
               >
                 {isRegister ? 'Have an account? Log in' : 'Need an account? Register'}
               </button>

@@ -8,7 +8,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import { formatCurrency } from '../utils/formatters';
-import { useTheme } from '../context/ThemeContext';
 import {
   TrendingUp,
   AlertTriangle,
@@ -51,7 +50,6 @@ const PIPELINE_STAGES = [
 ];
 
 export default function OverviewPage() {
-  const { isDark } = useTheme();
   const [overview, setOverview] = useState(null);
   const [failures, setFailures] = useState([]);
   const [rawFunnel, setRawFunnel] = useState([]);
@@ -110,10 +108,10 @@ export default function OverviewPage() {
   });
 
   const customTooltipStyle = {
-    backgroundColor: isDark ? '#222831' : '#FFFFFF',
-    borderColor: isDark ? '#39424E' : '#DBE2EF',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#DBE2EF',
     borderRadius: '12px',
-    color: isDark ? '#FEFCF3' : '#222831',
+    color: '#222831',
     fontSize: '13px',
     boxShadow: '0 4px 16px rgba(34, 40, 49, 0.08)'
   };
@@ -229,19 +227,19 @@ export default function OverviewPage() {
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke={isDark ? '#39424E' : '#DBE2EF'}
+                    stroke="#DBE2EF"
                     horizontal={false}
                   />
                   <XAxis
                     type="number"
-                    stroke={isDark ? '#9BA4B5' : '#686D76'}
+                    stroke="#686D76"
                     tick={{ fontSize: 11 }}
                     allowDecimals={false}
                   />
                   <YAxis
                     dataKey="stage"
                     type="category"
-                    stroke={isDark ? '#DBE2EF' : '#222831'}
+                    stroke="#222831"
                     tick={{ fontSize: 12, fontWeight: 600 }}
                     width={110}
                   />
@@ -259,7 +257,7 @@ export default function OverviewPage() {
                           <Cell
                             key={`cell-${idx}`}
                             fill="transparent"
-                            stroke={isDark ? '#485362' : '#C8D1E0'}
+                            stroke="#C8D1E0"
                             strokeWidth={1.5}
                             strokeDasharray="3 3"
                           />
@@ -268,14 +266,14 @@ export default function OverviewPage() {
                       return (
                         <Cell
                           key={`cell-${idx}`}
-                          fill={isDark ? '#F6C453' : '#20242C'}
+                          fill="#222831"
                         />
                       );
                     })}
                     <LabelList
                       dataKey="count"
                       position="right"
-                      fill={isDark ? '#DBE2EF' : '#222831'}
+                      fill="#222831"
                       fontSize={12}
                       fontWeight={700}
                     />
@@ -301,27 +299,27 @@ export default function OverviewPage() {
                 <BarChart data={failures} margin={{ top: 10, right: 10, left: 10, bottom: 25 }}>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke={isDark ? '#39424E' : '#DBE2EF'}
+                    stroke="#DBE2EF"
                     vertical={false}
                   />
                   <XAxis
                     dataKey="failureReason"
-                    stroke={isDark ? '#9BA4B5' : '#686D76'}
+                    stroke="#686D76"
                     tick={{ fontSize: 10 }}
                     angle={-20}
                     textAnchor="end"
                   />
-                  <YAxis stroke={isDark ? '#9BA4B5' : '#686D76'} tick={{ fontSize: 11 }} />
+                  <YAxis stroke="#686D76" tick={{ fontSize: 11 }} />
                   <Tooltip contentStyle={customTooltipStyle} />
                   <Bar
                     dataKey="count"
-                    fill={isDark ? '#D96C6C' : '#D96C6C'}
+                    fill="#D96C6C"
                     name="Failed Count"
                     radius={[4, 4, 0, 0]}
                   />
                   <Bar
                     dataKey="recoveredCount"
-                    fill={isDark ? '#9FDD8E' : '#9FDD8E'}
+                    fill="#9FDD8E"
                     name="Recovered Count"
                     radius={[4, 4, 0, 0]}
                   />
@@ -341,7 +339,7 @@ export default function OverviewPage() {
           </div>
           <Link
             to="/cases"
-            className="text-body-sm text-palette-ink dark:text-palette-accent hover:underline font-bold inline-flex items-center gap-1"
+            className="text-body-sm text-palette-ink hover:underline font-bold inline-flex items-center gap-1"
           >
             View All Cases <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>

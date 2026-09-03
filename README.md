@@ -216,23 +216,6 @@ cd backend
 npm test -- --runInBand
 ```
 
-```text
-PASS tests/auth.test.js (8 tests)
-PASS tests/webhook.test.js (5 tests)
-PASS tests/recovery.test.js (4 tests)
-PASS tests/probability.test.js (4 tests)
-PASS tests/gemini.test.js (5 tests)
-PASS tests/policy.test.js (7 tests)
-PASS tests/execution.test.js (2 tests)
-PASS tests/analytics.test.js (4 tests)
-PASS tests/simulation.test.js (4 tests)
-
-Test Suites: 9 passed, 9 total
-Tests:       43 passed, 43 total
-Snapshots:   0 total
-Time:        4.474 s
-```
-
 ---
 
 ## 👨‍💻 Author & Acknowledgements
